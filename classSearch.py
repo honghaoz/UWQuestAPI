@@ -119,7 +119,7 @@ postPersonalInfoData = {
 
 personalInfoResponse = s.post(studentCenterURL, data = postPersonalInfoData)
 
-print personalInfoResponse.content
+# print personalInfoResponse.content
 
 # personalInfoAddressGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_ADDRESSES.GBL"
 # getAddressData = {
@@ -214,41 +214,41 @@ print personalInfoResponse.content
 # # Print current state num
 # print "currentStateNum: " + str(currentStateNum) + '\n'
 
-# classSearchURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
-# postClassSearch = {
-# 	'ICAJAX': '1',
-# 	'ICNAVTYPEDROPDOWN': '0',
-# 	'ICType': 'Panel',
-# 	'ICElementNum': '0',
-# 	'ICStateNum': str(currentStateNum),
-# 	'ICAction': 'UW_DERIVED_SR_SSR_PB_CLASS_SRCH',
-# 	'ICXPos': '0',
-# 	'ICYPos': '0',
-# 	'ResponsetoDiffFrame': '-1',
-# 	'TargetFrameName': 'None',
-# 	'FacetPath': 'None',
-# 	'ICFocus': '',
-# 	'ICSaveWarningFilter': '0',
-# 	'ICChanged': '-1',
-# 	'ICResubmit': '0',
-# 	'ICSID': icsid,
-# 	'ICActionPrompt': 'false',
-# 	'ICFind': '',
-# 	'ICAddCount': '',
-# 	'ICAPPCLSDATA': '',
-# 	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$': '9999',
-# 	'CLASS_SRCH_WRK2_INSTITUTION$31$': 'UWATR',
-# 	'CLASS_SRCH_WRK2_STRM$35$': '1145',
-# 	'CLASS_SRCH_WRK2_SUBJECT$7$': 'CS',
-# 	'CLASS_SRCH_WRK2_CATALOG_NBR$8$': '350',
-# 	'CLASS_SRCH_WRK2_SSR_EXACT_MATCH1': 'E',
-# 	'CLASS_SRCH_WRK2_ACAD_CAREER': 'UG',
-# 	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY$chk': 'Y',
-# 	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY': 'Y',
-# 	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$': '9999',
-# }
+classSearchURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
+postClassSearch = {
+	'ICAJAX': '1',
+	'ICNAVTYPEDROPDOWN': '0',
+	'ICType': 'Panel',
+	'ICElementNum': '0',
+	'ICStateNum': str(currentStateNum + 1),
+	'ICAction': 'UW_DERIVED_SR_SSR_PB_CLASS_SRCH',
+	'ICXPos': '0',
+	'ICYPos': '0',
+	'ResponsetoDiffFrame': '-1',
+	'TargetFrameName': 'None',
+	'FacetPath': 'None',
+	'ICFocus': '',
+	'ICSaveWarningFilter': '0',
+	'ICChanged': '-1',
+	'ICResubmit': '0',
+	'ICSID': icsid,
+	'ICActionPrompt': 'false',
+	'ICFind': '',
+	'ICAddCount': '',
+	'ICAPPCLSDATA': '',
+	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$': '9999',
+	'CLASS_SRCH_WRK2_INSTITUTION$31$': 'UWATR',
+	'CLASS_SRCH_WRK2_STRM$35$': '1145',
+	'CLASS_SRCH_WRK2_SUBJECT$7$': 'CS',
+	'CLASS_SRCH_WRK2_CATALOG_NBR$8$': '350',
+	'CLASS_SRCH_WRK2_SSR_EXACT_MATCH1': 'E',
+	'CLASS_SRCH_WRK2_ACAD_CAREER': 'UG',
+	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY$chk': 'Y',
+	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY': 'Y',
+	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$': '9999',
+}
 
-# classSearchResponse = s.post(classSearchURL, data = postClassSearch)
+classSearchResponse = s.post(classSearchURL, data = postClassSearch)
 
-# print classSearchResponse.content
+print classSearchResponse.content
 
