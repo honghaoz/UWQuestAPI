@@ -43,8 +43,8 @@ s = Session()
 
 questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
 postLoginData = {
-	'userid': 'h344zhan',
-	'pwd': 'Zhh358279765099',
+	'userid': ''///,
+	'pwd': ''///,
 	'timezoneOffset': '240',
 	'httpPort': ''
 }

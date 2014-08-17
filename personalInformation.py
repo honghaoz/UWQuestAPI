@@ -17,12 +17,16 @@ def getStateNum(html):
 def getAddress(html):
 	soup = BeautifulSoup(html)
 
-	addressTRs = soup.find(id="SCC_ADDR_H$scroll$0")
+	# addressTable contains address information
+	addressTable = soup.find(id="SCC_ADDR_H$scroll$0")
 
-	tableString = str(addressTRs)
+	# Clean tags
+	tableString = str(addressTable)
 	x = re.sub("\<.*?\>", "", tableString);
+	# clean result list
 	resultList = filter(lambda x: len(x) > 0, x.replace(" \r", ", ").split("\n"))
 	del(resultList[2])
+	# resultList contains
 	print resultList
 
 	# Three <tr> tags contain one head and two(maybe more?) rows
@@ -43,9 +47,9 @@ s = Session()
 
 questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
 postLoginData = {
-	'userid': 'h344zhan',
-	'pwd': 'Zhh358279765099',
-	'timezoneOffset': '240',
+	'userid': ''///,
+	'pwd': ''///,
+	'timezoneOffset': '240', # Fix Me
 	'httpPort': ''
 }
 
@@ -94,30 +98,30 @@ print "currentStateNum: " + str(currentStateNum) + '\n'
 # 	'Content-Type': 'application/x-www-form-urlencoded',
 # }
 
-postPersonalInfoData = {
-	'ICAJAX': '1',
-	'ICNAVTYPEDROPDOWN': '0',
-	'ICType': 'Panel',
-	'ICElementNum': '0',
-	'ICStateNum': str(currentStateNum),
-	'ICAction': 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO',
-	'ICXPos': '0',
-	'ICYPos': '87',
-	'ResponsetoDiffFrame': '-1',
-	'TargetFrameName': 'None',
-	'FacetPath': 'None',
-	'ICFocus': '',
-	'ICSaveWarningFilter': '0',
-	'ICChanged': '-1',
-	'ICResubmit': '0',
-	'ICSID': icsid,
-	'ICActionPrompt': 'false',
-	'ICFind': '',
-	'ICAddCount': '',
-	'ICAPPCLSDATA': ''
-}
+# postPersonalInfoData = {
+# 	'ICAJAX': '1',
+# 	'ICNAVTYPEDROPDOWN': '0',
+# 	'ICType': 'Panel',
+# 	'ICElementNum': '0',
+# 	'ICStateNum': str(currentStateNum),
+# 	'ICAction': 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO',
+# 	'ICXPos': '0',
+# 	'ICYPos': '87',
+# 	'ResponsetoDiffFrame': '-1',
+# 	'TargetFrameName': 'None',
+# 	'FacetPath': 'None',
+# 	'ICFocus': '',
+# 	'ICSaveWarningFilter': '0',
+# 	'ICChanged': '-1',
+# 	'ICResubmit': '0',
+# 	'ICSID': icsid,
+# 	'ICActionPrompt': 'false',
+# 	'ICFind': '',
+# 	'ICAddCount': '',
+# 	'ICAPPCLSDATA': ''
+# }
 
-personalInfoResponse = s.post(studentCenterURL, data = postPersonalInfoData)
+# personalInfoResponse = s.post(studentCenterURL, data = postPersonalInfoData)
 
 # print personalInfoResponse.content
 
@@ -220,7 +224,7 @@ postClassSearch = {
 	'ICNAVTYPEDROPDOWN': '0',
 	'ICType': 'Panel',
 	'ICElementNum': '0',
-	'ICStateNum': str(currentStateNum + 1),
+	'ICStateNum': str(currentStateNum),
 	'ICAction': 'UW_DERIVED_SR_SSR_PB_CLASS_SRCH',
 	'ICXPos': '0',
 	'ICYPos': '0',
@@ -248,7 +252,6 @@ postClassSearch = {
 	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$': '9999',
 }
 
-classSearchResponse = s.post(classSearchURL, data = postClassSearch)
+classSearchResponse = s.get(classSearchURL, data = postClassSearch)
 
 print classSearchResponse.content
-
