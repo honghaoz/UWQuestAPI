@@ -1,7 +1,7 @@
-import basicQuestClass
+import BasicQuestClass
 import requests
 
-from basicQuestClass import BasicQuestSession
+from BasicQuestClass import BasicQuestSession
 
 class MyAcademicQuestSession(BasicQuestSession):
 	""" Subclass for myAcademic"""
