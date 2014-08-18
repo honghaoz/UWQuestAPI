@@ -1,4 +1,4 @@
-UWQuestAPI
+UWaterloo Quest API
 ==========
 
 University of Waterloo Quest API.
