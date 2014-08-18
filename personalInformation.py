@@ -2,6 +2,7 @@ import requests
 from requests import Request, Session
 from bs4 import BeautifulSoup
 import re
+import copy
 
 ################ Helper Functions ################
 
@@ -43,6 +44,7 @@ def getAddress(html):
 	# 	print eachAddr.td.div.span.string + "\t" + eachAddr.td.next_sibling.next_sibling.div.span.get_text().replace(" \r", ", ")
 
 
+
 # TODO: timeout handling, network error handling
 class questSession:
 	session = Session()
@@ -51,9 +53,41 @@ class questSession:
 	password = ""
 	icsid = ""
 	currentStateNum = 0
+	isUndergraduate = True
+	# Post parameters
+	basicPostData = {
+		'ICAJAX':'1',
+		'ICNAVTYPEDROPDOWN':'0',
+		'ICType':'Panel',
+		'ICElementNum':'0',
+		'ICStateNum': str(currentStateNum), # Need to change
+		'ICAction':'', # Need to change
+		'ICXPos':'0',
+		'ICYPos':'0',
+		'ResponsetoDiffFrame':'-1',
+		'TargetFrameName':'None',
+		'FacetPath':'None',
+		'ICFocus':'',
+		'ICSaveWarningFilter':'0',
+		'ICChanged':'-1',
+		'ICResubmit':'0',
+		'ICSID': icsid, # Need to change
+		'ICActionPrompt':'false',
+		'ICFind':'',
+		'ICAddCount':'',
+		'ICAPPCLSDATA':'',
+		# More keys maybe added
+	}
+
 	# Login
 	questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
 	studentCenterURL = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
+	myAcademicsURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
+	myAcademicsGraduateURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_MYPROG_GRD.GBL"
+	myAcademicsGraduateGradesURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL"
+	myAcademicsGraduateUnofficialTranscriptURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SS_AA_REPORT1.GBL"
+
+	myAcademicsUndergraduateURL = ""
 
 	# Initialization
 	def __init__(self, userid, password):
@@ -70,14 +104,15 @@ class questSession:
 			@Param 
 			@Return True if Successful
 		'''
+		print "Login Start..."
 		postLoginData = {
 			'userid': self.userid,
 			'pwd': self.password,
 			'timezoneOffset': '240', # Fix Me
 			'httpPort': ''
 		}
-		loginResponse = self.session.post(self.questLoginURL, data = postLoginData)
-		if loginResponse.status_code == requests.codes.ok:
+		response = self.session.post(self.questLoginURL, data = postLoginData)
+		if response.status_code == requests.codes.ok:
 			print "Login Successfully!"
 			self.isLoginisLogin = True
 			return True
@@ -92,7 +127,13 @@ class questSession:
 			@Return True if expired
 		'''
 		return False
-
+	# TODO
+	def checkIsUndergraduate(self, response):
+		''' Check whether logined account is undergraduate
+			@Param requests response
+			@Return 
+		'''
+		pass
 	def updateICSID(self, response):
 		''' Update ICSID and StateNum
 			@Param requests response
@@ -110,11 +151,21 @@ class questSession:
 		'''
 		self.currentStateNum = getStateNum(response.content)
 		# Print current state num
-		print "Current StateNum: " + str(self.currentStateNum) + '\n'
+		print "Current StateNum: " + str(self.currentStateNum)
 
-	def goToStudentCenter(self):
-		''' Update StateNum
-			@Param requests response
+	def getBasicParameters(self):
+		''' return a new post data dictionary with updated ICSID and StateNum
+			@Param
+			@Return new post data dictionary
+		'''
+		newPostData = copy.copy(self.basicPostData)
+		newPostData['ICStateNum'] = str(self.currentStateNum)
+		newPostData['ICSID'] = self.icsid
+		return newPostData
+
+	def gotoStudentCenter(self):
+		''' Go to Student Center Page (main page)
+			@Param 
 			@Return True/False
 		'''
 		getStudentCenterData = {
@@ -135,20 +186,119 @@ class questSession:
 			'PortalKeyStruct': 'yes',
 		}
 
-		studentCenterResponse = self.session.get(self.studentCenterURL, data = getStudentCenterData)
-		if studentCenterResponse.status_code == requests.codes.ok:
+		response = self.session.get(self.studentCenterURL, data = getStudentCenterData)
+		if response.status_code == requests.codes.ok:
 			print "GET Student Center OK"
-			self.updateICSID(studentCenterResponse)
-			# self.updateStateNum(studentCenterResponse)
+			self.updateICSID(response)
+			# self.updateStateNum(response)
 			return True
 		else:
 			print "GET Student Center Failed"
 			return False
 
+	def gotoMyAcademics(self):
+		''' Go to My Academics (default tab is first one)
+			@Param
+			@Return True/False
+		'''
+		postMyAcademics = self.getBasicParameters()
+		postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1' # FIXME: Constant?
+
+		# print "POST: My Academics Page"
+		response = self.session.post(self.myAcademicsURL, data = postMyAcademics)
+		if response.status_code == requests.codes.ok:
+			print "POST My Academics OK"
+			self.gotoMyAcademics_myProgram()
+		else:
+			print "POST My Academics Failed"
+			return False
+	def gotoMyAcademics_myProgram(self):
+		''' Go to my undergrad(grad) program
+			@Param
+			@Return True/False
+		'''
+		# if self.isUndergraduate:
+		# 	pass
+		getMyProgramData = {
+			'Page': 'UW_SS_MYPROG_GRD',
+			'Action': 'U',
+			'ExactKeys': 'Y',
+			'TargetFrameName': 'None'
+		}
+		response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData)
+		if response.status_code == requests.codes.ok:
+			print "GET My Graduate Program Page OK"
+			self.updateStateNum(response)
+			# print response.content
+			return True
+		else:
+			print "GET My Graduate Program Page Failed"
+			return False
+	def gotoMyAcademics_grades(self):
+		''' Go to my grades
+			@Param
+			@Return True/False
+		'''
+		getGradesData = {
+			'Page': 'SSR_SSENRL_GRADE',
+			'Action': 'A'
+		}
+		response = self.session.get(self.myAcademicsGraduateGradesURL, data = getGradesData)
+		if response.status_code == requests.codes.ok:
+			print "GET Grades Page OK"
+			self.updateStateNum(response)
+			# print response.content
+			return True
+		else:
+			print "GET Grades Page Failed"
+			return False
+
+	def gotoMyAcademics_unofficialTranscript(self):
+		''' Go to my Unofficial Transcript
+			@Param
+			@Return True/False
+		'''
+		getUnofficialTranscriptData = {
+			'Page': 'SS_ES_AARPT_TYPE2',
+			'Action': 'A'
+		}
+		response = self.session.get(self.myAcademicsGraduateUnofficialTranscriptURL, data = getUnofficialTranscriptData)
+		if response.status_code == requests.codes.ok:
+			print "GET Unofficial Transcript Page OK"
+			self.updateStateNum(response)
+			print response.content
+			return True
+		else:
+			print "GET Unofficial Transcript Page Failed"
+			return False
+
+	# def gotoMyAcademics_myAdvisors(self):
+	# 	''' Go to my My Advisors
+	# 		@Param
+	# 		@Return True/False
+	# 	'''
+	# 	getUnofficialTranscriptData = {
+	# 		'Page': 'SS_ES_AARPT_TYPE2',
+	# 		'Action': 'A'
+	# 	}
+	# 	response = self.session.get(self.myAcademicsGraduateUnofficialTranscriptURL, data = getUnofficialTranscriptData)
+	# 	if response.status_code == requests.codes.ok:
+	# 		print "GET Unofficial Transcript Page OK"
+	# 		self.updateStateNum(response)
+	# 		print response.content
+	# 		return True
+	# 	else:
+	# 		print "GET Unofficial Transcript Page Failed"
+	# 		return False
+
+
 def main():
-	myQuest = questSession("userid", "password")# "userid", "password"
+	myQuest = questSession("h344zhan", "Zhh358279765099")# "userid", "password"
 	myQuest.login()
-	myQuest.goToStudentCenter()
+	myQuest.gotoStudentCenter()
+	myQuest.gotoMyAcademics()
+	myQuest.gotoMyAcademics_grades()
+	myQuest.gotoMyAcademics_unofficialTranscript()
 
 if __name__ == '__main__':
     main()
@@ -416,6 +566,7 @@ if __name__ == '__main__':
 # currentStateNum = getStateNum(myAcademicsResponse.content)
 # print "currentStateNum: " + str(currentStateNum) + '\n'
 
+#####################
 
 # print "GET: Grades Page"
 # gradesResponse = s.get("https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL?Page=SSR_SSENRL_GRADE&Action=A")
