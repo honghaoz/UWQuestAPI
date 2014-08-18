@@ -30,9 +30,18 @@ This API provides full access to Quest.
 
 - /account/logout
   - method: POST
-  - parameters: {sid: your_session_id}
-  - return: {status: success/failure}
+  - Parameters
 
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field  | Description
+    ----------- | -------------
+    status      | "success" or "failure"
+    reason      | If failure happens, this filed will contain reasons
 
 
 ### Food Services
