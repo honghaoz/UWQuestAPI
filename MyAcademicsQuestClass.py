@@ -138,7 +138,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 def main():
 	myQuest = MyAcademicQuestSession("", "")# "userid", "password"
 	myQuest.login()
-	myQuest.gotoStudentCenter()
+	# myQuest.gotoStudentCenter()
 	myQuest.gotoMyAcademics()
 	myQuest.gotoMyAcademics_grades()
 	myQuest.gotoMyAcademics_unofficialTranscript()

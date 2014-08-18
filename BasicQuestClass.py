@@ -54,12 +54,31 @@ class BasicQuestSession:
 	studentCenterURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 
 	# Initialization
-	def __init__(self, userid, password):
-	    """ Initialization """
-	    self.session = Session()
-	    self.isLogin = False
-	    self.userid = userid
-	    self.password = password
+	def __init__(self, userid, password, anotherQuestSession = None):
+	    """ Initialization
+	    	There two ways of Initialization:
+	    		1: Initilize a new one session, only provide userid and password
+	    		2: Initilize with another quest session, provide another quest session object
+	    			In this way, anotherQuestSession must be a valid quest session.
+	    			Userid and password will be ignored.
+	    """
+	    if not anotherQuestSession == None:
+	    	print "Initilize with anotherQuestSession"
+	    	self.session = anotherQuestSession.session
+	    	self.isLogin = anotherQuestSession.isLogin
+	    	self.userid = anotherQuestSession.userid
+	    	self.password = anotherQuestSession.password
+	    	self.icsid = anotherQuestSession.icsid
+	    	self.currentStateNum = anotherQuestSession.currentStateNum
+	    	self.isUndergraduate = anotherQuestSession.isUndergraduate
+	    	if not self.isLogin:
+	    		self.login()
+	    else:
+	    	print "Initilize new one"
+	    	self.session = Session()
+	    	self.isLogin = False
+	    	self.userid = userid
+	    	self.password = password
 
 	# Login
 	# Side effects: isLogin is changed
@@ -79,11 +98,12 @@ class BasicQuestSession:
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "Login Successfully!"
-			self.isLoginisLogin = True
+			self.isLogin = True
+			self.gotoStudentCenter()
 			return True
 		else:
 			print "Login Failed!"
-			self.isLoginisLogin = False
+			self.isLogin = False
 			return False
 
 	def checkIsExpiration(self):
@@ -165,7 +185,7 @@ class BasicQuestSession:
 def main():
 	myQuest = BasicQuestSession("", "")# "userid", "password"
 	myQuest.login()
-	myQuest.gotoStudentCenter()
+	# myQuest.gotoStudentCenter()
 
 if __name__ == '__main__':
     main()

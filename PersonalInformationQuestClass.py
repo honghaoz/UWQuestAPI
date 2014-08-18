@@ -211,13 +211,16 @@ class PersonalInformationQuestSession(BasicQuestSession):
 	# 		return False
 
 def main():
-	myQuest = PersonalInformationQuestSession(//)# "userid", "password"
-	myQuest.login()
-	myQuest.gotoStudentCenter()
-	myQuest.gotoPersonalInformationStudentCenter()
-	myQuest.gotoPersonalInformation()
-	myQuest.gotoPersonalInformation_address()
-	print QuestParser.Parse_personalInfo_address(myQuest.currentResponse.content)
+	# Create a basic quest session
+	myBasicQuest = BasicQuestSession("", "")# "userid", "password"
+	myBasicQuest.login()
+
+	myPersonalInfoQuestSesson = PersonalInformationQuestSession("", "", myBasicQuest)
+	# myQuest.gotoStudentCenter()
+	myPersonalInfoQuestSesson.gotoPersonalInformationStudentCenter()
+	myPersonalInfoQuestSesson.gotoPersonalInformation()
+	myPersonalInfoQuestSesson.gotoPersonalInformation_address()
+	print QuestParser.Parse_personalInfo_address(myPersonalInfoQuestSesson.currentResponse.content)
 	# myQuest.gotoPersonalInformation_name()
 	# myQuest.gotoPersonalInformation_phoneNumbers()
 	# myQuest.gotoPersonalInformation_email()
