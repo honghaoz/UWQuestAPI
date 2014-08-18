@@ -10,6 +10,8 @@ class MyAcademicQuestSession(BasicQuestSession):
 	myAcademicsGraduateURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_MYPROG_GRD.GBL"
 	myAcademicsGraduateGradesURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL"
 	myAcademicsGraduateUnofficialTranscriptURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SS_AA_REPORT1.GBL"
+	myAcademicsGraduateAdvisorsURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSR_SSADVR.GBL"
+	myAcademicsGraduateGradOfferURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/UW_SS_MENU.UW_SS_GRD_OFFR_CTR.GBL"
 
 	myAcademicsUndergraduateURL = ""
 
@@ -83,10 +85,48 @@ class MyAcademicQuestSession(BasicQuestSession):
 		if response.status_code == requests.codes.ok:
 			print "GET Unofficial Transcript Page OK"
 			self.updateStateNum(response)
-			print response.content
+			# print response.content
 			return True
 		else:
 			print "GET Unofficial Transcript Page Failed"
+			return False
+
+	def gotoMyAcademics_advisors(self):
+		''' Go to my My Advisors
+			@Param
+			@Return True/False
+		'''
+		getAdvisorsData = {
+			'Page': 'SSR_SSADVR',
+			'Action': 'U'
+		}
+		response = self.session.get(self.myAcademicsGraduateAdvisorsURL, data = getAdvisorsData)
+		if response.status_code == requests.codes.ok:
+			print "GET My Advisors Page OK"
+			self.updateStateNum(response)
+			# print response.content
+			return True
+		else:
+			print "GET My Advisors Page Failed"
+			return False
+
+	def gotoMyAcademics_graduateOfferLetters(self):
+		''' Go to my Graduate Offer Letters
+			@Param
+			@Return True/False
+		'''
+		getGraduateOfferData = {
+			'Page': 'UW_SS_GRD_OFFR_CTR',
+			'Action': 'U'
+		}
+		response = self.session.get(self.myAcademicsGraduateGradOfferURL, data = getGraduateOfferData)
+		if response.status_code == requests.codes.ok:
+			print "GET Graduate Offer Letters Page OK"
+			self.updateStateNum(response)
+			# print response.content
+			return True
+		else:
+			print "GET Graduate Offer Letters Page Failed"
 			return False
 
 def main():
@@ -96,71 +136,14 @@ def main():
 	myQuest.gotoMyAcademics()
 	myQuest.gotoMyAcademics_grades()
 	myQuest.gotoMyAcademics_unofficialTranscript()
+	myQuest.gotoMyAcademics_advisors()
+	myQuest.gotoMyAcademics_graduateOfferLetters()
 
 if __name__ == '__main__':
     main()
 		
 
-# ################ Login and set cookies ################
-# # Start a session to manage cookies
-# s = Session()
 
-# questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
-# postLoginData = {
-# 	'userid': 'h344zhan',
-# 	'pwd': 'Zhh358279765099',
-# 	'timezoneOffset': '240', # Fix Me
-# 	'httpPort': ''
-# }
-
-# loginResponse = s.post(questLoginURL, data = postLoginData)
-# if loginResponse.status_code == requests.codes.ok:
-# 	print "Login Successfully!"
-
-# ################ Operations ################
-
-# print "GET: studentCenter Page"
-
-# # Get main page
-# studentCenterURL = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
-# getMainPageData = {
-# 	'PORTALPARAM_PTCNAV': 'HC_SSS_STUDENT_CENTER',
-# 	'EOPP.SCNode': 'SA',
-# 	'EOPP.SCPortal': 'ACADEMIC',
-# 	'EOPP.SCName': 'CO_EMPLOYEE_SELF_SERVICE',
-# 	'EOPP.SCLabel': 'Self Service',
-# 	'EOPP.SCPTfname': 'CO_EMPLOYEE_SELF_SERVICE',
-# 	'FolderPath': 'PORTAL_ROOT_OBJECT.CO_EMPLOYEE_SELF_SERVICE.HC_SSS_STUDENT_CENTER',
-# 	'IsFolder': 'false',
-# 	'PortalActualURL': 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL',
-# 	'PortalRegistryName': 'ACADEMIC',
-# 	'PortalServletURI': 'https://quest.pecs.uwaterloo.ca/psp/SS/',
-# 	'PortalURI': 'https://quest.pecs.uwaterloo.ca/psc/SS/',
-# 	'PortalHostNode': 'SA',
-# 	'NoCrumbs': 'yes',
-# 	'PortalKeyStruct': 'yes',
-# }
-
-# mainPageResponse = s.get(studentCenterURL, data = getMainPageData)
-
-# icsid = getICSID(mainPageResponse.content)
-# currentStateNum = getStateNum(mainPageResponse.content)
-
-# # Print ICSID
-# print "ICSID: " + icsid
-# # Print current state num
-# print "currentStateNum: " + str(currentStateNum) + '\n'
-
-# # headers={
-# # 	'Accept':'*/*',
-# # 	'Accept-Encoding':'gzip,deflate,sdch',
-# # 	'Accept-Language':'en-US,en;q=0.8,zh-CN;q=0.6',
-# # 	'Connection': 'keep-alive',
-# # 	'Content-Length': '356',
-# # 	'Origin': 'https://quest.pecs.uwaterloo.ca',
-# # 	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36',
-# # 	'Content-Type': 'application/x-www-form-urlencoded',
-# # }
 
 # # postPersonalInfoData = {
 # # 	'ICAJAX': '1',
