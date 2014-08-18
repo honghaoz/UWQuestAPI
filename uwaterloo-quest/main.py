@@ -26,8 +26,8 @@ from google.appengine.api import memcache
 
 sys.path.insert(0, 'libs')
 import requests
-import MyAcademicsQuestClass
-import PersonalInformationQuestClass
+# import MyAcademicsQuestClass
+from UWQuestAPI import PersonalInformationQuestClass
 
 # Global variables for jinja environment
 template_dir = os.path.join(os.path.dirname(__file__), 'html_template')
