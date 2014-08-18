@@ -43,7 +43,7 @@ This API provides full access to UW Quest.
     error       | If failure happens, this filed will contain error reasons
 
 
-### Food Services
+### Personal Information
 
 - **[/personalinformation/menu](v2/foodservices/menu.md)**
 - **[/personalinformation/addresses](v2/foodservices/menu.md)**
