@@ -6,7 +6,6 @@ from BasicQuestClass import BasicQuestSession
 class MyAcademicQuestSession(BasicQuestSession):
 	""" Subclass for myAcademic"""
 
-	myAcademicsURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 	myAcademicsGraduateURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_MYPROG_GRD.GBL"
 	myAcademicsGraduateGradesURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL"
 	myAcademicsGraduateUnofficialTranscriptURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SS_AA_REPORT1.GBL"
@@ -21,10 +20,10 @@ class MyAcademicQuestSession(BasicQuestSession):
 			@Return True/False
 		'''
 		postMyAcademics = self.getBasicParameters()
-		postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1' # FIXME: Constant?
+		postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1'
 
 		# print "POST: My Academics Page"
-		response = self.session.post(self.myAcademicsURL, data = postMyAcademics)
+		response = self.session.post(self.studentCenterURL_HRMS, data = postMyAcademics)
 		if response.status_code == requests.codes.ok:
 			print "POST My Academics OK"
 			self.gotoMyAcademics_myProgram()
@@ -53,6 +52,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 		else:
 			print "GET My Graduate Program Page Failed"
 			return False
+
 	def gotoMyAcademics_grades(self):
 		''' Go to my grades
 			@Param
@@ -142,129 +142,6 @@ def main():
 if __name__ == '__main__':
     main()
 		
-
-
-
-# # postPersonalInfoData = {
-# # 	'ICAJAX': '1',
-# # 	'ICNAVTYPEDROPDOWN': '0',
-# # 	'ICType': 'Panel',
-# # 	'ICElementNum': '0',
-# # 	'ICStateNum': str(currentStateNum),
-# # 	'ICAction': 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO',
-# # 	'ICXPos': '0',
-# # 	'ICYPos': '87',
-# # 	'ResponsetoDiffFrame': '-1',
-# # 	'TargetFrameName': 'None',
-# # 	'FacetPath': 'None',
-# # 	'ICFocus': '',
-# # 	'ICSaveWarningFilter': '0',
-# # 	'ICChanged': '-1',
-# # 	'ICResubmit': '0',
-# # 	'ICSID': icsid,
-# # 	'ICActionPrompt': 'false',
-# # 	'ICFind': '',
-# # 	'ICAddCount': '',
-# # 	'ICAPPCLSDATA': ''
-# # }
-
-# # personalInfoResponse = s.post(studentCenterURL, data = postPersonalInfoData)
-
-# # print personalInfoResponse.content
-
-# # personalInfoAddressGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_ADDRESSES.GBL"
-# # getAddressData = {
-# # 	'Page': 'SS_ADDRESSES',
-# # 	'Action': 'C'
-# # }
-
-# # addressResponse = s.get(personalInfoAddressGetURL, data = getAddressData)
-
-# # # print addressResponse.content
-# # getAddress(addressResponse.content)
-
-# # currentStateNum = getStateNum(addressResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
-# # personalInfoNameGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_NAMES.GBL?"
-# # getNameData = {
-# # 	'Page': 'SS_CC_NAME',
-# # 	'Action': 'C'
-# # }
-
-# # nameResponse = s.get(personalInfoNameGetURL, data = getNameData)
-
-# # # print nameResponse.content
-
-# # currentStateNum = getStateNum(nameResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
-
-# # personalInfoPhoneGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_PERS_PHONE.GBL"
-# # getPhoneData = {
-# # 	'Page': 'SS_CC_PERS_PHONE',
-# # 	'Action': 'U'
-# # }
-
-# # phoneResponse = s.get(personalInfoPhoneGetURL, data = getPhoneData)
-
-# # # print phoneResponse.content
-
-# # currentStateNum = getStateNum(phoneResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
-
-
-# # personalInfoEmailGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL"
-# # getEmailData = {
-# # 	'Page': 'SS_CC_EMAIL_ADDR',
-# # 	'Action': 'U'
-# # }
-
-# # emailResponse = s.get(personalInfoEmailGetURL, data = getEmailData)
-
-# # # print emailResponse.content
-
-# # currentStateNum = getStateNum(emailResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
-
-
-# # personalInfoDemographicInfoGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL"
-# # getDemographicInfoData = {
-# # 	'Page': 'SS_CC_DEMOG_DATA',
-# # 	'Action': 'U'
-# # }
-
-# # demographicInfoResponse = s.get(personalInfoDemographicInfoGetURL, data = getDemographicInfoData)
-
-# # # print demographicInfoResponse.content
-
-# # currentStateNum = getStateNum(demographicInfoResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
-
-
-
-# # personalInfoCitizenshipGetURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/UW_SS_MENU.UW_SS_CC_VISA_DOC.GBL"
-# # getCitizenshipData = {
-# # 	'Page': 'UW_SS_CC_VISA_DOC',
-# # 	'Action': 'U'
-# # }
-
-# # citizenshipResponse = s.get(personalInfoCitizenshipGetURL, data = getCitizenshipData)
-
-# # # print citizenshipResponse.content
-
-# # currentStateNum = getStateNum(citizenshipResponse.content)
-# # # Print current state num
-# # print "currentStateNum: " + str(currentStateNum) + '\n'
-
 # # classSearchURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
 # # postClassSearch = {
 # # 	'ICAJAX': '1',

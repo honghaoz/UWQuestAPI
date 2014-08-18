@@ -77,8 +77,8 @@ class BasicQuestSession:
 
 	# Login
 	questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
-	studentCenterURL = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
-	
+	studentCenterURL_SA = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
+	studentCenterURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 
 	# Initialization
 	def __init__(self, userid, password):
@@ -177,7 +177,7 @@ class BasicQuestSession:
 			'PortalKeyStruct': 'yes',
 		}
 
-		response = self.session.get(self.studentCenterURL, data = getStudentCenterData)
+		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		if response.status_code == requests.codes.ok:
 			print "GET Student Center OK"
 			self.updateICSID(response)
