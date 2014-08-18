@@ -1,8 +1,7 @@
-UWaterloo Quest API
+UW Quest API
 ==========
 
-University of Waterloo Quest API.
-This API provides full access to Quest.
+This API provides full access to UW Quest.
 
 ## Accessing the API
 
