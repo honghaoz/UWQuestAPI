@@ -211,7 +211,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 	# 		return False
 
 def main():
-	myQuest = PersonalInformationQuestSession(""///)# "userid", "password"
+	myQuest = PersonalInformationQuestSession("", "")# "userid", "password"
 	myQuest.login()
 	myQuest.gotoStudentCenter()
 	myQuest.gotoPersonalInformationStudentCenter()

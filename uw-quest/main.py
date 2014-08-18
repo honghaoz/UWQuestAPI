@@ -49,7 +49,8 @@ class BasicHandler(webapp2.RequestHandler):
 class MainHandler(BasicHandler):
     """Handle for '/' """
     def get(self):
-        PersonalInformationQuestClass.main()
+        self.render('home.html')
+        # PersonalInformationQuestClass.main()
 
 
 app = webapp2.WSGIApplication([
