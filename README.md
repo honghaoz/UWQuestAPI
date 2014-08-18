@@ -25,7 +25,7 @@ This API provides full access to Quest.
     ----------- | -------------
     status      | "success" or "failure"
     sid         | New session id, used for subsequent operations
-    reason      | If failure happens, this filed will contain reasons
+    error       | If failure happens, this filed will contain error reasons
     
 
 - /account/logout
@@ -41,7 +41,7 @@ This API provides full access to Quest.
      Field  | Description
     ----------- | -------------
     status      | "success" or "failure"
-    reason      | If failure happens, this filed will contain reasons
+    error       | If failure happens, this filed will contain error reasons
 
 
 ### Food Services
