@@ -1,5 +1,6 @@
 import BasicQuestClass
 import requests
+import QuestParser
 
 from BasicQuestClass import BasicQuestSession
 
@@ -23,6 +24,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 		postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO'
 
 		response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "POST Personal Information (Student Center) OK"
 			# self.gotoMyAcademics_myProgram()
@@ -40,6 +42,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 		postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SS_DEMO_SUM_LINK'
 
 		response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "POST Personal Information OK"
 			# self.gotoMyAcademics_myProgram()
@@ -58,6 +61,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'C',
 		}
 		response = self.session.get(self.personalInfoAddressURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Address Page OK"
 			self.updateStateNum(response)
@@ -77,6 +81,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'C',
 		}
 		response = self.session.get(self.personalInfoNameURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Name Page OK"
 			self.updateStateNum(response)
@@ -96,6 +101,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'U',
 		}
 		response = self.session.get(self.personalInfoPhoneNumbersURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Phone Numbers Page OK"
 			self.updateStateNum(response)
@@ -115,6 +121,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'U',
 		}
 		response = self.session.get(self.personalInfoEmailsURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Email Addresses Page OK"
 			self.updateStateNum(response)
@@ -134,6 +141,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'U',
 		}
 		response = self.session.get(self.personalInfoEnergencyURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Emergency Contacts Page OK"
 			self.updateStateNum(response)
@@ -153,6 +161,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'U',
 		}
 		response = self.session.get(self.personalInfoDemographicInfoURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Demographic Information Page OK"
 			self.updateStateNum(response)
@@ -172,6 +181,7 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Action': 'U',
 		}
 		response = self.session.get(self.personalInfoCitizenshipURL, data = getData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Citizenship/Immigration Documents Page OK"
 			self.updateStateNum(response)
@@ -207,12 +217,13 @@ def main():
 	myQuest.gotoPersonalInformationStudentCenter()
 	myQuest.gotoPersonalInformation()
 	myQuest.gotoPersonalInformation_address()
-	myQuest.gotoPersonalInformation_name()
-	myQuest.gotoPersonalInformation_phoneNumbers()
-	myQuest.gotoPersonalInformation_email()
-	myQuest.gotoPersonalInformation_emgencyContacts()
-	myQuest.gotoPersonalInformation_demographicInfo()
-	myQuest.gotoPersonalInformation_citizenship()
+	print QuestParser.Parse_personalInfo_address(myQuest.currentResponse.content)
+	# myQuest.gotoPersonalInformation_name()
+	# myQuest.gotoPersonalInformation_phoneNumbers()
+	# myQuest.gotoPersonalInformation_email()
+	# myQuest.gotoPersonalInformation_emgencyContacts()
+	# myQuest.gotoPersonalInformation_demographicInfo()
+	# myQuest.gotoPersonalInformation_citizenship()
 
 if __name__ == '__main__':
     main()

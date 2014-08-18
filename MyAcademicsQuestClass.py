@@ -24,6 +24,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 
 		# print "POST: My Academics Page"
 		response = self.session.post(self.studentCenterURL_HRMS, data = postMyAcademics)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "POST My Academics OK"
 			self.gotoMyAcademics_myProgram()
@@ -44,6 +45,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'TargetFrameName': 'None'
 		}
 		response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET My Graduate Program Page OK"
 			self.updateStateNum(response)
@@ -63,6 +65,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Action': 'A'
 		}
 		response = self.session.get(self.myAcademicsGraduateGradesURL, data = getGradesData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Grades Page OK"
 			self.updateStateNum(response)
@@ -82,6 +85,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Action': 'A'
 		}
 		response = self.session.get(self.myAcademicsGraduateUnofficialTranscriptURL, data = getUnofficialTranscriptData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Unofficial Transcript Page OK"
 			self.updateStateNum(response)
@@ -101,6 +105,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Action': 'U'
 		}
 		response = self.session.get(self.myAcademicsGraduateAdvisorsURL, data = getAdvisorsData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET My Advisors Page OK"
 			self.updateStateNum(response)
@@ -120,6 +125,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Action': 'U'
 		}
 		response = self.session.get(self.myAcademicsGraduateGradOfferURL, data = getGraduateOfferData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Graduate Offer Letters Page OK"
 			self.updateStateNum(response)

@@ -14,33 +14,6 @@ def getICSID(html):
 def getStateNum(html):
 	return int(re.findall("<input type='hidden' name='ICStateNum' id='ICStateNum' value='(\d+)'", html)[0])
 
-def getAddress(html):
-	soup = BeautifulSoup(html)
-
-	# addressTable contains address information
-	addressTable = soup.find(id="SCC_ADDR_H$scroll$0")
-
-	# Clean tags
-	tableString = str(addressTable)
-	x = re.sub("\<.*?\>", "", tableString);
-	# clean result list
-	resultList = filter(lambda x: len(x) > 0, x.replace(" \r", ", ").split("\n"))
-	del(resultList[2])
-	# resultList contains
-	print resultList
-
-	# Three <tr> tags contain one head and two(maybe more?) rows
-	# addressTRs = soup.body.form.find(id="win0divPAGECONTAINER").table.tr.td.find(id="win0divPSPAGECONTAINER").table.find_all(id="win0divSCC_ADDR_H$0")[0].table.tr.td.table.find_all('tr')
-	# # Table head
-	# addressHeads = addressTRs[0].find_all('th')
-	# print addressHeads[0].a.string + "\t" + addressHeads[1].a.string
-
-	# # Addresses
-	# numberOfAddresses = len(addressTRs)
-	# for i in range(1, numberOfAddresses):
-	# 	eachAddr = addressTRs[i]
-	# 	print eachAddr.td.div.span.string + "\t" + eachAddr.td.next_sibling.next_sibling.div.span.get_text().replace(" \r", ", ")
-
 # TODO: timeout handling, network error handling
 class BasicQuestSession:
 	session = Session()
@@ -103,6 +76,7 @@ class BasicQuestSession:
 			'httpPort': ''
 		}
 		response = self.session.post(self.questLoginURL, data = postLoginData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "Login Successfully!"
 			self.isLoginisLogin = True
@@ -178,6 +152,7 @@ class BasicQuestSession:
 		}
 
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
+		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "GET Student Center OK"
 			self.updateICSID(response)
