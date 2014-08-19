@@ -6,6 +6,8 @@ courseName = "CS"
 courseNumber = "350"
 termCode = "1145"
 studentID = "20385401"
+userID = "******"
+password = "******"
 #usage
 
 ##################################implementation#################################################
@@ -40,8 +42,8 @@ s = Session()
 ############# Login and set cookies #####################
 questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
 postLoginData = {
-	'userid': '******',
-	'pwd': '******',
+	'userid': userID,
+	'pwd': password,
 	'timezoneOffset': '240',
 	'httpPort': ''
 }
