@@ -101,3 +101,23 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     ext           | extension
     country       | country code
     preferred     | is preferred, either "Y" or  "N"
+
+- /personalinformation/email_addresses
+  - method: GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field                | Description
+    -----------           | -------------
+    description           | descriptipn for different email
+    campus_email_address  | campus email address section
+    campus_email          | campus email address
+    delivered_to          | email server be delivered to
+    alternate_email_address | alternate email address section
+    email_type            | type of alternate email address
+    email_address         | alternate email address
