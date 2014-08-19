@@ -141,3 +141,21 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     phone           | email server be delivered to
     extension       | alternate email address section
     country         | type of alternate email address
+    
+- /personalinformation/demographic_information
+  - method: GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field          | Description
+    -----------     | -------------
+    demographic_information | dictionary contains "gender", "date_of_birth", "id", "marital_status"
+    national_identification_number  | 
+    citizenship_information    | 
+    visa_or_permit_data | 
+    note           | 
