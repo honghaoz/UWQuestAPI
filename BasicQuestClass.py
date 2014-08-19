@@ -23,6 +23,9 @@ class BasicQuestSession:
 	icsid = ""
 	currentStateNum = 0
 	isUndergraduate = True
+	# currentResponse
+	currentError = ""
+
 	# Post parameters
 	basicPostData = {
 		'ICAJAX':'1',
@@ -98,9 +101,11 @@ class BasicQuestSession:
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "Login Successfully!"
-			self.isLogin = True
-			self.gotoStudentCenter()
-			return True
+			# Go to student center
+			if(self.gotoStudentCenter()):
+				self.isLogin = True
+			else:
+				self.isLogin = False
 		else:
 			print "Login Failed!"
 			self.isLogin = False
