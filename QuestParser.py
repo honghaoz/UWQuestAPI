@@ -58,8 +58,27 @@ def Parse_personalInfo_phone(html):
 		resultList.extend(newPhone)
 	return resultList
 		
-		
-		
+# Return example:
+# ['Email Addresses', 'Description for Email Addresses', 
+# 'Campus Email Address', 'Description for Campus Email Address', 
+# 'Campus email', 'Delivered to', 'x111xxx@uwaterloo.ca', 'x111xxx@connect.uwaterloo.ca', 
+# 'Alternate Email Addresses', 'Description for Alternate Email Address', 
+# 'Email Type', 'Email Address', 'Home', 'blablabla@gmail.com']
+def Parse_personalInfo_email(html):
+	soup = BeautifulSoup(html)	
+	# print soup.prettify()
+	emailTable1Description = soup.find(id="ACE_UW_SS_WORK_GROUP_BOX_1")
+	resultList = ["Email Addresses"]
+	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	emailTable1 = soup.find(id="UW_RTG_EMAIL_VW$scroll$0")
+	# print filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))
+	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+
+	emailTable2Description = soup.find(id="ACE_UW_DERIVED_CEM_GROUP_BOX_1")
+	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	emailTable2 = soup.find(id="SCC_EMAIL_H$scroll$0")
+	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	return resultList
 
 
 
@@ -155,3 +174,65 @@ def API_personalInfo_phoneResponse(questSession):
 		meta["message"] = "response page contains no phone information"
 	return getFullResponseDictionary(meta, data)
 
+
+def API_personalInfo_emailResponse(questSession):
+	keysNumber = 2 # How many columns
+	emailList = Parse_personalInfo_email(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	if not len(emailList) < 6:
+		meta["status"] = "success"
+		# {
+		# 	"data" : {
+		# 		"description" : ""
+		# 		"campus_email_address": {
+		# 			"description" : ""
+		# 			"data": [{
+		# 				"campus_email": ""
+		# 				"delivered_to": ""
+		# 			}]
+		# 		}
+		# 		"alternate_email_address": {
+		# 			"description" : ""
+		# 			"data": [{
+		# 				"email_type": ""
+		# 				"email_address": ""
+		# 			}]
+		# 		}
+		# 	}
+		# }
+
+		data["description"] = emailList[emailList.index("Email Addresses") + 1]
+
+		campusEmailIndex = emailList.index("Campus Email Address")
+		alternateEmailIndex = emailList.index("Alternate Email Addresses")
+
+		campusEmailCount = (alternateEmailIndex - (campusEmailIndex + 2)) / keysNumber - 1
+		alternateEmailCount = (len(emailList) - (alternateEmailIndex + 2)) / keysNumber - 1
+
+		campusEmailData = []
+		alternateEmailData = []
+
+		for i in xrange(0, campusEmailCount):
+			emailDict = {}
+			emailDict["campus_email"] = emailList[campusEmailIndex + 2 + (i + 1) * keysNumber]
+			emailDict["delivered_to"] = emailList[campusEmailIndex + 2 + (i + 1) * keysNumber + 1]
+			campusEmailData.append(emailDict)
+		data["campus_email_address"] = {
+			"description": emailList[campusEmailIndex + 1],
+			"data": campusEmailData
+		}
+
+		for i in xrange(0, alternateEmailCount):
+			emailDict = {}
+			emailDict["email_type"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber]
+			emailDict["email_address"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber + 1]
+			alternateEmailData.append(emailDict)
+		data["alternate_email_address"] = {
+			"description": emailList[alternateEmailIndex + 1],
+			"data": alternateEmailData
+		}
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no phone information"
+	return getFullResponseDictionary(meta, data)

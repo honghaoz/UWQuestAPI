@@ -191,25 +191,6 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			print "GET Citizenship/Immigration Documents Page Failed"
 			return False
 
-	# def gotoPersonalInformation_absenceDeclaration(self):
-	# 	''' Go to Citizenship/Immigration Documents
-	# 		@Param
-	# 		@Return True/False
-	# 	'''
-	# 	getData = {
-	# 		'Page': 'UW_SS_CC_VISA_DOC',
-	# 		'Action': 'U',
-	# 	}
-	# 	response = self.session.get(self.personalInfoCitizenshipURL, data = getData)
-	# 	if response.status_code == requests.codes.ok:
-	# 		print "GET Citizenship/Immigration Documents Page OK"
-	# 		self.updateStateNum(response)
-	# 		print response.content
-	# 		return True
-	# 	else:
-	# 		print "GET Citizenship/Immigration Documents Page Failed"
-	# 		return False
-
 def main():
 	# Create a basic quest session
 	myBasicQuest = BasicQuestSession("", "")# "userid", "password"
@@ -229,7 +210,8 @@ def main():
 	myPersonalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
 	print QuestParser.API_personalInfo_phoneResponse(myPersonalInfoQuestSesson)
 
-	# myQuest.gotoPersonalInformation_email()
+	myPersonalInfoQuestSesson.gotoPersonalInformation_email()
+	print QuestParser.API_personalInfo_emailResponse(myPersonalInfoQuestSesson)
 	# myQuest.gotoPersonalInformation_emgencyContacts()
 	# myQuest.gotoPersonalInformation_demographicInfo()
 	# myQuest.gotoPersonalInformation_citizenship()
