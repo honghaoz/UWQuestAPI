@@ -23,7 +23,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 ### Accout
 
 - /account/login
-  - method: POST
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
