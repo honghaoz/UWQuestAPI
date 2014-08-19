@@ -62,8 +62,8 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     
   - Response
 
-     Field  | Description
-    ----------- | -------------
-    status      | "success" or "failure"
-    error       | If failure happens, this filed will contain error reasons
+     Field        | Description
+    -----------   | -------------
+    address_type  | list contains address type
+    addresses     | dictionary that keys are address type and values are addresses
     
