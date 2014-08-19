@@ -50,7 +50,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
 ### Personal Information
 
-- **[/personalinformation/addresses](v2/foodservices/menu.md)**
+- /personalinformation/addresses
   - method: GET
   - Parameters
 
@@ -65,3 +65,21 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     address_type  | address type
     address       | address
     
+- /personalinformation/names
+  - method: GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    name_type     | name type
+    name_prefix   | name prefix
+    first_name    | first name
+    middle_name   | middle name
+    last_name     | last name
+    name_suffix   | name suffix
