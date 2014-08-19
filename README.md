@@ -80,6 +80,24 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     name_type     | name type
     name_prefix   | name prefix
     first_name    | first name
-    middle_name   | middle name
+    middle_name   | middle name, if not exists, return "-"
     last_name     | last name
     name_suffix   | name suffix
+    
+- /personalinformation/phone_numbers
+  - method: GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    phone_type    | phone type
+    telephone     | phone number
+    ext           | extension
+    country       | country code
+    preferred     | is preferred, either "Y" or  "N"
