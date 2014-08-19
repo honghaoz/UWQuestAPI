@@ -62,6 +62,6 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
      Field        | Description
     -----------   | -------------
-    address_type  | list contains address type keys
-    addresses     | dictionary that keys are address type and values are addresses
+    address_type  | address type
+    address       | address
     
