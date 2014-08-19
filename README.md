@@ -121,3 +121,23 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     alternate_email_address | alternate email address section
     email_type            | type of alternate email address
     email_address         | alternate email address
+    
+    
+- /personalinformation/emergency_contacts
+  - method: GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field          | Description
+    -----------     | -------------
+    primary_contact | descriptipn for different email
+    contact_name    | campus email address section
+    relationship    | campus email address
+    phone           | email server be delivered to
+    extension       | alternate email address section
+    country         | type of alternate email address
