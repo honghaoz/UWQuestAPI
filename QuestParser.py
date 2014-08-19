@@ -21,7 +21,7 @@ def Parse_personalInfo_address(html):
 	tableString = str(addressTable)
 	x = re.sub("\<.*?\>", "", tableString);
 	# clean result list
-	resultList = filter(lambda x: len(x) > 0, x.replace(" \r", ", ").split("\n"))
+	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, x.replace(" \r", ", ").split("\n")))
 	del(resultList[2])
 	# resultList contains
 	return resultList
@@ -35,7 +35,7 @@ def Parse_personalInfo_name(html):
 	tableString = str(nameTable)
 	x = re.sub("\<.*?\>", "", tableString);
 	# clean result list
-	resultList = filter(lambda x: len(x) > 0, x.replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n"))
+	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, x.replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 	return resultList
 
 # Return phone table list
@@ -44,7 +44,7 @@ def Parse_personalInfo_phone(html):
 	phoneTable = soup.find(id="SCC_PERS_PHN_H$scroll$0")
 	rows = phoneTable.find_all("tr")
 	# Phone table head
-	resultList = filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))
+	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	phonesCount = len(rows) - 1
 
 	for i in xrange(0, phonesCount):
@@ -69,15 +69,15 @@ def Parse_personalInfo_email(html):
 	# print soup.prettify()
 	emailTable1Description = soup.find(id="ACE_UW_SS_WORK_GROUP_BOX_1")
 	resultList = ["Email Addresses"]
-	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	emailTable1 = soup.find(id="UW_RTG_EMAIL_VW$scroll$0")
 	# print filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))
-	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 
 	emailTable2Description = soup.find(id="ACE_UW_DERIVED_CEM_GROUP_BOX_1")
-	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	emailTable2 = soup.find(id="SCC_EMAIL_H$scroll$0")
-	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	return resultList
 
 def Parse_personalInfo_emergencyContact(html):
@@ -89,13 +89,31 @@ def Parse_personalInfo_emergencyContact(html):
 	else:
 		rows = table.find_all("tr")
 		contactsCount = len(rows) - 1
-		resultList = filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n"))
+		resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 		for i in xrange(0, contactsCount):
 			newContact = []
 			eachContactRow = rows[i + 1]
 			resultList.append(eachContactRow.find(id="PRIMARY$chk$" + str(i))["value"])
-			resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(eachContactRow)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+			resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(eachContactRow)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n"))))
 		return resultList
+
+def Parse_personalInfo_demographicInfo(html):
+	soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	demographicTable = soup.find(id="ACE_$ICField$45$")
+	demographicDict = {}
+	demographicDict["demographic_information"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(demographicTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+
+	nationalIndentificationNumberTable = soup.find(id="$ICField$2$$scroll$0")
+	demographicDict["national_identification_number"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(nationalIndentificationNumberTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+	
+	citizenshipInformationTable = soup.find(id="CITIZENSHIP$scrolli$0")
+	demographicDict["citizenship_information"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipInformationTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+
+	visaTable = soup.find(id="DRIVERS_LIC1$scrolli$0")
+	demographicDict["visa_or_permit_data"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(visaTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+
+	return demographicDict
 
 
 
@@ -264,14 +282,94 @@ def API_personalInfo_emergencyContactResponse(questSession):
 		contactCount = len(contactList) / keysNumber - 1
 		for i in xrange(0, contactCount):
 			contactDict = {}
-			contactDict["primary_contact"] = contactList[(i + 1) * keysNumber]
-			contactDict["contact_name"] = contactList[(i + 1) * keysNumber + 1]
-			contactDict["relationship"] = contactList[(i + 1) * keysNumber + 2]
-			contactDict["phone"] = contactList[(i + 1) * keysNumber + 3]
-			contactDict["extension"] = contactList[(i + 1) * keysNumber + 4]
-			contactDict["country"] = contactList[(i + 1) * keysNumber + 5]
+			contactDict[contactList[0].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber]
+			contactDict[contactList[1].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber + 1]
+			contactDict[contactList[2].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber + 2]
+			contactDict[contactList[3].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber + 3]
+			contactDict[contactList[4].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber + 4]
+			contactDict[contactList[5].replace(" ", "_").lower()] = contactList[(i + 1) * keysNumber + 5]
 			data.append(contactDict)
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no phone information"
 	return getFullResponseDictionary(meta, data)
+
+def API_personalInfo_demographicInfoResponse(questSession):
+	demographicDict = Parse_personalInfo_demographicInfo(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	key = "demographic_information"
+	try:
+		demographicInfoList = demographicDict[key]
+		if len(demographicInfoList) > 1:
+			numberOfFileds = len(demographicInfoList) / 2
+			newDict = {}
+			for i in xrange(0, numberOfFileds):
+				newDict[demographicInfoList[i * 2].replace(" ", "_").lower()] = demographicInfoList[i * 2 + 1]
+			data[key] = newDict
+		else:
+			data[key] = {}
+	except:
+		meta["message"] = "get demographic_information error"
+
+	key = "national_identification_number"
+	try:
+		nationalList = demographicDict[key][1:]
+		keysNumber = 3
+		if len(nationalList) > keysNumber:
+			nationalCount = len(nationalList) / keysNumber - 1
+			nationalData = []
+			for i in xrange(0, nationalCount):
+				newDict = {}
+				newDict[nationalList[0].replace(" ", "_").lower()] = nationalList[(i + 1) * keysNumber]
+				newDict[nationalList[1].replace(" ", "_").lower()] = nationalList[(i + 1) * keysNumber + 1]
+				newDict[nationalList[2].replace(" ", "_").lower()] = nationalList[(i + 1) * keysNumber + 2]
+				nationalData.append(newDict)
+			data[key] = nationalData
+		else:
+			data[key] = {}
+	except:
+		meta["message"] = meta["message"] + ", get national_identification_number error"
+
+	key = "citizenship_information"
+	try:
+		citizenList = demographicDict[key][1:]
+		if citizenList > 2:
+			keysNumber = 4
+			citizenCount = len(citizenList) / keysNumber
+			citizenData = []
+			for i in xrange(0, citizenCount):
+				newDict = {}
+				newDict[citizenList[i * keysNumber].replace(" ", "_").lower()] = citizenList[i * keysNumber + 2]
+				newDict[citizenList[i * keysNumber + 1].replace(" ", "_").lower()] = citizenList[i * keysNumber + 2 + 1]
+				citizenData.append(newDict)
+			data[key] = citizenData
+		else :
+			data[key] = {}
+	except:
+		meta["message"] = meta["message"] + ", get citizenship_information error"
+
+	key = "visa_or_permit_data"
+	try:
+		visaList = demographicDict[key][1:]
+		if visaList > 2:
+			data[key] = {
+				"type": visaList[1] + " - " + visaList[2],
+				"country": visaList[4]
+			}
+		else:
+			data[key] = {}
+	except:
+		meta["message"] = meta["message"] + ", get visa_or_permit_data error"
+	
+	try:
+		data["note"] = demographicDict[key][-1]
+	except:
+		meta["message"] = meta["message"] + ", get note error"
+	if not len(meta["message"]) == 0:
+		meta["status"] = "failure"
+	else :
+		meta["status"] = "success"
+	return getFullResponseDictionary(meta, data)
+
+

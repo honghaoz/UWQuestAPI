@@ -215,7 +215,10 @@ def main():
 
 	myPersonalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
 	print QuestParser.API_personalInfo_emergencyContactResponse(myPersonalInfoQuestSesson)
-	# myQuest.gotoPersonalInformation_demographicInfo()
+	
+	myPersonalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.Parse_personalInfo_demographicInfo(myPersonalInfoQuestSesson.currentResponse.content)
+	print QuestParser.API_personalInfo_demographicInfoResponse(myPersonalInfoQuestSesson)
 	# myQuest.gotoPersonalInformation_citizenship()
 
 if __name__ == '__main__':
