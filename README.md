@@ -50,8 +50,6 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
 ### Personal Information
 
-- **[/personalinformation/menu](v2/foodservices/menu.md)**
-
 - **[/personalinformation/addresses](v2/foodservices/menu.md)**
   - method: GET
   - Parameters
