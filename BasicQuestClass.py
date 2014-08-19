@@ -8,11 +8,17 @@ import copy
 
 # Get ICSID from html code, ICSID is used for POST method
 def getICSID(html):
-	return re.findall("<input type='hidden' name='ICSID' id='ICSID' value='(.*)'", html)[0]
+	s = re.findall("<.*?id=['\"]ICSID['\"].*?>", html)[0]
+	s = re.findall("value=['\"].*?['\"]", s)[0]
+	s = s.replace("value=","").replace('"',"").replace("'","")
+	return s
 
 # Get StateNum from html code, StateNum is used for POST method
 def getStateNum(html):
-	return int(re.findall("<input type='hidden' name='ICStateNum' id='ICStateNum' value='(\d+)'", html)[0])
+	s = re.findall("<.*?id=['\"]ICStateNum['\"].*?>", html)[0]
+	s = re.findall("value=['\"].*?['\"]", s)[0]
+	s = s.replace("value=","").replace('"',"").replace("'","")
+	return int(s)
 
 # TODO: timeout handling, network error handling
 class BasicQuestSession:

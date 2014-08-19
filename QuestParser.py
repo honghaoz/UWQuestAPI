@@ -6,6 +6,8 @@ import re
 # def Parse_personalInfo_menu():
 # 	pass
 
+
+# Add new key for description
 # Return ['Address Type', 'Address', 
 #	'Home', '101-137 UNIVERSITY AVE. W, WATERLOO Ontario N2L 3E6', 
 #	'Mail', '101-137 UNIVERSITY AVE. W, WATERLOO Ontario N2L 3E6']
