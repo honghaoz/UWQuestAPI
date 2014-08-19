@@ -115,6 +115,14 @@ def Parse_personalInfo_demographicInfo(html):
 
 	return demographicDict
 
+def Parse_personalInfo_citizenship(html):
+	soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	citizenshipTable = soup.find(id="VISA_PMT_SUPPRT$scroll$0")
+	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
+	resultList.insert(0, "visa_type")
+	resultList.insert(0, "country")
+	return resultList
 
 
 ################# API ################
@@ -267,7 +275,7 @@ def API_personalInfo_emailResponse(questSession):
 		}
 	else:
 		meta["status"] = "failure"
-		meta["message"] = "response page contains no phone information"
+		meta["message"] = "response page contains no email information"
 	return getFullResponseDictionary(meta, data)
 
 def API_personalInfo_emergencyContactResponse(questSession):
@@ -291,7 +299,7 @@ def API_personalInfo_emergencyContactResponse(questSession):
 			data.append(contactDict)
 	else:
 		meta["status"] = "failure"
-		meta["message"] = "response page contains no phone information"
+		meta["message"] = "response page contains no emergency contact information"
 	return getFullResponseDictionary(meta, data)
 
 def API_personalInfo_demographicInfoResponse(questSession):
@@ -372,4 +380,22 @@ def API_personalInfo_demographicInfoResponse(questSession):
 		meta["status"] = "success"
 	return getFullResponseDictionary(meta, data)
 
-
+def API_personalInfo_citizenshipResponse(questSession):
+	keysNumber = 4 # How many columns
+	citizenList = Parse_personalInfo_citizenship(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	if not len(citizenList) < keysNumber:
+		meta["status"] = "success"
+		citizenCount = len(citizenList) / keysNumber - 1
+		for i in xrange(0, citizenCount):
+			citizenDict = {}
+			citizenDict[citizenList[0].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber]
+			citizenDict[citizenList[1].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 1]
+			citizenDict[citizenList[2].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 2]
+			citizenDict[citizenList[3].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 3]
+			data.append(citizenDict)
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no citizenship/immigration information"
+	return getFullResponseDictionary(meta, data)
