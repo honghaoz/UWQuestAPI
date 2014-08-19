@@ -220,8 +220,13 @@ def main():
 	myPersonalInfoQuestSesson.gotoPersonalInformationStudentCenter()
 	myPersonalInfoQuestSesson.gotoPersonalInformation()
 	myPersonalInfoQuestSesson.gotoPersonalInformation_address()
-	print QuestParser.Parse_personalInfo_address(myPersonalInfoQuestSesson.currentResponse.content)
-	# myQuest.gotoPersonalInformation_name()
+	# print QuestParser.API_account_loginResponse(myPersonalInfoQuestSesson)
+	# print QuestParser.API_personalInfo_addressResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_name()
+	# QuestParser.Parse_personalInfo_name(myPersonalInfoQuestSesson.currentResponse.content)
+	print QuestParser.API_personalInfo_nameResponse(myPersonalInfoQuestSesson)
+
 	# myQuest.gotoPersonalInformation_phoneNumbers()
 	# myQuest.gotoPersonalInformation_email()
 	# myQuest.gotoPersonalInformation_emgencyContacts()
