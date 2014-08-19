@@ -5,6 +5,7 @@ import re
 courseName = "CS"
 courseNumber = "350"
 termCode = "1145"
+studentID = "20385401"
 #usage
 
 ##################################implementation#################################################
@@ -59,7 +60,7 @@ enrollResponse = s.get(enrollURL)
 #print enrollResponse.content
 
 ############# search #####################
-searchTabURL ="https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL?Page=UW_SSR_CLSRCH_ENTR&Action=U&ACAD_CAREER=CAR&EMPLID=20385401&ENRL_REQUEST_ID=&INSTITUTION=INST&STRM=TERM"
+searchTabURL ="https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL?Page=UW_SSR_CLSRCH_ENTR&Action=U&ACAD_CAREER=CAR&EMPLID="+studentID+"&ENRL_REQUEST_ID=&INSTITUTION=INST&STRM=TERM"
 response = s.get(searchTabURL)
 #print response.content
 
