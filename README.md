@@ -152,10 +152,10 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     
   - Response
 
-     Field          | Description
-    -----------     | -------------
-    demographic_information | dictionary contains "gender", "date_of_birth", "id", "marital_status"
-    national_identification_number  | 
-    citizenship_information    | 
-    visa_or_permit_data | 
-    note           | 
+     Field                  | Description
+    -----------             | -------------
+    demographic_information | "gender", "date_of_birth", "id", "marital_status"
+    national_identification_number  | "country", "national_id_type", "national_id"
+    citizenship_information | "country", "description"  
+    visa_or_permit_data     | "country", "type" 
+    note                    | note on demographic information 
