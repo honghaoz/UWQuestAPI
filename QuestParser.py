@@ -80,7 +80,22 @@ def Parse_personalInfo_email(html):
 	resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	return resultList
 
-
+def Parse_personalInfo_emergencyContact(html):
+	soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	table = soup.find(id="SCC_EMERG_CNT_H$scroll$0")
+	if table is None:
+		return ["No current emergency contact information found."]
+	else:
+		rows = table.find_all("tr")
+		contactsCount = len(rows) - 1
+		resultList = filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n"))
+		for i in xrange(0, contactsCount):
+			newContact = []
+			eachContactRow = rows[i + 1]
+			resultList.append(eachContactRow.find(id="PRIMARY$chk$" + str(i))["value"])
+			resultList.extend(filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(eachContactRow)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		return resultList
 
 
 
@@ -232,6 +247,30 @@ def API_personalInfo_emailResponse(questSession):
 			"description": emailList[alternateEmailIndex + 1],
 			"data": alternateEmailData
 		}
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no phone information"
+	return getFullResponseDictionary(meta, data)
+
+def API_personalInfo_emergencyContactResponse(questSession):
+	keysNumber = 8 # How many columns
+	contactList = Parse_personalInfo_emergencyContact(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	if len(contactList) == 1:
+		meta["status"] = "success"
+	elif not len(contactList) < keysNumber:
+		meta["status"] = "success"
+		contactCount = len(contactList) / keysNumber - 1
+		for i in xrange(0, contactCount):
+			contactDict = {}
+			contactDict["primary_contact"] = contactList[(i + 1) * keysNumber]
+			contactDict["contact_name"] = contactList[(i + 1) * keysNumber + 1]
+			contactDict["relationship"] = contactList[(i + 1) * keysNumber + 2]
+			contactDict["phone"] = contactList[(i + 1) * keysNumber + 3]
+			contactDict["extension"] = contactList[(i + 1) * keysNumber + 4]
+			contactDict["country"] = contactList[(i + 1) * keysNumber + 5]
+			data.append(contactDict)
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no phone information"

@@ -212,7 +212,9 @@ def main():
 
 	myPersonalInfoQuestSesson.gotoPersonalInformation_email()
 	print QuestParser.API_personalInfo_emailResponse(myPersonalInfoQuestSesson)
-	# myQuest.gotoPersonalInformation_emgencyContacts()
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
+	print QuestParser.API_personalInfo_emergencyContactResponse(myPersonalInfoQuestSesson)
 	# myQuest.gotoPersonalInformation_demographicInfo()
 	# myQuest.gotoPersonalInformation_citizenship()
 
