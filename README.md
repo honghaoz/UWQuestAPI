@@ -1,7 +1,7 @@
 UW Quest API
 ==========
 
-This API provides full access to UW Quest.
+This API provides full access to University of Waterloo Quest, the Waterloo's student information system.
 
 ## Accessing the API
 
