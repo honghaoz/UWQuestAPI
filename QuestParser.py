@@ -133,7 +133,13 @@ def Parse_myAcademics_myProgram(html):
 	resultList.insert(0, "Current Program")
 	return resultList
 
-
+def Parse_myAcademics_grades(html):
+	soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	table = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
+	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	del(resultList[0])
+	return resultList
 
 
 ################# API ################
@@ -427,3 +433,22 @@ def API_myAcademics_myProgramResponse(questSession):
 		meta["message"] = "response page contains no my program information"
 	return getFullResponseDictionary(meta, data)
 
+def API_myAcademics_gradesResponse(questSession):
+	resultList = Parse_myAcademics_grades(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	keysNumber = 3
+	if not len(resultList) < keysNumber:
+		meta["status"] = "success"
+		count = len(resultList) / keysNumber - 1
+		for i in xrange(0, count):
+			newDict = {}
+			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
+			newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
+			newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
+			newDict["index"] = i
+			data.append(newDict)
+	else :
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no grades information"
+	return getFullResponseDictionary(meta, data)

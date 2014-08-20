@@ -151,7 +151,10 @@ def main():
 
 	myAcamedicsQuestSession.gotoMyAcademics_myProgram()
 	print QuestParser.API_myAcademics_myProgramResponse(myAcamedicsQuestSession)
-	# myAcamedicsQuestSession.gotoMyAcademics_grades()
+
+	myAcamedicsQuestSession.gotoMyAcademics_grades()
+	print QuestParser.API_myAcademics_gradesResponse(myAcamedicsQuestSession)
+
 	# myAcamedicsQuestSession.gotoMyAcademics_unofficialTranscript()
 	# myAcamedicsQuestSession.gotoMyAcademics_advisors()
 	# myAcamedicsQuestSession.gotoMyAcademics_graduateOfferLetters()
