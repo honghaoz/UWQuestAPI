@@ -38,7 +38,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
       sid       | New session id, used for subsequent operations
 
 - /account/logout
-  - method: POST
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
