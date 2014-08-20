@@ -100,7 +100,7 @@ class BasicQuestSession:
 		postLoginData = {
 			'userid': self.userid,
 			'pwd': self.password,
-			'timezoneOffset': '240', # Fix Me
+			'timezoneOffset': '0', # Fix Me '240'
 			'httpPort': ''
 		}
 		response = self.session.post(self.questLoginURL, data = postLoginData)
@@ -119,7 +119,8 @@ class BasicQuestSession:
 			self.isLogin = False
 			print "Login Failed!"
 			return False
-
+	
+	# TODO
 	def checkIsExpiration(self):
 		''' Check whether login is expired, return True if expired
 			@Param 
@@ -133,6 +134,7 @@ class BasicQuestSession:
 			@Return 
 		'''
 		pass
+
 	def updateICSID(self, response):
 		''' Update ICSID and StateNum
 			@Param requests response
@@ -210,7 +212,6 @@ class BasicQuestSession:
 def main():
 	myQuest = BasicQuestSession("", "")# "userid", "password"
 	myQuest.login()
-	# myQuest.gotoStudentCenter()
 
 if __name__ == '__main__':
     main()
