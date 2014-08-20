@@ -207,7 +207,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
      Field        | Description
     -----------   | -------------
-    index  | the index for this term, used as parameters for get grades
+    index  | int, the index for this term, used as parameters for get grades
     term       | which term
     career | undergraduate or graduate
     institution | institution
