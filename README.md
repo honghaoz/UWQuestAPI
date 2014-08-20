@@ -51,7 +51,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 ### Personal Information
 
 - /personalinformation/addresses
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -66,7 +66,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     address       | address
     
 - /personalinformation/names
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -85,7 +85,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     name_suffix   | name suffix
     
 - /personalinformation/phone_numbers
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -103,7 +103,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     preferred     | is preferred, either "Y" or  "N"
 
 - /personalinformation/email_addresses
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -124,7 +124,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     
     
 - /personalinformation/emergency_contacts
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -143,7 +143,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     country         | type of alternate email address
     
 - /personalinformation/demographic_information
-  - method: GET
+  - method: POST/GET
   - Parameters
 
      Parameter  | Description
@@ -159,3 +159,20 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     citizenship_information | "country", "description"  
     visa_or_permit_data     | "country", "type" 
     note                    | note on demographic information 
+
+- /personalinformation/citizenship_immigration_documents
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field                  | Description
+    -----------             | -------------
+    visa_type | visa type
+    country  | visa issue country
+    date_received | received date
+    expiration_date     | expiration date
