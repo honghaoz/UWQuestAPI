@@ -32,6 +32,8 @@ class BasicQuestSession:
 	# currentResponse
 	currentError = ""
 
+	currentPOSTpage = "" # Log which page we are at
+
 	# Post parameters
 	basicPostData = {
 		'ICAJAX':'1',
@@ -111,14 +113,9 @@ class BasicQuestSession:
 				self.isLogin = True
 				print "Login Successfully!"
 				return True
-			else:
-				self.isLogin = False
-				print "Login Failed!"
-				return False
-		else:
-			self.isLogin = False
-			print "Login Failed!"
-			return False
+		self.isLogin = False
+		print "Login Failed!"
+		return False
 	
 	# TODO
 	def checkIsExpiration(self):
@@ -127,13 +124,22 @@ class BasicQuestSession:
 			@Return True if expired
 		'''
 		return False
-	# TODO
+
 	def checkIsUndergraduate(self, response):
 		''' Check whether logined account is undergraduate
 			@Param requests response
 			@Return 
 		'''
-		pass
+		soup = BeautifulSoup(response.content)
+		academicTable = soup.find(id='ACE_DERIVED_SSS_SCL_SS_ACAD_INFO_LINK')
+		resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(academicTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		# FIXME
+		if len(resultList) == 3:
+			print "Graduate student"
+			self.isUndergraduate = False
+		else:
+			print "Undergraduate student"
+			self.isUndergraduate = True
 
 	def updateICSID(self, response):
 		''' Update ICSID and StateNum
@@ -197,17 +203,12 @@ class BasicQuestSession:
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			# Fix Me
-			result = self.updateICSID(response)
-			if result is True:
+			self.checkIsUndergraduate(response)
+			if self.updateICSID(response) is True:
 				print "GET Student Center OK"
 				return True
-			else :
-				print "GET Student Center Failed"
-				return False
-		else:
-			print "GET Student Center Failed"
-			return False
+		print "GET Student Center Failed"
+		return False
 
 def main():
 	myQuest = BasicQuestSession("", "")# "userid", "password"

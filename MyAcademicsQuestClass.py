@@ -34,29 +34,34 @@ class MyAcademicQuestSession(BasicQuestSession):
 		else:
 			print "POST My Academics Failed"
 			return False
+
 	def gotoMyAcademics_myProgram(self):
 		''' Go to my undergrad(grad) program
 			@Param
 			@Return True/False
 		'''
-		# if self.isUndergraduate:
-		# 	pass
-		getMyProgramData = {
-			'Page': 'UW_SS_MYPROG_GRD',
-			'Action': 'U',
-			'ExactKeys': 'Y',
-			'TargetFrameName': 'None'
-		}
-		response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData)
-		self.currentResponse = response
-		if response.status_code == requests.codes.ok:
-			print "GET My Graduate Program Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
+		if self.isUndergraduate:
+			pass
 		else:
-			print "GET My Graduate Program Page Failed"
-			return False
+			getMyProgramData = {
+				'Page': 'UW_SS_MYPROG_GRD',
+				'Action': 'U',
+				'ExactKeys': 'Y',
+				'TargetFrameName': 'None'
+			}
+			response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData)
+			self.currentResponse = response
+			if response.status_code == requests.codes.ok:
+				if (self.updateStateNum(response)):
+					print "GET My Graduate Program Page OK"
+					# print response.content
+					return True
+				else:
+					print "GET My Graduate Program Page Failed"
+					return False
+			else:
+				print "GET My Graduate Program Page Failed"
+				return False
 
 	def gotoMyAcademics_grades(self):
 		''' Go to my grades

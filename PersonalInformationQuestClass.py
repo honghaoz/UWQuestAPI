@@ -38,18 +38,22 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			@Param
 			@Return True/False
 		'''
-		postPersonalInfo = self.getBasicParameters()
-		postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SS_DEMO_SUM_LINK'
+		if self.currentPOSTpage is "PERSONAL_INFORMATION":
+			print "POST Personal Information: Already In"
+			return True
+		else :
+			postPersonalInfo = self.getBasicParameters()
+			postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SS_DEMO_SUM_LINK'
 
-		response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo)
-		self.currentResponse = response
-		if response.status_code == requests.codes.ok:
-			print "POST Personal Information OK"
-			# self.gotoMyAcademics_myProgram()
-			# print response.content
-		else:
-			print "POST Personal Information Failed"
-			return False
+			response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo, allow_redirects = False)
+			self.currentResponse = response
+			if response.status_code == requests.codes.ok:
+				print "POST Personal Information OK"
+				self.currentPOSTpage = "PERSONAL_INFORMATION"
+				return True
+			else:
+				print "POST Personal Information Failed"
+				return False
 
 	def gotoPersonalInformation_address(self):
 		''' Go to address
@@ -60,16 +64,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_ADDRESSES',
 			'Action': 'C',
 		}
-		response = self.session.get(self.personalInfoAddressURL, data = getData)
+		response = self.session.get(self.personalInfoAddressURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Address Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Address Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Address Page OK"
+				# print response.content
+				return True
+		print "GET Address Page Failed"
+		return False
 
 	def gotoPersonalInformation_name(self):
 		''' Go to name
@@ -80,16 +83,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_CC_NAME',
 			'Action': 'C',
 		}
-		response = self.session.get(self.personalInfoNameURL, data = getData)
+		response = self.session.get(self.personalInfoNameURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Name Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Name Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Name Page OK"
+				# print response.content
+				return True
+		print "GET Name Page Failed"
+		return False
 
 	def gotoPersonalInformation_phoneNumbers(self):
 		''' Go to Phone Numbers
@@ -100,16 +102,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_CC_PERS_PHONE',
 			'Action': 'U',
 		}
-		response = self.session.get(self.personalInfoPhoneNumbersURL, data = getData)
+		response = self.session.get(self.personalInfoPhoneNumbersURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Phone Numbers Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Phone Numbers Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Phone Numbers Page OK"
+				# print response.content
+				return True
+		print "GET Phone Numbers Page Failed"
+		return False
 
 	def gotoPersonalInformation_email(self):
 		''' Go to Email Addresses
@@ -120,16 +121,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_CC_EMAIL_ADDR',
 			'Action': 'U',
 		}
-		response = self.session.get(self.personalInfoEmailsURL, data = getData)
+		response = self.session.get(self.personalInfoEmailsURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Email Addresses Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Email Addresses Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Email Addresses Page OK"
+				# print response.content
+				return True
+		print "GET Email Addresses Page Failed"
+		return False
 
 	def gotoPersonalInformation_emgencyContacts(self):
 		''' Go to Emergency Contacts
@@ -140,16 +140,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_CC_EMRG_CNTCT_L',
 			'Action': 'U',
 		}
-		response = self.session.get(self.personalInfoEnergencyURL, data = getData)
+		response = self.session.get(self.personalInfoEnergencyURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Emergency Contacts Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Emergency Contacts Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Emergency Contacts Page OK"
+				# print response.content
+				return True
+		print "GET Emergency Contacts Page Failed"
+		return False
 
 	def gotoPersonalInformation_demographicInfo(self):
 		''' Go to Demographic Information
@@ -160,16 +159,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'SS_CC_DEMOG_DATA',
 			'Action': 'U',
 		}
-		response = self.session.get(self.personalInfoDemographicInfoURL, data = getData)
+		response = self.session.get(self.personalInfoDemographicInfoURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Demographic Information Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Demographic Information Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Demographic Information Page OK"
+				# print response.content
+				return True
+		print "GET Demographic Information Page Failed"
+		return False
 
 	def gotoPersonalInformation_citizenship(self):
 		''' Go to Citizenship/Immigration Documents
@@ -180,16 +178,15 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			'Page': 'UW_SS_CC_VISA_DOC',
 			'Action': 'U',
 		}
-		response = self.session.get(self.personalInfoCitizenshipURL, data = getData)
+		response = self.session.get(self.personalInfoCitizenshipURL, data = getData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Citizenship/Immigration Documents Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Citizenship/Immigration Documents Page Failed"
-			return False
+			if self.updateStateNum(response):
+				print "GET Citizenship/Immigration Documents Page OK"
+				# print response.content
+				return True
+		print "GET Citizenship/Immigration Documents Page Failed"
+		return False
 
 def main():
 	# Create a basic quest session
@@ -197,12 +194,13 @@ def main():
 	myBasicQuest.login()
 
 	myPersonalInfoQuestSesson = PersonalInformationQuestSession("", "", myBasicQuest)
-	# myQuest.gotoStudentCenter()
-	myPersonalInfoQuestSesson.gotoPersonalInformationStudentCenter()
+
 	myPersonalInfoQuestSesson.gotoPersonalInformation()
+
 	myPersonalInfoQuestSesson.gotoPersonalInformation_address()
-	# print QuestParser.API_account_loginResponse(myPersonalInfoQuestSesson)
 	print QuestParser.API_personalInfo_addressResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation()
 
 	myPersonalInfoQuestSesson.gotoPersonalInformation_name()
 	print QuestParser.API_personalInfo_nameResponse(myPersonalInfoQuestSesson)
@@ -217,7 +215,6 @@ def main():
 	print QuestParser.API_personalInfo_emergencyContactResponse(myPersonalInfoQuestSesson)
 	
 	myPersonalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
-	# print QuestParser.Parse_personalInfo_demographicInfo(myPersonalInfoQuestSesson.currentResponse.content)
 	print QuestParser.API_personalInfo_demographicInfoResponse(myPersonalInfoQuestSesson)
 	
 	myPersonalInfoQuestSesson.gotoPersonalInformation_citizenship()
