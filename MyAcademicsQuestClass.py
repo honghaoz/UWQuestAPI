@@ -1,6 +1,6 @@
 import BasicQuestClass
 import requests
-
+import QuestParser
 from BasicQuestClass import BasicQuestSession
 
 class MyAcademicQuestSession(BasicQuestSession):
@@ -17,23 +17,29 @@ class MyAcademicQuestSession(BasicQuestSession):
 	myAcademicsUndergraduateGradesURL = ""
 	myAcademicsUndergraduateUnofficialTranscriptURL = ""
 
-	def gotoMyAcademics(self):
+	def postMyAcademics(self):
 		''' Go to My Academics (default tab is first one)
 			@Param
 			@Return True/False
 		'''
-		postMyAcademics = self.getBasicParameters()
-		postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1'
+		if self.currentPOSTpage is "MY_ACADEMICS_HOME":
+			print "POST My Academics: Already In"
+			return True
+		else :	
+			postMyAcademics = self.getBasicParameters()
+			postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1'
 
-		# print "POST: My Academics Page"
-		response = self.session.post(self.studentCenterURL_HRMS, data = postMyAcademics)
-		self.currentResponse = response
-		if response.status_code == requests.codes.ok:
-			print "POST My Academics OK"
-			self.gotoMyAcademics_myProgram()
-		else:
-			print "POST My Academics Failed"
-			return False
+			# print "POST: My Academics Page"
+			response = self.session.post(self.studentCenterURL_HRMS, data = postMyAcademics, allow_redirects = False)
+			self.currentResponse = response
+			if response.status_code == requests.codes.ok:
+				print "POST My Academics OK"
+				self.currentPOSTpage = "MY_ACADEMICS_HOME"
+				# self.gotoMyAcademics_myProgram()
+				return True
+			else:
+				print "POST My Academics Failed"
+				return False
 
 	def gotoMyAcademics_myProgram(self):
 		''' Go to my undergrad(grad) program
@@ -41,6 +47,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 			@Return True/False
 		'''
 		if self.isUndergraduate:
+			# TODO
 			pass
 		else:
 			getMyProgramData = {
@@ -49,19 +56,15 @@ class MyAcademicQuestSession(BasicQuestSession):
 				'ExactKeys': 'Y',
 				'TargetFrameName': 'None'
 			}
-			response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData)
+			response = self.session.get(self.myAcademicsGraduateURL, data = getMyProgramData, allow_redirects = False)
 			self.currentResponse = response
 			if response.status_code == requests.codes.ok:
 				if (self.updateStateNum(response)):
 					print "GET My Graduate Program Page OK"
 					# print response.content
 					return True
-				else:
-					print "GET My Graduate Program Page Failed"
-					return False
-			else:
-				print "GET My Graduate Program Page Failed"
-				return False
+			print "GET My Graduate Program Page Failed"
+			return False
 
 	def gotoMyAcademics_grades(self):
 		''' Go to my grades
@@ -72,16 +75,15 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Page': 'SSR_SSENRL_GRADE',
 			'Action': 'A'
 		}
-		response = self.session.get(self.myAcademicsGraduateGradesURL, data = getGradesData)
+		response = self.session.get(self.myAcademicsGraduateGradesURL, data = getGradesData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Grades Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Grades Page Failed"
-			return False
+			if (self.updateStateNum(response)):
+				print "GET Grades Page OK"
+				# print response.content
+				return True
+		print "GET Grades Page Failed"
+		return False
 
 	def gotoMyAcademics_unofficialTranscript(self):
 		''' Go to my Unofficial Transcript
@@ -92,16 +94,15 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Page': 'SS_ES_AARPT_TYPE2',
 			'Action': 'A'
 		}
-		response = self.session.get(self.myAcademicsGraduateUnofficialTranscriptURL, data = getUnofficialTranscriptData)
+		response = self.session.get(self.myAcademicsGraduateUnofficialTranscriptURL, data = getUnofficialTranscriptData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Unofficial Transcript Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Unofficial Transcript Page Failed"
-			return False
+			if (self.updateStateNum(response)):
+				print "GET Unofficial Transcript Page OK"
+				# print response.content
+				return True
+		print "GET Unofficial Transcript Page Failed"
+		return False
 
 	def gotoMyAcademics_advisors(self):
 		''' Go to my My Advisors
@@ -112,16 +113,15 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Page': 'SSR_SSADVR',
 			'Action': 'U'
 		}
-		response = self.session.get(self.myAcademicsGraduateAdvisorsURL, data = getAdvisorsData)
+		response = self.session.get(self.myAcademicsGraduateAdvisorsURL, data = getAdvisorsData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET My Advisors Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET My Advisors Page Failed"
-			return False
+			if (self.updateStateNum(response)):
+				print "GET My Advisors Page OK"
+				# print response.content
+				return True
+		print "GET My Advisors Page Failed"
+		return False
 
 	def gotoMyAcademics_graduateOfferLetters(self):
 		''' Go to my Graduate Offer Letters
@@ -132,26 +132,29 @@ class MyAcademicQuestSession(BasicQuestSession):
 			'Page': 'UW_SS_GRD_OFFR_CTR',
 			'Action': 'U'
 		}
-		response = self.session.get(self.myAcademicsGraduateGradOfferURL, data = getGraduateOfferData)
+		response = self.session.get(self.myAcademicsGraduateGradOfferURL, data = getGraduateOfferData, allow_redirects = False)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Graduate Offer Letters Page OK"
-			self.updateStateNum(response)
-			# print response.content
-			return True
-		else:
-			print "GET Graduate Offer Letters Page Failed"
-			return False
+			if (self.updateStateNum(response)):
+				print "GET Graduate Offer Letters Page OK"
+				# print response.content
+				return True
+		print "GET Graduate Offer Letters Page Failed"
+		return False
 
 def main():
-	myQuest = MyAcademicQuestSession("", "")# "userid", "password"
-	myQuest.login()
-	# myQuest.gotoStudentCenter()
-	myQuest.gotoMyAcademics()
-	myQuest.gotoMyAcademics_grades()
-	myQuest.gotoMyAcademics_unofficialTranscript()
-	myQuest.gotoMyAcademics_advisors()
-	myQuest.gotoMyAcademics_graduateOfferLetters()
+	myBasicQuest = BasicQuestSession("", "")# "userid", "password"
+	myBasicQuest.login()
+
+	myAcamedicsQuestSession = MyAcademicQuestSession("", "", myBasicQuest)
+	myAcamedicsQuestSession.postMyAcademics()
+
+	myAcamedicsQuestSession.gotoMyAcademics_myProgram()
+	print QuestParser.API_myAcademics_myProgramResponse(myAcamedicsQuestSession)
+	# myAcamedicsQuestSession.gotoMyAcademics_grades()
+	# myAcamedicsQuestSession.gotoMyAcademics_unofficialTranscript()
+	# myAcamedicsQuestSession.gotoMyAcademics_advisors()
+	# myAcamedicsQuestSession.gotoMyAcademics_graduateOfferLetters()
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import re
+from xml.sax.saxutils import unescape
 
 ################# Parser ################
 
@@ -123,6 +124,16 @@ def Parse_personalInfo_citizenship(html):
 	resultList.insert(0, "visa_type")
 	resultList.insert(0, "country")
 	return resultList
+
+def Parse_myAcademics_myProgram(html):
+	soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	table = soup.find(id="ACADPROGCURRENT$scroll$0")
+	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	resultList.insert(0, "Current Program")
+	return resultList
+
+
 
 
 ################# API ################
@@ -399,3 +410,20 @@ def API_personalInfo_citizenshipResponse(questSession):
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no citizenship/immigration information"
 	return getFullResponseDictionary(meta, data)
+
+def API_myAcademics_myProgramResponse(questSession):
+	resultList = Parse_myAcademics_myProgram(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	if not len(resultList) < 2:
+		meta["status"] = "success"
+		kvPairCount = len(resultList) / 2
+		for i in xrange(0, kvPairCount):
+			newDict = {}
+			newDict[resultList[2 * i].replace(" ", "_").lower()] = resultList[2 * i + 1]
+			data.append(newDict)
+	else :
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no my program information"
+	return getFullResponseDictionary(meta, data)
+

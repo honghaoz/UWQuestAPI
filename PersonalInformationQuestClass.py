@@ -15,25 +15,25 @@ class PersonalInformationQuestSession(BasicQuestSession):
 	personalInfoCitizenshipURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_CC_VISA_DOC.GBL"
 	personalInfoAbsenceDeclarationURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.UW_SS_CC_ABSENCE.GBL"
 
-	def gotoPersonalInformationStudentCenter(self):
-		''' Open "Personal Information" tab on student center page
-			@Param
-			@Return True/False
-		'''
-		postPersonalInfo = self.getBasicParameters()
-		postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO'
+	# def gotoPersonalInformationStudentCenter(self):
+	# 	''' Open "Personal Information" tab on student center page
+	# 		@Param
+	# 		@Return True/False
+	# 	'''
+	# 	postPersonalInfo = self.getBasicParameters()
+	# 	postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SSS_PERSONAL_INFO'
 
-		response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo)
-		self.currentResponse = response
-		if response.status_code == requests.codes.ok:
-			print "POST Personal Information (Student Center) OK"
-			# self.gotoMyAcademics_myProgram()
-			# print response.content
-		else:
-			print "POST Personal Information (Student Center) Failed"
-			return False
+	# 	response = self.session.post(self.studentCenterURL_HRMS, data = postPersonalInfo)
+	# 	self.currentResponse = response
+	# 	if response.status_code == requests.codes.ok:
+	# 		print "POST Personal Information (Student Center) OK"
+	# 		# self.gotoMyAcademics_myProgram()
+	# 		# print response.content
+	# 	else:
+	# 		print "POST Personal Information (Student Center) Failed"
+	# 		return False
 
-	def gotoPersonalInformation(self):
+	def postPersonalInformation(self):
 		''' Open "Personal Information"
 			@Param
 			@Return True/False
@@ -195,12 +195,12 @@ def main():
 
 	myPersonalInfoQuestSesson = PersonalInformationQuestSession("", "", myBasicQuest)
 
-	myPersonalInfoQuestSesson.gotoPersonalInformation()
+	myPersonalInfoQuestSesson.postPersonalInformation()
 
 	myPersonalInfoQuestSesson.gotoPersonalInformation_address()
 	print QuestParser.API_personalInfo_addressResponse(myPersonalInfoQuestSesson)
 
-	myPersonalInfoQuestSesson.gotoPersonalInformation()
+ 	# myPersonalInfoQuestSesson.postPersonalInformation()
 
 	myPersonalInfoQuestSesson.gotoPersonalInformation_name()
 	print QuestParser.API_personalInfo_nameResponse(myPersonalInfoQuestSesson)
