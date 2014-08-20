@@ -50,7 +50,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
 ### Personal Information
 
-- /personalinformation/addresses
+- /personal_information/addresses
   - method: POST/GET
   - Parameters
 
@@ -65,7 +65,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     address_type  | address type
     address       | address
     
-- /personalinformation/names
+- /personal_information/names
   - method: POST/GET
   - Parameters
 
@@ -84,7 +84,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     last_name     | last name
     name_suffix   | name suffix
     
-- /personalinformation/phone_numbers
+- /personal_information/phone_numbers
   - method: POST/GET
   - Parameters
 
@@ -102,7 +102,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     country       | country code
     preferred     | is preferred, either "Y" or  "N"
 
-- /personalinformation/email_addresses
+- /personal_information/email_addresses
   - method: POST/GET
   - Parameters
 
@@ -123,7 +123,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     email_address         | alternate email address
     
     
-- /personalinformation/emergency_contacts
+- /personal_information/emergency_contacts
   - method: POST/GET
   - Parameters
 
@@ -142,7 +142,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     extension       | alternate email address section
     country         | type of alternate email address
     
-- /personalinformation/demographic_information
+- /personal_information/demographic_information
   - method: POST/GET
   - Parameters
 
@@ -160,7 +160,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     visa_or_permit_data     | "country", "type" 
     note                    | note on demographic information 
 
-- /personalinformation/citizenship_immigration_documents
+- /personal_information/citizenship_immigration_documents
   - method: POST/GET
   - Parameters
 
@@ -176,3 +176,21 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     country  | visa issue country
     date_received | received date
     expiration_date     | expiration date
+
+### My Academics
+
+- /my_academics/my_program
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    current_program  | current program
+    campus       | campus
+    approved_load | approved load
