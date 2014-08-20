@@ -106,15 +106,18 @@ class BasicQuestSession:
 		response = self.session.post(self.questLoginURL, data = postLoginData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "Login Successfully!"
 			# Go to student center
 			if(self.gotoStudentCenter()):
 				self.isLogin = True
+				print "Login Successfully!"
+				return True
 			else:
 				self.isLogin = False
+				print "Login Failed!"
+				return False
 		else:
-			print "Login Failed!"
 			self.isLogin = False
+			print "Login Failed!"
 			return False
 
 	def checkIsExpiration(self):
@@ -135,19 +138,26 @@ class BasicQuestSession:
 			@Param requests response
 			@Return 
 		'''
-		self.icsid = getICSID(response.content)
-		# Print ICSID
-		print "ICSID: " + self.icsid
-		self.updateStateNum(response)
+		try:
+			self.icsid = getICSID(response.content)
+			# Print ICSID
+			print "ICSID: " + self.icsid
+		except:
+			return False
+		return self.updateStateNum(response)
 
 	def updateStateNum(self, response):
 		''' Update StateNum
 			@Param requests response
 			@Return 
 		'''
-		self.currentStateNum = getStateNum(response.content)
-		# Print current state num
-		print "Current StateNum: " + str(self.currentStateNum)
+		try:
+			self.currentStateNum = getStateNum(response.content)
+			# Print current state num
+			print "Current StateNum: " + str(self.currentStateNum)
+		except:
+			return False
+		return True
 
 	def getBasicParameters(self):
 		''' return a new post data dictionary with updated ICSID and StateNum
@@ -185,10 +195,14 @@ class BasicQuestSession:
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			print "GET Student Center OK"
-			self.updateICSID(response)
-			# self.updateStateNum(response)
-			return True
+			# Fix Me
+			result = self.updateICSID(response)
+			if result is True:
+				print "GET Student Center OK"
+				return True
+			else :
+				print "GET Student Center Failed"
+				return False
 		else:
 			print "GET Student Center Failed"
 			return False

@@ -12,7 +12,10 @@ class MyAcademicQuestSession(BasicQuestSession):
 	myAcademicsGraduateAdvisorsURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSR_SSADVR.GBL"
 	myAcademicsGraduateGradOfferURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/UW_SS_MENU.UW_SS_GRD_OFFR_CTR.GBL"
 
+	# TODO:
 	myAcademicsUndergraduateURL = ""
+	myAcademicsUndergraduateGradesURL = ""
+	myAcademicsUndergraduateUnofficialTranscriptURL = ""
 
 	def gotoMyAcademics(self):
 		''' Go to My Academics (default tab is first one)

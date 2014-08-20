@@ -5,9 +5,9 @@ import re
 courseName = "CS"
 courseNumber = "350"
 termCode = "1145"
-studentID = "20385401"
-userID = "******"
-password = "******"
+studentID = "20530902"
+userID = "h344zhan"
+password = "Zhh358279765099"
 #usage
 
 ##################################implementation#################################################
