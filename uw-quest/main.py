@@ -26,8 +26,11 @@ from google.appengine.api import memcache
 
 sys.path.insert(0, 'libs')
 import requests
-# import MyAcademicsQuestClass
-from UWQuestAPI import PersonalInformationQuestClass
+
+from UWQuestAPI.BasicQuestClass import BasicQuestSession
+
+from UWQuestAPI.PersonalInformationQuestClass import PersonalInformationQuestSession
+from UWQuestAPI import QuestParser
 
 # Global variables for jinja environment
 template_dir = os.path.join(os.path.dirname(__file__), 'html_template')
@@ -52,7 +55,89 @@ class MainHandler(BasicHandler):
         self.render('home.html')
         # PersonalInformationQuestClass.main()
 
+basicQuestSession = BasicQuestSession("", "")
+
+class LoginHandler(BasicHandler):
+    def post(self):
+        self.loginOperation()
+
+    def get(self):
+        self.loginOperation()
+        
+    def loginOperation(self):
+        userid = self.request.get("userid")
+        password = self.request.get("password")
+        global basicQuestSession
+        basicQuestSession = BasicQuestSession(userid, password)
+        basicQuestSession.login()
+        self.write(json.dumps(QuestParser.API_account_loginResponse(basicQuestSession)))
+        
+class LogoutHandler(BasicHandler):
+    def post(self):
+        self.logoutOperation()
+
+    def get(self):
+        self.logoutOperation()
+        
+    def logoutOperation(self):
+        sid = self.request.get("sid")
+        # TODO
+        # global basicQuestSession
+        # basicQuestSession = BasicQuestSession(userid, password)
+        # basicQuestSession.login()
+        # self.write(json.dumps(QuestParser.API_account_loginResponse(basicQuestSession)))
+
+class personalinformationHandler(BasicHandler):
+    def post(self, category):
+        self.personalinformationOperation(category)
+
+    def get(self, category):
+        self.personalinformationOperation(category)
+
+    def personalinformationOperation(self, category):
+        sid = self.request.get("sid")
+        logging.info("category: " + category)
+        logging.info("sid: " + sid)
+        global basicQuestSession
+        if sid == basicQuestSession.icsid:
+            personalInfoQuestSesson = PersonalInformationQuestSession("", "", basicQuestSession)
+            if category == "addresses":
+                personalInfoQuestSesson.gotoPersonalInformation_address()
+                response = QuestParser.API_personalInfo_addressResponse(personalInfoQuestSesson)
+            elif category == "names":
+                personalInfoQuestSesson.gotoPersonalInformation_name()
+                response = QuestParser.API_personalInfo_nameResponse(personalInfoQuestSesson)
+            elif category == "phone_numbers":
+                personalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
+                response = QuestParser.API_personalInfo_phoneResponse(personalInfoQuestSesson)
+            elif category == "email_addresses":
+                personalInfoQuestSesson.gotoPersonalInformation_email()
+                response = QuestParser.API_personalInfo_emailResponse(personalInfoQuestSesson)
+            elif category == "emergency_contacts":
+                personalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
+                response = QuestParser.API_personalInfo_emergencyContactResponse(personalInfoQuestSesson)
+            elif category == "demographic_information":
+                personalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
+                response = QuestParser.API_personalInfo_demographicInfoResponse(personalInfoQuestSesson)
+            elif category == "citizenship_immigration_documents":
+                personalInfoQuestSesson.gotoPersonalInformation_citizenship()
+                response = QuestParser.API_personalInfo_citizenshipResponse(personalInfoQuestSesson)
+            else:
+                response = {"meta": {"status": "failure", "message": "Invalid endpoint"}, "data": []}                    
+            self.write(json.dumps(response))
+        else:
+            response = {"meta": {"status": "failure", "message": "Invalid sid"}, "data": []}
+            self.write(json.dumps(response))
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/login', LoginHandler),
+    ('/logout', LogoutHandler),
+    ('/personalinformation/%s' % r'([a-z\_]+)', personalinformationHandler)
+    # ('/personalinformation/names', personalinformation_namesHandler),
+    # ('/personalinformation/phone_numbers', personalinformation_phoneNumbersHandler),
+    # ('/personalinformation/email_addresses', personalinformation_emailAddressesHandler),
+    # ('/personalinformation/emergency_contacts', personalinformation_emergencyContactsHandler),
+    # ('/personalinformation/demographic_information', personalinformation_demographicInformationHandler),
+    # ('/personalinformation/citizenship_immigration_documents', personalinformation_citizenshipImmigrationDocumentsHandler),
 ], debug=True)

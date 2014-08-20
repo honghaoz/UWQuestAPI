@@ -8,11 +8,17 @@ import copy
 
 # Get ICSID from html code, ICSID is used for POST method
 def getICSID(html):
-	return re.findall("<input type='hidden' name='ICSID' id='ICSID' value='(.*)'", html)[0]
+	s = re.findall("<.*?id=['\"]ICSID['\"].*?>", html)[0]
+	s = re.findall("value=['\"].*?['\"]", s)[0]
+	s = s.replace("value=","").replace('"',"").replace("'","")
+	return s
 
 # Get StateNum from html code, StateNum is used for POST method
 def getStateNum(html):
-	return int(re.findall("<input type='hidden' name='ICStateNum' id='ICStateNum' value='(\d+)'", html)[0])
+	s = re.findall("<.*?id=['\"]ICStateNum['\"].*?>", html)[0]
+	s = re.findall("value=['\"].*?['\"]", s)[0]
+	s = s.replace("value=","").replace('"',"").replace("'","")
+	return int(s)
 
 # TODO: timeout handling, network error handling
 class BasicQuestSession:
@@ -23,6 +29,9 @@ class BasicQuestSession:
 	icsid = ""
 	currentStateNum = 0
 	isUndergraduate = True
+	# currentResponse
+	currentError = ""
+
 	# Post parameters
 	basicPostData = {
 		'ICAJAX':'1',
@@ -54,12 +63,31 @@ class BasicQuestSession:
 	studentCenterURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 
 	# Initialization
-	def __init__(self, userid, password):
-	    """ Initialization """
-	    self.session = Session()
-	    self.isLogin = False
-	    self.userid = userid
-	    self.password = password
+	def __init__(self, userid, password, anotherQuestSession = None):
+	    """ Initialization
+	    	There two ways of Initialization:
+	    		1: Initilize a new one session, only provide userid and password
+	    		2: Initilize with another quest session, provide another quest session object
+	    			In this way, anotherQuestSession must be a valid quest session.
+	    			Userid and password will be ignored.
+	    """
+	    if not anotherQuestSession == None:
+	    	print "Initilize with anotherQuestSession"
+	    	self.session = anotherQuestSession.session
+	    	self.isLogin = anotherQuestSession.isLogin
+	    	self.userid = anotherQuestSession.userid
+	    	self.password = anotherQuestSession.password
+	    	self.icsid = anotherQuestSession.icsid
+	    	self.currentStateNum = anotherQuestSession.currentStateNum
+	    	self.isUndergraduate = anotherQuestSession.isUndergraduate
+	    	if not self.isLogin:
+	    		self.login()
+	    else:
+	    	print "Initilize new one"
+	    	self.session = Session()
+	    	self.isLogin = False
+	    	self.userid = userid
+	    	self.password = password
 
 	# Login
 	# Side effects: isLogin is changed
@@ -79,11 +107,14 @@ class BasicQuestSession:
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "Login Successfully!"
-			self.isLoginisLogin = True
-			return True
+			# Go to student center
+			if(self.gotoStudentCenter()):
+				self.isLogin = True
+			else:
+				self.isLogin = False
 		else:
 			print "Login Failed!"
-			self.isLoginisLogin = False
+			self.isLogin = False
 			return False
 
 	def checkIsExpiration(self):
@@ -165,7 +196,7 @@ class BasicQuestSession:
 def main():
 	myQuest = BasicQuestSession("", "")# "userid", "password"
 	myQuest.login()
-	myQuest.gotoStudentCenter()
+	# myQuest.gotoStudentCenter()
 
 if __name__ == '__main__':
     main()

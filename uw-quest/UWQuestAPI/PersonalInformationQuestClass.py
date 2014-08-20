@@ -191,39 +191,37 @@ class PersonalInformationQuestSession(BasicQuestSession):
 			print "GET Citizenship/Immigration Documents Page Failed"
 			return False
 
-	# def gotoPersonalInformation_absenceDeclaration(self):
-	# 	''' Go to Citizenship/Immigration Documents
-	# 		@Param
-	# 		@Return True/False
-	# 	'''
-	# 	getData = {
-	# 		'Page': 'UW_SS_CC_VISA_DOC',
-	# 		'Action': 'U',
-	# 	}
-	# 	response = self.session.get(self.personalInfoCitizenshipURL, data = getData)
-	# 	if response.status_code == requests.codes.ok:
-	# 		print "GET Citizenship/Immigration Documents Page OK"
-	# 		self.updateStateNum(response)
-	# 		print response.content
-	# 		return True
-	# 	else:
-	# 		print "GET Citizenship/Immigration Documents Page Failed"
-	# 		return False
-
 def main():
-	myQuest = PersonalInformationQuestSession("", "")# "userid", "password"
-	myQuest.login()
-	myQuest.gotoStudentCenter()
-	myQuest.gotoPersonalInformationStudentCenter()
-	myQuest.gotoPersonalInformation()
-	myQuest.gotoPersonalInformation_address()
-	print QuestParser.Parse_personalInfo_address(myQuest.currentResponse.content)
-	# myQuest.gotoPersonalInformation_name()
-	# myQuest.gotoPersonalInformation_phoneNumbers()
-	# myQuest.gotoPersonalInformation_email()
-	# myQuest.gotoPersonalInformation_emgencyContacts()
-	# myQuest.gotoPersonalInformation_demographicInfo()
-	# myQuest.gotoPersonalInformation_citizenship()
+	# Create a basic quest session
+	myBasicQuest = BasicQuestSession("", "")# "userid", "password"
+	myBasicQuest.login()
+
+	myPersonalInfoQuestSesson = PersonalInformationQuestSession("", "", myBasicQuest)
+	# myQuest.gotoStudentCenter()
+	myPersonalInfoQuestSesson.gotoPersonalInformationStudentCenter()
+	myPersonalInfoQuestSesson.gotoPersonalInformation()
+	myPersonalInfoQuestSesson.gotoPersonalInformation_address()
+	# print QuestParser.API_account_loginResponse(myPersonalInfoQuestSesson)
+	print QuestParser.API_personalInfo_addressResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_name()
+	print QuestParser.API_personalInfo_nameResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
+	print QuestParser.API_personalInfo_phoneResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_email()
+	print QuestParser.API_personalInfo_emailResponse(myPersonalInfoQuestSesson)
+
+	myPersonalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
+	print QuestParser.API_personalInfo_emergencyContactResponse(myPersonalInfoQuestSesson)
+	
+	myPersonalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.Parse_personalInfo_demographicInfo(myPersonalInfoQuestSesson.currentResponse.content)
+	print QuestParser.API_personalInfo_demographicInfoResponse(myPersonalInfoQuestSesson)
+	
+	myPersonalInfoQuestSesson.gotoPersonalInformation_citizenship()
+	print QuestParser.API_personalInfo_citizenshipResponse(myPersonalInfoQuestSesson)
 
 if __name__ == '__main__':
     main()
