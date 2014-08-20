@@ -194,3 +194,20 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     current_program  | current program
     campus       | campus
     approved_load | approved load
+
+- /my_academics/grades
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    index  | the index for this term, used as parameters for get grades
+    term       | which term
+    career | undergraduate or graduate
+    institution | institution
