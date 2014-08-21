@@ -17,20 +17,26 @@ def Parse_personalInfo_address(html):
 
 	# addressTable contains address information
 	addressTable = soup.find(id="SCC_ADDR_H$scroll$0")
-
+	if addressTable is None:
+		return []
 	# Clean tags
 	tableString = str(addressTable)
 	x = re.sub("\<.*?\>", "", tableString);
 	# clean result list
 	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, x.replace(" \r", ", ").split("\n")))
-	del(resultList[2])
-	# resultList contains
-	return resultList
+	try:
+		del(resultList[2])
+		# resultList contains
+		return resultList
+	except:
+		return []
 
 # Return name table list
 def Parse_personalInfo_name(html):
 	soup = BeautifulSoup(html)
 	nameTable = soup.find(id="SCC_NAMES_H$scroll$0")
+	if nameTable is None:
+		return []
 
 	# Clean tags
 	tableString = str(nameTable)
@@ -43,10 +49,15 @@ def Parse_personalInfo_name(html):
 def Parse_personalInfo_phone(html):
 	soup = BeautifulSoup(html)
 	phoneTable = soup.find(id="SCC_PERS_PHN_H$scroll$0")
+	if phoneTable is None:
+		return []
 	rows = phoneTable.find_all("tr")
+
+	phonesCount = len(rows) - 1
+	if phonesCount < 1:
+		return []
 	# Phone table head
 	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
-	phonesCount = len(rows) - 1
 
 	for i in xrange(0, phonesCount):
 		newPhone = []
@@ -69,27 +80,41 @@ def Parse_personalInfo_email(html):
 	soup = BeautifulSoup(html)	
 	# print soup.prettify()
 	emailTable1Description = soup.find(id="ACE_UW_SS_WORK_GROUP_BOX_1")
+	if emailTable1Description is None:
+		return []
 	resultList = ["Email Addresses"]
 	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	emailTable1 = soup.find(id="UW_RTG_EMAIL_VW$scroll$0")
+	if emailTable1 is None:
+		return []
 	# print filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))
 	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 
 	emailTable2Description = soup.find(id="ACE_UW_DERIVED_CEM_GROUP_BOX_1")
+	if emailTable2Description is None:
+		return []
 	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	emailTable2 = soup.find(id="SCC_EMAIL_H$scroll$0")
+	if emailTable2 is None:
+		return []
 	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	return resultList
 
 def Parse_personalInfo_emergencyContact(html):
 	soup = BeautifulSoup(html)	
-	# return soup.prettify()
+	# print soup.prettify()
 	table = soup.find(id="SCC_EMERG_CNT_H$scroll$0")
 	if table is None:
-		return ["No current emergency contact information found."]
+		isValid = soup.find(id="DERIVED_CCSRVC1_SS_TRANSACT_TITLE")
+		if (not isValid is None) and isValid[0].text.strip() is "Emergency Contacts":
+			return ["No current emergency contact information found."]
+		else:
+			return []
 	else:
 		rows = table.find_all("tr")
 		contactsCount = len(rows) - 1
+		if contactsCount < 1:
+			return []
 		resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(rows[0])).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 		for i in xrange(0, contactsCount):
 			newContact = []
@@ -102,16 +127,24 @@ def Parse_personalInfo_demographicInfo(html):
 	soup = BeautifulSoup(html)	
 	# return soup.prettify()
 	demographicTable = soup.find(id="ACE_$ICField$45$")
-	demographicDict = {}
+	demographicDict = {"demographic_information": [], "national_identification_number": [], "citizenship_information": [], "visa_or_permit_data": []}
+	if demographicTable is None:
+		return demographicDict
 	demographicDict["demographic_information"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(demographicTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 
 	nationalIndentificationNumberTable = soup.find(id="$ICField$2$$scroll$0")
+	if nationalIndentificationNumberTable is None:
+		return demographicDict
 	demographicDict["national_identification_number"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(nationalIndentificationNumberTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 	
 	citizenshipInformationTable = soup.find(id="CITIZENSHIP$scrolli$0")
+	if citizenshipInformationTable is None:
+		return demographicDict
 	demographicDict["citizenship_information"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipInformationTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 
 	visaTable = soup.find(id="DRIVERS_LIC1$scrolli$0")
+	if visaTable is None:
+		return demographicDict
 	demographicDict["visa_or_permit_data"] = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(visaTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 
 	return demographicDict
@@ -120,6 +153,8 @@ def Parse_personalInfo_citizenship(html):
 	soup = BeautifulSoup(html)	
 	# return soup.prettify()
 	citizenshipTable = soup.find(id="VISA_PMT_SUPPRT$scroll$0")
+	if citizenshipTable is None:
+		return []
 	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
 	resultList.insert(0, "visa_type")
 	resultList.insert(0, "country")
@@ -129,6 +164,8 @@ def Parse_myAcademics_myProgram(html):
 	soup = BeautifulSoup(html)	
 	# return soup.prettify()
 	table = soup.find(id="ACADPROGCURRENT$scroll$0")
+	if table is None:
+		return []
 	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	resultList.insert(0, "Current Program")
 	return resultList
@@ -137,9 +174,14 @@ def Parse_myAcademics_grades(html):
 	soup = BeautifulSoup(html)	
 	# return soup.prettify()
 	table = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
+	if table is None:
+		return []
 	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
-	del(resultList[0])
-	return resultList
+	try:
+		del(resultList[0])
+		return resultList
+	except:
+		return []
 
 def Parse_myAcademics_gradesTerm(html):
 	s = re.findall("<.*?id=['\"]DERIVED_REGFRM1_SSR_STDNTKEY_DESCR\$5\$['\"].*?>.*?</.*?>", html)[0]

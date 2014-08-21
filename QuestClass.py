@@ -4,8 +4,10 @@ from bs4 import BeautifulSoup
 import re
 import copy
 
+# Import outer files
 import QuestParser
 import PersonalInformation
+import MyAcademics
 
 ################ Helper Functions ################
 
@@ -220,6 +222,31 @@ class QuestSession(object):
 
 	def gotoPersonalInformation_citizenship(self):	
 		return PersonalInformation.gotoPersonalInformation_citizenship(self)
+
+	# My Academics
+	def postMyAcademics(self):
+		return MyAcademics.postMyAcademics(self)
+
+	def gotoMyAcademics_myProgram(self):
+		return MyAcademics.gotoMyAcademics_myProgram(self)
+
+	def gotoMyAcademics_grades(self):
+		return MyAcademics.gotoMyAcademics_grades(self)
+
+	def postMyAcademics_grades_termIndex(self, termIndex):
+		return MyAcademics.postMyAcademics_grades_termIndex(self, termIndex)
+
+	def postMyAcademics_grades_termLink(self):
+		return MyAcademics.postMyAcademics_grades_termLink(self)
+
+	def gotoMyAcademics_unofficialTranscript(self):
+		return MyAcademics.gotoMyAcademics_unofficialTranscript(self)
+
+	def gotoMyAcademics_advisors(self):
+		return MyAcademics.gotoMyAcademics_advisors(self)
+
+	def gotoMyAcademics_graduateOfferLetters():
+		return MyAcademics.gotoMyAcademics_graduateOfferLetters(self)
 
 def main():
 	myQuest = QuestSession("", "") # "userid", "password"
