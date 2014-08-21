@@ -1,7 +1,7 @@
-import BasicQuestClass
+import QuestClass
 import requests
 import QuestParser
-from BasicQuestClass import BasicQuestSession
+from QuestClass import QuestSession
 
 class MyAcademicQuestSession(BasicQuestSession):
 	""" Subclass for myAcademic"""
@@ -85,6 +85,55 @@ class MyAcademicQuestSession(BasicQuestSession):
 		print "GET Grades Page Failed"
 		return False
 
+	def postMyAcademics_grades(self, termIndex):
+		''' POST to get grades for one term
+			@Param term index return from gotoMyAcademics_grades
+			@Return True/False
+		'''
+		# If not in the right post postition, change to right post position
+		if not (self.currentPOSTpage is "MY_ACADEMICS_HOME" or self.currentPOSTpage is "MY_ACADEMICS_GRADES_TERM_LINK"):
+			if not self.postMyAcademics_grades_termLink():
+				print "POST grades with index: %d Failed" % termIndex
+				return False
+
+		# Start to post
+		postGradesData = self.getBasicParameters()
+		postGradesData['ICAction'] = 'DERIVED_SSS_SCT_SSR_PB_GO'
+		postGradesData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+		postGradesData['SSR_DUMMY_RECV1$sels$0'] = termIndex # str(termIndex)
+		postGradesData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+
+		response = self.session.post(self.myAcademicsGraduateGradesURL, data = postGradesData, allow_redirects = False)
+		self.currentResponse = response
+		if response.status_code == requests.codes.ok:
+			print "POST grades with index: %d OK" % termIndex
+			self.currentPOSTpage = "MY_ACADEMICS_GRADES_ONE_TERM"
+			# self.gotoMyAcademics_myProgram()
+			return True
+		else:
+			print "POST grades with index: %d Failed" % termIndex
+			return False
+			
+	def postMyAcademics_grades_termLink(self):
+		if self.currentPOSTpage is "MY_ACADEMICS_GRADES_TERM_LINK":
+			print "POST Grades term link: Already In"
+			return True
+		else :
+			postData = self.getBasicParameters()
+			postData['ICAction'] = 'DERIVED_SSS_SCT_SSS_TERM_LINK'
+			postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+			postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+			response = self.session.post(self.myAcademicsGraduateGradesURL, data = postData, allow_redirects = False)
+			self.currentResponse = response
+			if response.status_code == requests.codes.ok:
+				print "POST grades term link OK"
+				self.currentPOSTpage = "MY_ACADEMICS_GRADES_TERM_LINK"
+				return True
+			else:
+				print "POST grades term link Failed"
+				return False
+
+
 	def gotoMyAcademics_unofficialTranscript(self):
 		''' Go to my Unofficial Transcript
 			@Param
@@ -143,7 +192,7 @@ class MyAcademicQuestSession(BasicQuestSession):
 		return False
 
 def main():
-	myBasicQuest = BasicQuestSession("", "")# "userid", "password"
+	myBasicQuest = BasicQuestSession("h344zhan", "Zhh358279765099")# "userid", "password"
 	myBasicQuest.login()
 
 	myAcamedicsQuestSession = MyAcademicQuestSession("", "", myBasicQuest)
@@ -155,6 +204,11 @@ def main():
 	myAcamedicsQuestSession.gotoMyAcademics_grades()
 	print QuestParser.API_myAcademics_gradesResponse(myAcamedicsQuestSession)
 
+	myAcamedicsQuestSession.postMyAcademics_grades(0)
+
+	print QuestParser.Parse_myAcademics_gradesTerm(myAcamedicsQuestSession.currentResponse.content)
+	myAcamedicsQuestSession.postMyAcademics_grades(1)
+
 	# myAcamedicsQuestSession.gotoMyAcademics_unofficialTranscript()
 	# myAcamedicsQuestSession.gotoMyAcademics_advisors()
 	# myAcamedicsQuestSession.gotoMyAcademics_graduateOfferLetters()
@@ -162,92 +216,6 @@ def main():
 if __name__ == '__main__':
     main()
 		
-# # classSearchURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
-# # postClassSearch = {
-# # 	'ICAJAX': '1',
-# # 	'ICNAVTYPEDROPDOWN': '0',
-# # 	'ICType': 'Panel',
-# # 	'ICElementNum': '0',
-# # 	'ICStateNum': str(currentStateNum),
-# # 	'ICAction': 'UW_DERIVED_SR_SSR_PB_CLASS_SRCH',
-# # 	'ICXPos': '0',
-# # 	'ICYPos': '0',
-# # 	'ResponsetoDiffFrame': '-1',
-# # 	'TargetFrameName': 'None',
-# # 	'FacetPath': 'None',
-# # 	'ICFocus': '',
-# # 	'ICSaveWarningFilter': '0',
-# # 	'ICChanged': '-1',
-# # 	'ICResubmit': '0',
-# # 	'ICSID': icsid,
-# # 	'ICActionPrompt': 'false',
-# # 	'ICFind': '',
-# # 	'ICAddCount': '',
-# # 	'ICAPPCLSDATA': '',
-# # 	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$': '9999',
-# # 	'CLASS_SRCH_WRK2_INSTITUTION$31$': 'UWATR',
-# # 	'CLASS_SRCH_WRK2_STRM$35$': '1145',
-# # 	'CLASS_SRCH_WRK2_SUBJECT$7$': 'CS',
-# # 	'CLASS_SRCH_WRK2_CATALOG_NBR$8$': '350',
-# # 	'CLASS_SRCH_WRK2_SSR_EXACT_MATCH1': 'E',
-# # 	'CLASS_SRCH_WRK2_ACAD_CAREER': 'UG',
-# # 	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY$chk': 'Y',
-# # 	'CLASS_SRCH_WRK2_SSR_OPEN_ONLY': 'Y',
-# # 	'DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$': '9999',
-# # }
-
-# # classSearchResponse = s.post(classSearchURL, data = postClassSearch)
-
-# # print classSearchResponse.content
-
-# basicData = {
-# 	'ICAJAX':'1',
-# 	'ICNAVTYPEDROPDOWN':'0',
-# 	'ICType':'Panel',
-# 	'ICElementNum':'0',
-# 	'ICStateNum': '0', # Need to change
-# 	'ICAction':'', # Need to change
-# 	'ICXPos':'0',
-# 	'ICYPos':'0',
-# 	'ResponsetoDiffFrame':'-1',
-# 	'TargetFrameName':'None',
-# 	'FacetPath':'None',
-# 	'ICFocus':'',
-# 	'ICSaveWarningFilter':'0',
-# 	'ICChanged':'-1',
-# 	'ICResubmit':'0',
-# 	'ICSID': icsid, # Need to change
-# 	'ICActionPrompt':'false',
-# 	'ICFind':'',
-# 	'ICAddCount':'',
-# 	'ICAPPCLSDATA':'',
-# 	# More keys maybe added
-# }
-
-# print "POST: My Academics Page"
-
-# myAcademicsURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
-# postMyAcademics = basicData
-# postMyAcademics['ICStateNum'] = str(currentStateNum)
-# postMyAcademics['ICAction'] = 'DERIVED_SSS_SCR_SSS_LINK_ANCHOR1'
-
-# s.post(myAcademicsURL, data = postMyAcademics)
-
-# print "GET: My Graduate Program Page"
-# myAcademicsResponse = s.get("https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_MYPROG_GRD.GBL?Page=UW_SS_MYPROG_GRD&Action=U&ExactKeys=Y&TargetFrameName=None")
-
-# # print myAcademicResponse.content
-
-# currentStateNum = getStateNum(myAcademicsResponse.content)
-# print "currentStateNum: " + str(currentStateNum) + '\n'
-
-#####################
-
-# print "GET: Grades Page"
-# gradesResponse = s.get("https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL?Page=SSR_SSENRL_GRADE&Action=A")
-# currentStateNum = getStateNum(gradesResponse.content)
-# print "currentStateNum: " + str(currentStateNum) + '\n'
-
 
 # gradesURL = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSR_SSENRL_GRADE.GBL"
 # postGrades = basicData

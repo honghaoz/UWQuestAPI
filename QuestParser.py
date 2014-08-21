@@ -141,6 +141,31 @@ def Parse_myAcademics_grades(html):
 	del(resultList[0])
 	return resultList
 
+def Parse_myAcademics_gradesTerm(html):
+	s = re.findall("<.*?id=['\"]DERIVED_REGFRM1_SSR_STDNTKEY_DESCR\$5\$['\"].*?>.*?</.*?>", html)[0]
+	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", s).split("|"))
+	result = {}
+	result["term"] = termList[0]
+	result["career"] = termList[1]
+	result["institution"] = termList[2]
+
+	gradesTable = re.findall("<table.*?id=['\"]TERM_CLASSES\$scroll\$0['\"].*?>.*?</table>", html, re.DOTALL)[0]
+	# FIXME
+	print len(gradesTable)
+	return map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", gradesTable[-1]).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+
+	return gradesTable
+	# id='TERM_CLASSES$scroll$0'
+
+
+	# soup = BeautifulSoup(html)	
+	# return soup.prettify()
+	# table = soup.find(id="win0divPSHIDDENFIELDS")
+	return table
+	# resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	# del(resultList[0])
+	# return resultList
+
 
 ################# API ################
 

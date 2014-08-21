@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 import re
 import copy
 
+import QuestParser
+import PersonalInformation
+
 ################ Helper Functions ################
 
 # Get ICSID from html code, ICSID is used for POST method
@@ -21,7 +24,7 @@ def getStateNum(html):
 	return int(s)
 
 # TODO: timeout handling, network error handling
-class BasicQuestSession:
+class QuestSession(object):
 	session = Session()
 	isLogin = False
 	userid = ""
@@ -30,7 +33,7 @@ class BasicQuestSession:
 	currentStateNum = 0
 	isUndergraduate = True
 	# currentResponse
-	currentError = ""
+	currentError = "" # Error message
 
 	currentPOSTpage = "" # Log which page we are at
 
@@ -64,32 +67,15 @@ class BasicQuestSession:
 	studentCenterURL_SA = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
 	studentCenterURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 
-	# Initialization
-	def __init__(self, userid, password, anotherQuestSession = None):
-	    """ Initialization
-	    	There two ways of Initialization:
-	    		1: Initilize a new one session, only provide userid and password
-	    		2: Initilize with another quest session, provide another quest session object
-	    			In this way, anotherQuestSession must be a valid quest session.
-	    			Userid and password will be ignored.
-	    """
-	    if not anotherQuestSession == None:
-	    	print "Initilize with anotherQuestSession"
-	    	self.session = anotherQuestSession.session
-	    	self.isLogin = anotherQuestSession.isLogin
-	    	self.userid = anotherQuestSession.userid
-	    	self.password = anotherQuestSession.password
-	    	self.icsid = anotherQuestSession.icsid
-	    	self.currentStateNum = anotherQuestSession.currentStateNum
-	    	self.isUndergraduate = anotherQuestSession.isUndergraduate
-	    	if not self.isLogin:
-	    		self.login()
-	    else:
-	    	print "Initilize new one"
-	    	self.session = Session()
-	    	self.isLogin = False
-	    	self.userid = userid
-	    	self.password = password
+ 	def __init__(self, userid, password):
+ 		""" Initialization
+ 			Initilize a new one session, only provide userid and password
+ 		"""
+ 		print "Initilize new one"
+ 		self.session = Session()
+ 		self.isLogin = False
+ 		self.userid = userid
+ 		self.password = password
 
 	# Login
 	# Side effects: isLogin is changed
@@ -210,9 +196,58 @@ class BasicQuestSession:
 		print "GET Student Center Failed"
 		return False
 
+	# Personal Information
+	def postPersonalInformation(self):
+		PersonalInformation.postPersonalInformation(self)
+
+	def gotoPersonalInformation_address(self):
+		PersonalInformation.gotoPersonalInformation_address(self)
+
+	def gotoPersonalInformation_name(self):
+		PersonalInformation.gotoPersonalInformation_name(self)
+
+	def gotoPersonalInformation_phoneNumbers(self):
+		PersonalInformation.gotoPersonalInformation_phoneNumbers(self)
+
+	def gotoPersonalInformation_email(self):
+		PersonalInformation.gotoPersonalInformation_email(self)
+	
+	def gotoPersonalInformation_emgencyContacts(self):
+		PersonalInformation.gotoPersonalInformation_emgencyContacts(self)
+
+	def gotoPersonalInformation_demographicInfo(self):
+		PersonalInformation.gotoPersonalInformation_demographicInfo(self)
+
+	def gotoPersonalInformation_citizenship(self):	
+		PersonalInformation.gotoPersonalInformation_citizenship(self)
+
 def main():
-	myQuest = BasicQuestSession("", "")# "userid", "password"
+	myQuest = QuestSession("", "") # "userid", "password"
 	myQuest.login()
+
+	# Personal Information
+	myQuest.postPersonalInformation()
+
+	myQuest.gotoPersonalInformation_address()
+	print QuestParser.API_personalInfo_addressResponse(myQuest)
+
+	myQuest.gotoPersonalInformation_name()
+	print QuestParser.API_personalInfo_nameResponse(myQuest)
+
+	myQuest.gotoPersonalInformation_phoneNumbers()
+	print QuestParser.API_personalInfo_phoneResponse(myQuest)
+
+	myQuest.gotoPersonalInformation_email()
+	print QuestParser.API_personalInfo_emailResponse(myQuest)
+
+	myQuest.gotoPersonalInformation_emgencyContacts()
+	print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
+	
+	myQuest.gotoPersonalInformation_demographicInfo()
+	print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
+	
+	myQuest.gotoPersonalInformation_citizenship()
+	print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
 
 if __name__ == '__main__':
     main()
