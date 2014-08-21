@@ -195,7 +195,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     campus       | campus
     approved_load | approved load
 
-- /my_academics/grades
+- /my_academics/grades_index
   - method: POST/GET
   - Parameters
 
@@ -211,3 +211,24 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     term       | which term
     career | undergraduate or graduate
     institution | institution
+    
+- /my_academics/grades_term
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    term_index	| index number which is responsed from /my_academics/grades_index
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    term       | which term
+    career | undergraduate or graduate
+    class | class category and number, e.g. CS 136
+    description | class name
+    units | units
+    grade | your grades
+    grade_points | your grade points

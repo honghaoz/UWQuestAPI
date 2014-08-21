@@ -189,7 +189,7 @@ def gotoMyAcademics_graduateOfferLetters(self):
 	return False
 
 def main():
-	myQuest = QuestClass.QuestSession("", "") # "userid", "password"
+	myQuest = QuestClass.QuestSession("h344zhan", "Zhh358279765099") # "userid", "password"
 	myQuest.login()
 
 	myQuest.postMyAcademics()
@@ -200,7 +200,7 @@ def main():
 	myQuest.gotoMyAcademics_grades()
 	print QuestParser.API_myAcademics_gradesResponse(myQuest)
 
-	myQuest.postMyAcademics_grades_termIndex(0)
+	myQuest.postMyAcademics_grades_termIndex(1)
 
 	print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 	# myQuest.postMyAcademics_grades_termIndex(1)
