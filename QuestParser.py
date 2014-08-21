@@ -205,6 +205,37 @@ def Parse_myAcademics_gradesTerm(html):
 	result["data"] = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(gradesTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 	return result
 
+def Parse_myAcademics_unofficialTranscript(html):
+	soup = BeautifulSoup(html)
+	# return soup.prettify()
+	soup.find(id="GO$span").clear()
+	table = soup.find(id="ACE_TRANSCRIPT_TYPE_")
+	if table is None:
+		return {}
+	keys = table.find_all("label")
+	values = table.find_all("select")
+	if not len(keys) == len(values):
+		return {}
+	keys = map(lambda x: re.sub("\<.*?\>", "", str(x)).replace("\xc2\xa0", "").strip().replace(" ", "_").lower(), keys)
+	# print keys
+	responseDict = {}
+	count = len(keys)
+	for i in xrange(0, count):
+		options = values[i].find_all("option")
+		optionsList = []
+		for eachOption in options:
+			dic = {}
+			dic["value"] = eachOption["value"]
+			if len(dic["value"]) == 0:
+				continue
+			dic["description"] = eachOption.text.strip()
+			optionsList.append(dic)
+		responseDict[keys[i]] = optionsList
+	# print responseDict
+	return responseDict
+
+
+
 ################# API ################
 
 # Passed in meta and data dictionary and return full response dictionary
@@ -509,7 +540,7 @@ def API_myAcademics_gradesResponse(questSession):
 			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
 			newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
 			newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
-			newDict["index"] = i
+			newDict["term_index"] = i
 			data.append(newDict)
 	else :
 		meta["status"] = "failure"
@@ -550,4 +581,28 @@ def API_myAcademics_gradesTermResponse(questSession):
 		meta["status"] = "failure"
 	else :
 		meta["status"] = "success"
+	return getFullResponseDictionary(meta, data)
+
+def API_myAcademics_unofficialTranscriptResponse(questSession):
+	resultDict = Parse_myAcademics_unofficialTranscript(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	if not len(resultDict) < 2:
+		meta["status"] = "success"
+		data = resultDict
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no unofficial transcript options information"
+	return getFullResponseDictionary(meta, data)
+
+def API_myAcademics_unofficialTranscriptResultResponse(questSession):
+	soup = BeautifulSoup(questSession.currentResult)
+	# print soup.prettify()
+	meta = getEmptyMetaDict()
+	data = ""
+	if soup.find(id="PrintTranscript"):
+		meta["status"] = "success"
+		data = soup.find(id="PrintTranscript")
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "get transcript time out"
 	return getFullResponseDictionary(meta, data)

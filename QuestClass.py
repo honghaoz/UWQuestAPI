@@ -38,6 +38,7 @@ class QuestSession(object):
 	currentError = "" # Error message
 
 	currentPOSTpage = "" # Log which page we are at
+	# currentResult
 
 	# Post parameters
 	basicPostData = {
@@ -241,6 +242,12 @@ class QuestSession(object):
 
 	def gotoMyAcademics_unofficialTranscript(self):
 		return MyAcademics.gotoMyAcademics_unofficialTranscript(self)
+
+	def postMyAcademics_unofficialTranscript_option(self, academic_option, type_option):
+		return MyAcademics.postMyAcademics_unofficialTranscript_option(self, academic_option, type_option)
+
+	def postMyAcademics_unofficialTranscript_optionLink(self):
+		return MyAcademics.postMyAcademics_unofficialTranscript_optionLink(self)
 
 	def gotoMyAcademics_advisors(self):
 		return MyAcademics.gotoMyAcademics_advisors(self)

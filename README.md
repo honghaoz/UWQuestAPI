@@ -195,7 +195,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     campus       | campus
     approved_load | approved load
 
-- /my_academics/grades_index
+- /my_academics/grades_options
   - method: POST/GET
   - Parameters
 
@@ -207,12 +207,12 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
      Field        | Description
     -----------   | -------------
-    index  | int, the index for this term, used as parameters for get grades
+    term_index  | int, the index for this term, used as parameters for get grades
     term       | which term
     career | undergraduate or graduate
     institution | institution
 
-- /my_academics/grades_term
+- /my_academics/grades
   - method: POST/GET
   - Parameters
 
@@ -232,3 +232,36 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     units | units
     grade | your grades
     grade_points | your grade points
+    
+- /my_academics/unofficial_transcript_options
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    academic_institution | institution issues transcript
+    report_type | type
+    value | option values, e.g. 'UNGRD', 'UNUG', 'UWATR'
+    description | description for option value
+    
+- /my_academics/unofficial_transcript
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    academic_institution | value get from /my_academics/unofficial_transcript_options
+    report_type | value get from /my_academics/unofficial_transcript_options
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    data | html source code for transcript
