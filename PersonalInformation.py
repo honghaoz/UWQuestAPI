@@ -169,7 +169,7 @@ def main():
 	pass
 	
 	# Create a basic quest session
-	# myBasicQuest = BasicQuestSession("h344zhan", "Zhh358279765099")# "userid", "password"
+	# myBasicQuest = BasicQuestSession("", "")# "userid", "password"
 	# myBasicQuest.login()
 
 	# myPersonalInfoQuestSesson = PersonalInformationQuestSession("", "", myBasicQuest)
