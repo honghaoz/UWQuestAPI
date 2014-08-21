@@ -198,28 +198,28 @@ class QuestSession(object):
 
 	# Personal Information
 	def postPersonalInformation(self):
-		PersonalInformation.postPersonalInformation(self)
+		return PersonalInformation.postPersonalInformation(self)
 
 	def gotoPersonalInformation_address(self):
-		PersonalInformation.gotoPersonalInformation_address(self)
+		return PersonalInformation.gotoPersonalInformation_address(self)
 
 	def gotoPersonalInformation_name(self):
-		PersonalInformation.gotoPersonalInformation_name(self)
+		return PersonalInformation.gotoPersonalInformation_name(self)
 
 	def gotoPersonalInformation_phoneNumbers(self):
-		PersonalInformation.gotoPersonalInformation_phoneNumbers(self)
+		return PersonalInformation.gotoPersonalInformation_phoneNumbers(self)
 
 	def gotoPersonalInformation_email(self):
-		PersonalInformation.gotoPersonalInformation_email(self)
+		return PersonalInformation.gotoPersonalInformation_email(self)
 	
 	def gotoPersonalInformation_emgencyContacts(self):
-		PersonalInformation.gotoPersonalInformation_emgencyContacts(self)
+		return PersonalInformation.gotoPersonalInformation_emgencyContacts(self)
 
 	def gotoPersonalInformation_demographicInfo(self):
-		PersonalInformation.gotoPersonalInformation_demographicInfo(self)
+		return PersonalInformation.gotoPersonalInformation_demographicInfo(self)
 
 	def gotoPersonalInformation_citizenship(self):	
-		PersonalInformation.gotoPersonalInformation_citizenship(self)
+		return PersonalInformation.gotoPersonalInformation_citizenship(self)
 
 def main():
 	myQuest = QuestSession("", "") # "userid", "password"
