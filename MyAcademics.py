@@ -202,7 +202,7 @@ def main():
 
 	myQuest.postMyAcademics_grades_termIndex(0)
 
-	print QuestParser.Parse_myAcademics_gradesTerm(myQuest.currentResponse.content)
+	print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 	# myQuest.postMyAcademics_grades_termIndex(1)
 
 	# myQuest.gotoMyAcademics_unofficialTranscript()

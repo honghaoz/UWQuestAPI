@@ -184,30 +184,26 @@ def Parse_myAcademics_grades(html):
 		return []
 
 def Parse_myAcademics_gradesTerm(html):
-	s = re.findall("<.*?id=['\"]DERIVED_REGFRM1_SSR_STDNTKEY_DESCR\$5\$['\"].*?>.*?</.*?>", html)[0]
-	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", s).split("|"))
+	soup = BeautifulSoup(html.replace("<![CDATA[", "<").replace("]]>", ">"))
+	# return soup.prettify()
+	termList = soup.find(id="DERIVED_REGFRM1_SSR_STDNTKEY_DESCR$5$")
+	result = {"term": "", "career": "", "institution": "", "data": []}
+	if termList is None:
+		return result
+	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
+	if len(termList) < 3:
+		return result
 	result = {}
 	result["term"] = termList[0]
 	result["career"] = termList[1]
 	result["institution"] = termList[2]
+	# print result
 
-	gradesTable = re.findall("<table.*?id=['\"]TERM_CLASSES\$scroll\$0['\"].*?>.*?</table>", html, re.DOTALL)[0]
-	# FIXME
-	print len(gradesTable)
-	return map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", gradesTable[-1]).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
-
-	return gradesTable
-	# id='TERM_CLASSES$scroll$0'
-
-
-	# soup = BeautifulSoup(html)	
-	# return soup.prettify()
-	# table = soup.find(id="win0divPSHIDDENFIELDS")
-	return table
-	# resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
-	# del(resultList[0])
-	# return resultList
-
+	gradesTable = soup.find(id="TERM_CLASSES$scroll$0")
+	if gradesTable is None:
+		return result
+	result["data"] = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(gradesTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+	return result
 
 ################# API ################
 
@@ -518,4 +514,40 @@ def API_myAcademics_gradesResponse(questSession):
 	else :
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no grades information"
+	return getFullResponseDictionary(meta, data)
+
+def API_myAcademics_gradesTermResponse(questSession):
+	resultDict = Parse_myAcademics_gradesTerm(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+
+	keys = ["term", "career", "institution"]
+	for key in keys:
+		result = resultDict[key]
+		if len(result) == 0:
+			meta["message"] = meta["message"] + ", get " + key + " error"
+		else:
+			data[key] = result
+	keysNumber = 5
+	key = "data"
+	resultList = resultDict[key]
+	if len(resultList) < keysNumber:
+		meta["message"] = meta["message"] + ", get grades data error"
+	else :
+		count = len(resultList) / keysNumber - 1
+		gradesData = []
+		for i in xrange(0, count):
+			newDict = {}
+			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
+			newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
+			newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
+			newDict[resultList[3].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 3]
+			newDict[resultList[4].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 4]
+			gradesData.append(newDict)
+		data[key] = gradesData
+
+	if not len(meta["message"]) == 0:
+		meta["status"] = "failure"
+	else :
+		meta["status"] = "success"
 	return getFullResponseDictionary(meta, data)
