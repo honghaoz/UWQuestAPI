@@ -25,12 +25,6 @@ def getStateNum(html):
 	s = s.replace("value=","").replace('"',"").replace("'","")
 	return int(s)
 
-def getJumpURL(html):
-	s = re.findall("window.location.href *= *['\"]https://quest\.pecs\.uwaterloo\.ca.*?[\"']",html)[0]; 
-	s = re.findall("['\"]https://quest\.pecs\.uwaterloo\.ca.*?[\"']", s)[0]
-	s = s.replace('"',"").replace("'","")
-	return s
-
 def escapeChar(s):
 	return s.replace("+","%2B").replace(" ","%20").replace("=","%3D").replace("/","%2F")
 
