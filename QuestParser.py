@@ -208,6 +208,9 @@ def Parse_myAcademics_gradesTerm(html):
 def Parse_myAcademics_unofficialTranscript(html):
 	soup = BeautifulSoup(html)
 	# return soup.prettify()
+	result = soup.find(id="GO$span")
+	if result == None:
+		return {}
 	soup.find(id="GO$span").clear()
 	table = soup.find(id="ACE_TRANSCRIPT_TYPE_")
 	if table is None:
@@ -234,6 +237,19 @@ def Parse_myAcademics_unofficialTranscript(html):
 	# print responseDict
 	return responseDict
 
+def Parse_myAcademics_myAdvisors(html):
+	soup = BeautifulSoup(html)
+	# return soup.prettify()
+	programTable = soup.find(id="ACE_DERIVED_SSSADVR_GROUPBOX2$0")
+	if programTable == None:
+		return []
+	programList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(programTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	advisorTable = soup.find(id="ADVISOR_LIST$scroll$0")
+	if advisorTable == None:
+		return []
+	advisorList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(advisorTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+	programList.extend(advisorList)
+	return programList
 
 
 ################# API ################
@@ -586,6 +602,7 @@ def API_myAcademics_gradesTermResponse(questSession):
 def API_myAcademics_unofficialTranscriptResponse(questSession):
 	resultDict = Parse_myAcademics_unofficialTranscript(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
+	data = {}
 	if not len(resultDict) < 2:
 		meta["status"] = "success"
 		data = resultDict
@@ -595,7 +612,14 @@ def API_myAcademics_unofficialTranscriptResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_myAcademics_unofficialTranscriptResultResponse(questSession):
-	soup = BeautifulSoup(questSession.currentResult)
+	try:
+		soup = BeautifulSoup(questSession.currentResult)
+	except:
+		meta = getEmptyMetaDict()
+		data = ""
+		meta["status"] = "failure"
+		meta["message"] = "get transcript time out"
+		return getFullResponseDictionary(meta, data)
 	# print soup.prettify()
 	meta = getEmptyMetaDict()
 	data = ""
@@ -605,4 +629,18 @@ def API_myAcademics_unofficialTranscriptResultResponse(questSession):
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "get transcript time out"
+	return getFullResponseDictionary(meta, data)
+
+def API_myAcademics_myAdvisorResponse(questSession):
+	resultList = Parse_myAcademics_myAdvisors(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	if not len(resultList) < 5:
+		meta["status"] = "success"
+		data[resultList[0].replace(" ", "_").lower()] = resultList[1]
+		data[resultList[2].replace(" ", "_").lower()] = resultList[3]
+		data[resultList[4].replace(" ", "_").lower()] = resultList[5:]
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no advisors information"
 	return getFullResponseDictionary(meta, data)

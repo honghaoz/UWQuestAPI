@@ -265,3 +265,20 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
      Field        | Description
     -----------   | -------------
     data | html source code for transcript
+    
+- /my_academics/my_advisors
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    academic_program | 
+    (program plan name) | e.g. master_of_engineering
+    advisor_name | a list of advisors' name
+    

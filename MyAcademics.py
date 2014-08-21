@@ -325,7 +325,9 @@ def main():
 	myQuest.postMyAcademics_unofficialTranscript_option('UWATR', 'UNGRD')
 	print QuestParser.API_myAcademics_unofficialTranscriptResultResponse(myQuest)
 
-	# myQuest.gotoMyAcademics_advisors()
+	myQuest.gotoMyAcademics_advisors()
+	print QuestParser.API_myAcademics_myAdvisorResponse(myQuest)
+	
 	# myQuest.gotoMyAcademics_graduateOfferLetters()
 
 if __name__ == '__main__':
