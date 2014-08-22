@@ -106,7 +106,7 @@ def Parse_personalInfo_emergencyContact(html):
 	table = soup.find(id="SCC_EMERG_CNT_H$scroll$0")
 	if table is None:
 		isValid = soup.find(id="DERIVED_CCSRVC1_SS_TRANSACT_TITLE")
-		if (not isValid is None) and isValid[0].text.strip() is "Emergency Contacts":
+		if (not isValid is None) and isValid.text.strip() == "Emergency Contacts":
 			return ["No current emergency contact information found."]
 		else:
 			return []
@@ -125,7 +125,7 @@ def Parse_personalInfo_emergencyContact(html):
 
 def Parse_personalInfo_demographicInfo(html):
 	soup = BeautifulSoup(html)	
-	# return soup.prettify()
+	# print soup.prettify()
 	demographicTable = soup.find(id="ACE_$ICField$45$")
 	demographicDict = {"demographic_information": [], "national_identification_number": [], "citizenship_information": [], "visa_or_permit_data": []}
 	if demographicTable is None:
@@ -151,9 +151,14 @@ def Parse_personalInfo_demographicInfo(html):
 
 def Parse_personalInfo_citizenship(html):
 	soup = BeautifulSoup(html)	
-	# return soup.prettify()
+	# print soup.prettify()
 	citizenshipTable = soup.find(id="VISA_PMT_SUPPRT$scroll$0")
 	if citizenshipTable is None:
+		isValid = soup.find(id="win0div$ICField$1$")
+		if (not isValid is None) and isValid.text.strip() == 'Citizenship/Immigration Documents':
+			extraText = soup.find(id="win0divUW_DERIVED_DOCS_PAGETEXT1")
+			if not extraText is None:
+				return [extraText.text.strip()]
 		return []
 	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
 	resultList.insert(0, "visa_type")
@@ -515,6 +520,7 @@ def API_personalInfo_emergencyContactResponse(questSession):
 	data = []
 	if len(contactList) == 1:
 		meta["status"] = "success"
+		meta["message"] = "No current emergency contact information found."
 	elif not len(contactList) < keysNumber:
 		meta["status"] = "success"
 		contactCount = len(contactList) / keysNumber - 1
@@ -615,7 +621,10 @@ def API_personalInfo_citizenshipResponse(questSession):
 	citizenList = Parse_personalInfo_citizenship(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
 	data = []
-	if not len(citizenList) < keysNumber:
+	if len(citizenList) == 1:
+		meta["status"] = "success"
+		meta["message"] = citizenList[0]
+	elif not len(citizenList) < keysNumber:
 		meta["status"] = "success"
 		citizenCount = len(citizenList) / keysNumber - 1
 		for i in xrange(0, citizenCount):
