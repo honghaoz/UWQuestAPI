@@ -253,8 +253,34 @@ def Parse_myAcademics_myAdvisors(html):
 
 def Parse_enroll_myClassSchedule(html):
 	soup = BeautifulSoup(html)
-	# return soup.prettify().encode('utf8')
+	choiceTable = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
+	if choiceTable is None: # There is only one chice and schedule list is returned directly
+		termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
+		if termList is None:
+			return []
+		termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
+		if len(termList) < 3:
+			return []
+		result = ["Term", "Career", "Institution", termList[0], termList[1], termList[2]]
+		return result
+	else:
+		choiceList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(choiceTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		if len(choiceList) < 3:
+			return []
+		try:
+			del(choiceList[0])
+		except:
+			return []
+		return choiceList
 
+
+def Parse_enroll_myClassScheduleTerm(html):
+	soup = BeautifulSoup(html.replace("<![CDATA[", "<").replace("]]>", ">"))
+	# print soup.prettify().encode('utf8')
+	try:
+		soup.find(id="DERIVED_SSS_SCT_SSS_TERM_LINK").clear()
+	except:
+		pass
 	termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
 	result = {"term": "", "career": "", "institution": "", "data": []}
 	if termList is None:
@@ -306,7 +332,7 @@ def Parse_enroll_myClassSchedule(html):
 		newClass["components"] = []
 		# process class components
 		keysNumber = 7
-		classComponentsList = map(lambda x: unescape(x.replace("--", "").strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(classComponents)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		classComponentsList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(classComponents)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 		# print classComponentsList
 		if not len(classComponentsList) % keysNumber is 0:
 			return (result, "class components count error")
@@ -314,6 +340,10 @@ def Parse_enroll_myClassSchedule(html):
 		for i in xrange(0, componentsCount):
 			newDict = {}
 			for j in xrange(0, keysNumber):
+				# Replace MC-- 2035 to MC 2035
+				if classComponentsList[j].replace(" ", "_").lower() == "room":
+					classComponentsList[(i + 1) * keysNumber + j] = classComponentsList[(i + 1) * keysNumber + j].replace("-", "")
+
 				newDict[classComponentsList[j].replace(" ", "_").lower()] = classComponentsList[(i + 1) * keysNumber + j] if (not classComponentsList[(i + 1) * keysNumber + j] is '-') else classComponentsList[(i + 1 - 1) * keysNumber + j]
 			newClass["components"].append(newDict)
 		result["classes"].append(newClass)
@@ -719,7 +749,28 @@ def API_myAcademics_myAdvisorResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_enroll_myClassScheduleResponse(questSession):
-	result = Parse_enroll_myClassSchedule(questSession.currentResponse.content)
+	resultList = Parse_enroll_myClassSchedule(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	keysNumber = 3
+	if not len(resultList) < keysNumber:
+		meta["status"] = "success"
+		count = len(resultList) / keysNumber - 1
+		for i in xrange(0, count):
+			newDict = {}
+			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
+			newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
+			newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
+			newDict["term_index"] = i
+			data.append(newDict)
+	else :
+		meta["status"] = "failure"
+		meta["message"] = "response page contains no schedule information"
+	return getFullResponseDictionary(meta, data)
+
+
+def API_enroll_myClassScheduleTermResponse(questSession):
+	result = Parse_enroll_myClassScheduleTerm(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
 	data = {}
 	if len(result[1]) == 0:

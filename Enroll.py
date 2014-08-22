@@ -50,6 +50,37 @@ def gotoEnroll_myClassSchedule(questSession):
 	print "GET My Class Schedule Page Failed"
 	return False
 
+def postEnroll_myClassSchedule_termIndex(questSession, termIndex):
+	''' POST to get schedule for one term
+		@Param term index return from gotoEnroll_myClassSchedule
+		@Return True/False
+	'''
+	# If not in the right post postition, change to right post position
+	if not (questSession.currentPOSTpage is "ENROLL_HOME"):
+		if not gotoEnroll_myClassSchedule(questSession): #questSession.postMyAcademics_grades_termLink():
+			print "POST schedule with index: %d Failed" % termIndex
+			return False
+
+	# Start to post
+	postData = questSession.getBasicParameters()
+	postData['ICAction'] = 'DERIVED_SSS_SCT_SSR_PB_GO'
+	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+	postData['SSR_DUMMY_RECV1$sels$0'] = termIndex
+	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+	# print postGradesData["ICStateNum"]
+
+	response = questSession.session.post(enroll_myClassScheduleURL_HRMS, data = postData, allow_redirects = False)
+	questSession.currentResponse = response
+	if response.status_code == requests.codes.ok:
+		print "POST schedule with index: %d OK" % termIndex
+		questSession.currentStateNum += 1
+		questSession.currentPOSTpage = "ENROLL_HOME_ONE_TERM"
+		# questSession.gotoMyAcademics_myProgram()
+		return True
+	else:
+		print "POST schedule with index: %d Failed" % termIndex
+		return False
+
 # def gotoMyAcademics_grades(questSession):
 # 	''' Go to my grades
 # 		@Param
@@ -282,6 +313,9 @@ def main():
 
 	myQuest.gotoEnroll_myClassSchedule()
 	print QuestParser.API_enroll_myClassScheduleResponse(myQuest)
+
+	myQuest.postEnroll_myClassSchedule_termIndex(0)
+	print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
 
 if __name__ == '__main__':
     main()

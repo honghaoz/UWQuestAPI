@@ -195,15 +195,19 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     campus       | campus
     approved_load | approved load
 
-- /my_academics/grades_options
-  - method: POST/GET
-  - Parameters
+- /my_academics/grades
+  - There are two kinds of response. 
+  	- If only sid is provided, response will be terms that can be queried
+  	- If sid and term index are provided, response will be grades for queried term
+  
+  - 1) method: POST/GET
+  - 1) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
     
-  - Response
+  - 1) Response
 
      Field        | Description
     -----------   | -------------
@@ -212,16 +216,16 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     career | undergraduate or graduate
     institution | institution
 
-- /my_academics/grades
-  - method: POST/GET
-  - Parameters
+
+  - 2) method: POST/GET
+  - 2) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
-    term_index	| index number which is responsed from /my_academics/grades_index
+    term_index	| index number which is responsed from /my_academics/grades
     
-  - Response
+  - 2) Response
 
      Field        | Description
     -----------   | -------------
@@ -233,15 +237,19 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     grade | your grades
     grade_points | your grade points
     
-- /my_academics/unofficial_transcript_options
-  - method: POST/GET
-  - Parameters
+- /my_academics/unofficial_transcript
+  - There are two kinds of response. 
+  	- If only sid is provided, response will be options that can be queried
+  	- If sid, academic_institution and report_type are provided, response will be unofficial transcript queried
+
+  - 1) method: POST/GET
+  - 1) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
     
-  - Response
+  - 1) Response
 
      Field        | Description
     -----------   | -------------
@@ -250,17 +258,17 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     value | option values, e.g. 'UNGRD', 'UNUG', 'UWATR'
     description | description for option value
     
-- /my_academics/unofficial_transcript
-  - method: POST/GET
-  - Parameters
+
+  - 2) method: POST/GET
+  - 2) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
-    academic_institution | value get from /my_academics/unofficial_transcript_options
-    report_type | value get from /my_academics/unofficial_transcript_options
+    academic_institution | value get from /my_academics/unofficial_transcript
+    report_type | value get from /my_academics/unofficial_transcript
     
-  - Response
+  - 2) Response
 
      Field        | Description
     -----------   | -------------
@@ -285,14 +293,37 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 ### Enroll
 
 - /enroll/my_class_schedule
-  - method: POST/GET
-  - Parameters
+  - There are two kinds of response. 
+  	- If only sid is provided, response will be terms that can be queried
+  	- If sid and term index are provided, response will be class schedule for queried term
+  	
+  - 1) method: POST/GET
+  - 1) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
     
-  - Response
+  - 1) Response
+
+     Field        | Description
+    -----------   | -------------
+    term_index  | int, the index for this term, used as parameters for get class schedule
+    term       | which term
+    career | undergraduate or graduate
+    institution | institution
+  	
+
+  - 2) method: POST/GET
+  - 2) Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    term_index	| index number which is responsed from /my_academics/my_class_schedule
+    
+    
+  - 2) Response
 
      Field        | Description
     -----------   | -------------
