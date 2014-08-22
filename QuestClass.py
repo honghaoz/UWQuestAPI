@@ -8,6 +8,7 @@ import copy
 import QuestParser
 import PersonalInformation
 import MyAcademics
+import Enroll
 
 ################ Helper Functions ################
 
@@ -252,8 +253,15 @@ class QuestSession(object):
 	def gotoMyAcademics_advisors(self):
 		return MyAcademics.gotoMyAcademics_advisors(self)
 
-	def gotoMyAcademics_graduateOfferLetters():
-		return MyAcademics.gotoMyAcademics_graduateOfferLetters(self)
+	# def gotoMyAcademics_graduateOfferLetters(self):
+	# 	return MyAcademics.gotoMyAcademics_graduateOfferLetters(self)
+
+	# Enroll
+	def postEnroll(self):
+		return Enroll.postEnroll(self)
+
+	def gotoEnroll_myClassSchedule(self):
+		return Enroll.gotoEnroll_myClassSchedule(self)
 
 def main():
 	myQuest = QuestSession("", "") # "userid", "password"

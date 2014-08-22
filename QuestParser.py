@@ -251,6 +251,79 @@ def Parse_myAcademics_myAdvisors(html):
 	programList.extend(advisorList)
 	return programList
 
+def Parse_enroll_myClassSchedule(html):
+	soup = BeautifulSoup(html)
+	# return soup.prettify().encode('utf8')
+
+	termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
+	result = {"term": "", "career": "", "institution": "", "data": []}
+	if termList is None:
+		return (result, "page error")
+	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
+	if len(termList) < 3:
+		return (result, "term string error")
+	result = {}
+	result["term"] = termList[0]
+	result["career"] = termList[1]
+	result["institution"] = termList[2]
+	result["classes"] = []
+
+	classTable = soup.find(id="ACE_STDNT_ENRL_SSV2$0")
+	classCount = len(re.findall("['\"]win0divDERIVED_REGFRM1_DESCR20\$[\d+]['\"]", str(classTable)))
+	# print classCount
+	for i in xrange(0, classCount):
+		classStatus = soup.find(id="SSR_DUMMY_RECVW$scroll$" + str(i)).extract()
+		classComponents = soup.find(id="CLASS_MTG_VW$scroll$" + str(i)).extract()
+		# Process class title
+		classTitle = soup.find(id="win0divDERIVED_REGFRM1_DESCR20$" + str(i))
+		classTitle = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(classTitle)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		if not len(classTitle) is 1:
+			return (result, "class title not found")
+		classTitle = classTitle[0]
+		classTitleList = map(lambda x: x.strip(), classTitle.split(" - "))
+		if not len(classTitleList) is 2:
+			return (result, "class title split error")
+		classSubject_categoryNum = classTitleList[0]
+		classSubject_categoryNumList = classSubject_categoryNum.split(" ")
+		if not len(classSubject_categoryNumList) is 2:
+			return (result, "class subject category split error")
+		classSubject = classSubject_categoryNumList[0]
+		classCategoryNum = classSubject_categoryNumList[1]
+		classDescription = classTitleList[1]
+		newClass = {}
+		newClass["subject"] = classSubject
+		newClass["category_number"] = classCategoryNum
+		newClass["description"] = classDescription
+
+		# Process class status
+		classStatusList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(classStatus)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		keysNumber = 4
+		if not len(classStatusList) is keysNumber * 2:
+			return (result, "class status split error")
+		for i in xrange(0, keysNumber):
+			newClass[classStatusList[i].replace(" ", "_").lower()] = classStatusList[keysNumber + i]
+		
+		newClass["components"] = []
+		# process class components
+		keysNumber = 7
+		classComponentsList = map(lambda x: unescape(x.replace("--", "").strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(classComponents)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print classComponentsList
+		if not len(classComponentsList) % keysNumber is 0:
+			return (result, "class components count error")
+		componentsCount = len(classComponentsList) / keysNumber - 1
+		for i in xrange(0, componentsCount):
+			newDict = {}
+			for j in xrange(0, keysNumber):
+				newDict[classComponentsList[j].replace(" ", "_").lower()] = classComponentsList[(i + 1) * keysNumber + j] if (not classComponentsList[(i + 1) * keysNumber + j] is '-') else classComponentsList[(i + 1 - 1) * keysNumber + j]
+			newClass["components"].append(newDict)
+		result["classes"].append(newClass)
+
+	return (result, "")
+
+	# id="win0divDERIVED_REGFRM1_DESCR20$1" # Class Div
+	# id="SSR_DUMMY_RECVW$scroll$1" # Class status table
+	# id="CLASS_MTG_VW$scroll$1" # Class number table
+
 
 ################# API ################
 
@@ -643,4 +716,16 @@ def API_myAcademics_myAdvisorResponse(questSession):
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no advisors information"
+	return getFullResponseDictionary(meta, data)
+
+def API_enroll_myClassScheduleResponse(questSession):
+	result = Parse_enroll_myClassSchedule(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	if len(result[1]) == 0:
+		meta["status"] = "success"
+		data = result[0]
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "response page class schedule invalid"
 	return getFullResponseDictionary(meta, data)
