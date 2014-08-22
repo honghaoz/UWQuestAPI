@@ -167,47 +167,70 @@ def Parse_personalInfo_citizenship(html):
 
 def Parse_myAcademics_myProgram(html):
 	soup = BeautifulSoup(html)	
-	# return soup.prettify()
+	# print soup.prettify()
 	table = soup.find(id="ACADPROGCURRENT$scroll$0")
 	if table is None:
 		return []
 	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	resultList.insert(0, "Current Program")
+	if resultList[2] == "CurrentSubPlanGroupbox":
+		resultList[2] = "Current Sub Plan"
 	return resultList
 
 def Parse_myAcademics_grades(html):
 	soup = BeautifulSoup(html)	
-	# return soup.prettify()
-	table = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
-	if table is None:
-		return []
-	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
-	try:
-		del(resultList[0])
-		return resultList
-	except:
-		return []
+	# print soup.prettify()
+	choiceTable = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
+	if choiceTable is None: # There is only one chice and grade list is returned directly
+		termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
+		if termList is None:
+			return []
+		termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
+		if len(termList) < 2:
+			return []
+		result = ["Term", "Career", "Institution", termList[0], "-", termList[1]]
+		# print result
+		return result
+	else:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(choiceTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		try:
+			del(resultList[0])
+			return resultList
+		except:
+			return []
 
 def Parse_myAcademics_gradesTerm(html):
 	soup = BeautifulSoup(html.replace("<![CDATA[", "<").replace("]]>", ">"))
-	# return soup.prettify()
+	# print soup.prettify()
 	termList = soup.find(id="DERIVED_REGFRM1_SSR_STDNTKEY_DESCR$5$")
-	result = {"term": "", "career": "", "institution": "", "data": []}
+	result = {"term": "", "career": "", "institution": "", "message": "", "grades": []}
 	if termList is None:
 		return result
 	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
-	if len(termList) < 3:
+	# print termList
+	if len(termList) < 2:
 		return result
-	result = {}
-	result["term"] = termList[0]
-	result["career"] = termList[1]
-	result["institution"] = termList[2]
-	# print result
+	# result = {}
+	if len(termList) == 3:
+		result["term"] = termList[0]
+		result["career"] = termList[1]
+		result["institution"] = termList[2]
+	elif len(termList) == 2:
+		result["term"] = termList[0]
+		result["career"] = '-'
+		result["institution"] = termList[1]
+	else:
+		return result
+
+	message = soup.find(id="DERIVED_SSS_GRD_SSR_MESSAGE")
+	# print message
+	if not message is None:
+		result["message"] = unescape(message.text.strip())
 
 	gradesTable = soup.find(id="TERM_CLASSES$scroll$0")
 	if gradesTable is None:
 		return result
-	result["data"] = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(gradesTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+	result["grades"] = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(gradesTable)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
 	return result
 
 def Parse_myAcademics_unofficialTranscript(html):
@@ -244,9 +267,12 @@ def Parse_myAcademics_unofficialTranscript(html):
 
 def Parse_myAcademics_myAdvisors(html):
 	soup = BeautifulSoup(html)
-	# return soup.prettify()
+	# print soup.prettify()
 	programTable = soup.find(id="ACE_DERIVED_SSSADVR_GROUPBOX2$0")
 	if programTable == None:
+		isValid = soup.find(id="ACE_DERIVED_SR_DESCR100")
+		if (not isValid is None) and (not isValid.text.strip().find("have not been assigned") == -1):
+			return [isValid.text.strip()]
 		return []
 	programList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(programTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	advisorTable = soup.find(id="ADVISOR_LIST$scroll$0")
@@ -657,12 +683,14 @@ def API_myAcademics_myProgramResponse(questSession):
 
 def API_myAcademics_gradesResponse(questSession):
 	resultList = Parse_myAcademics_grades(questSession.currentResponse.content)
+	# print resultList
 	meta = getEmptyMetaDict()
 	data = []
 	keysNumber = 3
 	if not len(resultList) < keysNumber:
 		meta["status"] = "success"
 		count = len(resultList) / keysNumber - 1
+		# print "count: " + str(count)
 		for i in xrange(0, count):
 			newDict = {}
 			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
@@ -680,7 +708,7 @@ def API_myAcademics_gradesTermResponse(questSession):
 	meta = getEmptyMetaDict()
 	data = {}
 
-	keys = ["term", "career", "institution"]
+	keys = ["term", "career", "institution", "message"]
 	for key in keys:
 		result = resultDict[key]
 		if len(result) == 0:
@@ -688,7 +716,7 @@ def API_myAcademics_gradesTermResponse(questSession):
 		else:
 			data[key] = result
 	keysNumber = 5
-	key = "data"
+	key = "grades"
 	resultList = resultDict[key]
 	if len(resultList) < keysNumber:
 		meta["message"] = meta["message"] + ", get grades data error"
@@ -747,7 +775,10 @@ def API_myAcademics_myAdvisorResponse(questSession):
 	resultList = Parse_myAcademics_myAdvisors(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
 	data = {}
-	if not len(resultList) < 5:
+	if len(resultList) == 1:
+		meta["status"] = "success"
+		meta["message"] = resultList[0]
+	elif not len(resultList) < 5:
 		meta["status"] = "success"
 		data[resultList[0].replace(" ", "_").lower()] = resultList[1]
 		data[resultList[2].replace(" ", "_").lower()] = resultList[3]

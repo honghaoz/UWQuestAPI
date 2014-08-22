@@ -192,6 +192,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
      Field        | Description
     -----------   | -------------
     current_program  | current program
+    current_sub_plan | sub plan
     campus       | campus
     approved_load | approved load
 
@@ -231,6 +232,8 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     -----------   | -------------
     term       | which term
     career | undergraduate or graduate
+    message | message like "Grades for the term will be available on Dec 20, 2014."
+    institution | institution
     class | class category and number, e.g. CS 136
     description | class name
     units | units
