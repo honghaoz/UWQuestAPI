@@ -281,4 +281,43 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     academic_program | 
     (program plan name) | e.g. master_of_engineering
     advisor_name | a list of advisors' name
+
+### Enroll
+
+- /enroll/my_class_schedule
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+    term       | which term
+    career | undergraduate or graduate
+    institution | institution
+    classes | list contains classes
+    status | enrolled or not
+    subject | e.g. CS, ECE
+    category_number | 136
+    description | class name
+    grading | grading method
+    units | units
+    grade | your grades
+    components | list contains class components
+    class_nbr | class number
+    section | section
+    component | LEC TUT TST
+    days_&_times | days and times
+    room | class room number
+    instructor | instructor name
+    start/end_date | start/end date
+    
+    
+    
+    
+    
     
