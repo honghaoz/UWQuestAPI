@@ -350,7 +350,20 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     instructor | instructor name
     start/end_date | start/end date
     
+- /enroll/add
+
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
     
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+      |
     
     
     
