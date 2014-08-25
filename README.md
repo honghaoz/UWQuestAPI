@@ -365,6 +365,11 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     -----------   | -------------
       |
     
-    
+- /enroll/drop
+
+
+- /enroll/component_swap
+
+- /enroll/search_for_classes
     
     
