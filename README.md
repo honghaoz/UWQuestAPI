@@ -371,17 +371,45 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 - /enroll/component_swap
 
 - /enroll/search_for_classes
-  - method: POST/GET
-  - Parameters
+
+	- There are two kinds of response. 
+  		- If only sid is provided, response will be search criteria and option values that can be queried
+  		- If sid and at least two criterias are provided, response will be results for this search
+  	
+  - 1) method: POST/GET
+  - 1) Parameters
 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
     
-  - Response
+  - 1) Response
 
      Field        | Description
     -----------   | -------------
-      |
+    institution   | 
+    term		   | which term
+    course_subject | 
+    course_number | institution
+    course_number_relations |
+    course_career |
+    show_open_classes_only |
+    
+  	
+
+  - 2) method: POST/GET
+  - 2) Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+    
+  - 2) Response
+
+     Field        | Description
+    -----------   | -------------
+    term       | which term
+
     
     
