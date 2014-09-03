@@ -169,7 +169,7 @@ def gotoPersonalInformation_citizenship(questSession):
 
 def main():
 
-	myQuest = QuestClass.QuestSession() # "userid", "password"
+	myQuest = QuestClass.QuestSession("", "") # "userid", "password"
 	myQuest.login()
 
 	# Personal Information

@@ -296,7 +296,7 @@ def gotoMyAcademics_graduateOfferLetters(questSession):
 	return False
 
 def main():
-	myQuest = QuestClass.QuestSession() # "userid", "password"
+	myQuest = QuestClass.QuestSession("", "") # "userid", "password"
 	myQuest.login()
 
 	myQuest.postMyAcademics()

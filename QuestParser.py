@@ -708,10 +708,11 @@ def API_myAcademics_gradesTermResponse(questSession):
 	meta = getEmptyMetaDict()
 	data = {}
 
-	keys = ["term", "career", "institution", "message"]
+	optionalKey = "message"
+	keys = ["term", "career", "institution", optionalKey]
 	for key in keys:
 		result = resultDict[key]
-		if len(result) == 0:
+		if len(result) == 0 and not key == optionalKey:
 			meta["message"] = meta["message"] + ", get " + key + " error"
 		else:
 			data[key] = result
