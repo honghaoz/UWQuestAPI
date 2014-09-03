@@ -371,5 +371,17 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 - /enroll/component_swap
 
 - /enroll/search_for_classes
+  - method: POST/GET
+  - Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    
+  - Response
+
+     Field        | Description
+    -----------   | -------------
+      |
     
     

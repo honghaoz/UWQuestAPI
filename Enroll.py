@@ -4,7 +4,7 @@ import QuestParser
 from bs4 import BeautifulSoup
 
 enroll_myClassScheduleURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_LIST.GBL"
-
+enroll_searchForClassesURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
 
 def postEnroll(questSession):
 	''' Go to Enroll
@@ -22,6 +22,7 @@ def postEnroll(questSession):
 		questSession.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "POST Enroll OK"
+			# print response.content
 			questSession.currentPOSTpage = "ENROLL_HOME"
 			# questSession.gotoMyAcademics_myProgram()
 			return True
@@ -36,9 +37,9 @@ def gotoEnroll_myClassSchedule(questSession):
 	'''
 	getData = {
 		'Page': 'SSR_SSENRL_LIST',
-		'Action': 'A',
-		'ExactKeys': 'Y',
-		'TargetFrameName': 'None'
+		'Action': 'A'#,
+		#'ExactKeys': 'Y',
+		#'TargetFrameName': 'None'
 	}
 	response = questSession.session.get(enroll_myClassScheduleURL_HRMS, data = getData, allow_redirects = False)
 	questSession.currentResponse = response
@@ -80,6 +81,25 @@ def postEnroll_myClassSchedule_termIndex(questSession, termIndex):
 	else:
 		print "POST schedule with index: %d Failed" % termIndex
 		return False
+
+def gotoEnroll_searchForClasses(questSession):
+	''' Go to search for classes
+		@Param
+		@Return True/False
+	'''
+	getData = {
+		'Page': 'UW_SSR_CLSRCH_ENTR',
+		'Action': 'U',
+	}
+	response = questSession.session.get(enroll_searchForClassesURL_HRMS, data = getData, allow_redirects = False)
+	questSession.currentResponse = response
+	if response.status_code == requests.codes.ok:
+		if (questSession.updateStateNum(response)):
+			print "GET search for classes Page OK"
+			print response.content
+			return True
+	print "GET search for classes Page Failed"
+	return False
 
 # def gotoMyAcademics_grades(questSession):
 # 	''' Go to my grades
@@ -311,11 +331,13 @@ def main():
 
 	myQuest.postEnroll()
 
-	myQuest.gotoEnroll_myClassSchedule()
-	print QuestParser.API_enroll_myClassScheduleResponse(myQuest)
+	# myQuest.gotoEnroll_myClassSchedule()
+	# print QuestParser.API_enroll_myClassScheduleResponse(myQuest)
 
-	myQuest.postEnroll_myClassSchedule_termIndex(0)
-	print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
+	# myQuest.postEnroll_myClassSchedule_termIndex(0)
+	# print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
+
+	myQuest.gotoEnroll_searchForClasses()
 
 if __name__ == '__main__':
     main()

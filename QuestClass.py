@@ -266,6 +266,9 @@ class QuestSession(object):
 	def postEnroll_myClassSchedule_termIndex(self, termIndex):
 		return Enroll.postEnroll_myClassSchedule_termIndex(self, termIndex)
 
+	def gotoEnroll_searchForClasses(self):
+		return Enroll.gotoEnroll_searchForClasses(self)
+
 def main():
 	myQuest = QuestSession("", "") # "userid", "password"
 	myQuest.login()
