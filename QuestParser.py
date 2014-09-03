@@ -284,11 +284,16 @@ def Parse_myAcademics_myAdvisors(html):
 
 def Parse_enroll_myClassSchedule(html):
 	soup = BeautifulSoup(html)
+	# print soup.prettify()
 	choiceTable = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
 	if choiceTable is None: # There is only one chice and schedule list is returned directly
 		termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
 		if termList is None:
-			return []
+			isValid = soup.find(id="win0divDERIVED_REGFRM1_SS_MESSAGE_LONG")
+			if not isValid:
+				return []
+			else:
+				return[isValid.text.strip()]
 		termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
 		if len(termList) < 3:
 			return []
@@ -315,7 +320,11 @@ def Parse_enroll_myClassScheduleTerm(html):
 	termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
 	result = {"term": "", "career": "", "institution": "", "data": []}
 	if termList is None:
-		return (result, "page error")
+		isValid = soup.find(id="win0divDERIVED_REGFRM1_SS_MESSAGE_LONG")
+		if isValid:
+			return (result, isValid.text.strip())
+		else:
+			return (result, "page error")
 	termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
 	if len(termList) < 3:
 		return (result, "term string error")
@@ -794,7 +803,10 @@ def API_enroll_myClassScheduleResponse(questSession):
 	meta = getEmptyMetaDict()
 	data = []
 	keysNumber = 3
-	if not len(resultList) < keysNumber:
+	if len(resultList) == 1:
+		meta["status"] = "failure"
+		meta["message"] = resultList[0]
+	elif not len(resultList) < keysNumber:
 		meta["status"] = "success"
 		count = len(resultList) / keysNumber - 1
 		for i in xrange(0, count):
@@ -819,5 +831,5 @@ def API_enroll_myClassScheduleTermResponse(questSession):
 		data = result[0]
 	else:
 		meta["status"] = "failure"
-		meta["message"] = "response page class schedule invalid"
+		meta["message"] = result[1] #"response page class schedule invalid"
 	return getFullResponseDictionary(meta, data)
