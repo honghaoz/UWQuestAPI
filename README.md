@@ -260,6 +260,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     report_type | type
     value | option values, e.g. 'UNGRD', 'UNUG', 'UWATR'
     description | description for option value
+    selected    | whether is selected by default "Y" or "N"
     
 
   - 2) method: POST/GET
@@ -387,15 +388,13 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
      Field        | Description
     -----------   | -------------
-    institution   | 
+    institution   | which institution
     term		   | which term
-    course_subject | 
-    course_number | institution
-    course_number_relations |
-    course_career |
-    show_open_classes_only |
-    
-  	
+    course_subject| eg. "CS", "ECE"
+    course_number | 
+    course_number_relations | contians, equal...
+    course_career | undergraduate or graduate
+    show_open_classes_only | "Y" or "N"
 
   - 2) method: POST/GET
   - 2) Parameters

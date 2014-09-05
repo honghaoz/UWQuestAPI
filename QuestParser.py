@@ -260,6 +260,13 @@ def Parse_myAcademics_unofficialTranscript(html):
 			if len(dic["value"]) == 0:
 				continue
 			dic["description"] = eachOption.text.strip()
+			dic["selected"] = "N"
+			try:
+				isSelected = eachOption["selected"]
+				if isSelected:
+					dic["selected"] = "Y"
+			except:
+				pass
 			optionsList.append(dic)
 		responseDict[keys[i]] = optionsList
 	# print responseDict
@@ -394,6 +401,51 @@ def Parse_enroll_myClassScheduleTerm(html):
 	# id="SSR_DUMMY_RECVW$scroll$1" # Class status table
 	# id="CLASS_MTG_VW$scroll$1" # Class number table
 
+def Parse_enroll_searchForClasses(html):
+	soup = BeautifulSoup(html)
+	# print soup.prettify()
+	searchInstitutionID = "win0divCLASS_SRCH_WRK2_INSTITUTION$31$"
+	searchTermID = "win0divCLASS_SRCH_WRK2_STRM$35$"
+	#searchCourseID = ""
+	searchCourseNumberMatch = "win0divCLASS_SRCH_WRK2_SSR_EXACT_MATCH1"
+	searchCourseCareer = "win0divCLASS_SRCH_WRK2_ACAD_CAREER"
+
+	keys = ["institution", "term", "course_number_relation", "course_career"]
+	searchIDs = [searchInstitutionID, searchTermID, searchCourseNumberMatch, searchCourseCareer]
+
+	responseDict = {}
+	try:
+		numberOfFileds = 4
+		for i in xrange(0, numberOfFileds):
+			key = keys[i]
+			id = searchIDs[i]
+			div = soup.find(id=id)
+			options = div.find_all("option")
+			optionsList = []
+			for eachOption in options:
+				# print eachOption
+				dic = {}
+				dic["value"] = eachOption["value"]
+				if len(dic["value"]) == 0:
+					continue
+				dic["description"] = eachOption.text.strip()
+				dic["selected"] = "N"
+				try:
+					isSelected = eachOption["selected"]
+					if isSelected:
+						dic["selected"] = "Y"
+				except:
+					pass
+
+				optionsList.append(dic)
+			responseDict[key] = optionsList
+		responseDict["course_subject"] = []
+		responseDict["course_number"] = []
+		responseDict["show_open_classes_only"] = []
+	except Exception, e:
+		responseDict = {}
+	# print responseDict
+	return responseDict
 
 ################# API ################
 
@@ -832,4 +884,16 @@ def API_enroll_myClassScheduleTermResponse(questSession):
 	else:
 		meta["status"] = "failure"
 		meta["message"] = result[1] #"response page class schedule invalid"
+	return getFullResponseDictionary(meta, data)
+
+def API_enroll_searchForClassesResponse(questSession):
+	resultDict = Parse_enroll_searchForClasses(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	if not len(resultDict) < 1:
+		meta["status"] = "success"
+		data = resultDict
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "parse seach for classes options error"
 	return getFullResponseDictionary(meta, data)
