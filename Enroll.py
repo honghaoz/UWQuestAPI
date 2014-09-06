@@ -2,6 +2,7 @@ import QuestClass
 import requests
 import QuestParser
 from bs4 import BeautifulSoup
+import json
 
 enroll_myClassScheduleURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSR_SSENRL_LIST.GBL"
 enroll_searchForClassesURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.UW_SSR_CLASS_SRCH.GBL"
@@ -214,7 +215,8 @@ def main():
 	# print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
 
 	myQuest.gotoEnroll_searchForClasses()
-	print QuestParser.API_enroll_searchForClassesResponse(myQuest)
+	# print QuestParser.API_enroll_searchForClassesResponse(myQuest)
+	print json.dumps(QuestParser.API_enroll_searchForClassesResponse(myQuest), indent=4, sort_keys=True)
 
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
@@ -224,12 +226,13 @@ def main():
 										course_career = "UG", 
 										open_only = "Y")
 
-	print QuestParser.API_enroll_searchForClassesResultResponse(myQuest)
+	print json.dumps(QuestParser.API_enroll_searchForClassesResultResponse(myQuest), indent=4, sort_keys=True)
 
 	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$0')
-	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$1')
+	# myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$1')
 
-	print QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content)
+	# print QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content)
+	print json.dumps(QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content), indent=4, sort_keys=True)
 
 if __name__ == '__main__':
     main()

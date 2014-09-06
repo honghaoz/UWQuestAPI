@@ -443,6 +443,7 @@ def Parse_enroll_searchForClasses(html):
 		responseDict["course_number"] = []
 		responseDict["show_open_classes_only"] = []
 	except Exception, e:
+		print e
 		responseDict = {}
 	# print responseDict
 	return responseDict
@@ -494,6 +495,7 @@ def parseCourse(courseHtml, index):
 				assert(0)
 		resultDict["sections"] = sectionsList
 	except Exception, e:
+		print e
 		return None
 	return resultDict
 
@@ -521,7 +523,7 @@ def parseSection(idString, sectionHtml):
 		# print soup.prettify()
 		status = soup.find(id="win0divDERIVED_CLSRCH_SSR_STATUS_LONG$" + indexString)
 		# print status.find("img")["alt"]
-		resultDict["status"] = status.find("img")["alt"].lower().strip()
+		resultDict["status"] = status.find("img")["alt"].strip()
 		session = soup.find(id='win0divPSXLATITEM_XLATSHORTNAME$' + indexString).text.strip()
 
 		scheduleTable = soup.find(id="SSR_CLSRCH_MTG1$scroll$" + indexString)
@@ -543,6 +545,7 @@ def parseSection(idString, sectionHtml):
 		# sectionNumberString = sectionString
 		# print sectionString
 	except Exception, e:
+		print e
 		return None
 	# print resultDict
 	return resultDict
@@ -550,15 +553,159 @@ def parseSection(idString, sectionHtml):
 def Parse_enroll_searchForClassesClassDetail(html):
 	html = html.replace("<![CDATA[", "<").replace("]]>", ">")
 	soup = BeautifulSoup(html)
-	print soup.prettify().encode('utf8')
+	# print soup.prettify().encode('utf8')
+	# ids for different section
+	# course related
+	id_course_name = "win0divDERIVED_CLSRCH_DESCR200"
+	id_course_institution = "win0divDERIVED_CLSRCH_SSS_PAGE_KEYDESCR"
+	# class related
+	id_class_detail = "win0divSSR_CLS_DTL_WRK_GROUP1"
+	id_meeting_info = "win0divSSR_CLSRCH_MTG$0"
+	id_enrollment_info = "win0divSSR_CLS_DTL_WRK_GROUP2" # special case: cs 137 tut002
+	id_class_availability = "win0divSSR_CLS_DTL_WRK_GROUP3"
+	id_combined_section = "win0divSCTN_CMBND$0" # graduate courses
+	id_unknown = "win0divSSR_CLS_DTL_WRK_GROUP4" # Missing GROUP4??? TODO: 
+	id_class_note = "win0divSSR_CLS_DTL_WRK_GROUP5"# cs 115 sec 001
+	id_description = "win0divSSR_CLS_DTL_WRK_GROUP6"
+
+	resultDict = {}
+	# course name
+	soupResult = soup.find(id=id_course_name).extract()
+	if not soupResult:
+		error = "id_course_name not found"
+		print error
+		return resultDict, error
+	course_name_result = parseClass_course_name(soupResult)
+	if not len(course_name_result) > 0:
+		error = "parse name result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + course_name_result.items())
+
+	# course institution
+	soupResult = soup.find(id=id_course_institution).extract()
+	if not soupResult:
+		error = "id_course_institution not found"
+		print error
+		return resultDict, error
+	course_institution_result = parseClass_course_institution(soupResult)
+	if not len(course_institution_result) > 0:
+		error = "parse institution result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + course_institution_result.items())
+
+	# class detail
+	soupResult = soup.find(id=id_class_detail).extract()
+	if not soupResult:
+		error = "id_class_detail not found"
+		print error
+		return resultDict, error
+	result = parseClass_detail(soupResult)
+	if not len(result) > 0:
+		error = "parse class detail result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + result.items())
+
+	# process id_meeting_info
+	soupResult = soup.find(id=id_meeting_info).extract()
+	if not soupResult:
+		error = "id_meeting_info not found"
+		print error
+		return resultDict, error
+	result = parseClass_meeting_info(soupResult)
+	if not len(result) > 0:
+		error = "parse meeting_info result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + result.items())
+
+	# print resultDict
+	return resultDict
+
+def parseClass_course_name(soupResult):
+	resultDict = {}
+	try:
+		string = soupResult.text.encode('utf8').strip().replace("\xc2\xa0", "")
+		first, second = map(lambda x: x.strip(), string.split("-"))
+		# print first, second
+		subject, number = map(lambda x: x.strip(), first.split())
+		# print subject
+		# print number
+		resultDict["course_subject"] = subject
+		resultDict["course_number"] = number
+		secondList = map(lambda x: x.strip(), second.split())
+		component_number = secondList[0]
+		name = " ".join(secondList[1:])
+		# print component_number
+		# print name
+		resultDict["component_number"] = component_number
+		resultDict["course_name"] = name
+	except Exception, e:
+		print "parse course name error %s" % e
+		return {}
+	return resultDict
+
+def parseClass_course_institution(soupResult):
+	resultDict = {}
+	try:
+		string = soupResult.text.encode('utf8').strip().replace("\xc2\xa0", "")
+		institution, term, component_type = map(lambda x: x.strip(), string.split("|"))
+		resultDict["institution"] = institution
+		resultDict["term"] = term
+		resultDict["component_type"] = component_type
+	except Exception, e:
+		print "parse course institution error %s" % e
+		return {}
+	return resultDict
+
+def parseClass_detail(soupResult):
+	resultDict = {}
+	try:
+		# print soupResult.prettify().encode('utf8')
+		subDict = {}
+
+		# process components
+		component_key = soupResult.find(id="win0divSR_LBL_WRK_CRSE_COMPONENT_LBLlbl").extract().text.strip().replace(" ", "_").lower()
+		components = soupResult.find(id="win0divSSR_DUMMY_RECVW$0").extract()
+		componentList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(components)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		keysNumber = 2
+		componentCount = len(componentList) / keysNumber
+		aListOfComponentDict = []
+		for i in xrange(0, componentCount):
+			componentDict = {}
+			componentDict["component_type"] = componentList[i * keysNumber]
+			componentDict["is_required"] = componentList[i * keysNumber + 1]
+			aListOfComponentDict.append(componentDict)
+		subDict[component_key] = aListOfComponentDict
+
+		# process other keys
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# get main key - class detail
+		class_detail = resultList[0]
+		resultList = resultList[1:]
+		count = len(resultList)
+		assert(count % 2 == 0)
+		for i in xrange(0, count / 2):
+			subDict[resultList[2 * i].replace(" ", "_").lower()] = resultList[2 * i + 1].strip()
+		resultDict[class_detail] = subDict
+	except Exception, e:
+		print "parse class detail error: %s" % e
+		return {}
+	return resultDict
 
 
-
-
-
-
-
-
+def parseClass_meeting_info(soupResult):
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		print resultList
+	except Exception, e:
+		print "parse meeting info error: %s" % e
+		return {}
+	return resultDict
 
 ################# API ################
 

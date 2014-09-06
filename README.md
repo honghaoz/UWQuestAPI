@@ -421,7 +421,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     sections |
     	sections_number |
     	class_number |
-    	status | open or close
+    	status | Open or Close
     	session | Regular
     	section_info_request_value | value used for get detail info for this section
     	schedules | section schedules
