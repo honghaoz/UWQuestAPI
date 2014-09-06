@@ -530,15 +530,19 @@ def parseSection(idString, sectionHtml):
 		scheduleList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(scheduleTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 		# print scheduleList
 		keysNumber = 4
+		assert(len(scheduleList) % keysNumber == 0)
 		count = len(scheduleList) / keysNumber - 1
 		# print count
 		scheduleResultList = []
 		for i in xrange(0, count):
 			dic = {}
-			dic[scheduleList[0].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber]
-			dic[scheduleList[1].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 1]
-			dic[scheduleList[2].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 2]
-			dic[scheduleList[3].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 3]
+			for keyIndex in xrange(0, keysNumber):
+				key = scheduleList[keyIndex].replace(" ", "_").lower()
+				if key == "room":
+					# Replace MC-- 2035 to MC 2035
+					dic[key] = scheduleList[(i + 1) * keysNumber + keyIndex].replace("-", "")
+				else:
+					dic[key] = scheduleList[(i + 1) * keysNumber + keyIndex]
 			# print dic
 			scheduleResultList.append(dic)
 		resultDict["schedules"] = scheduleResultList
@@ -617,6 +621,19 @@ def Parse_enroll_searchForClassesClassDetail(html):
 	result = parseClass_meeting_info(soupResult)
 	if not len(result) > 0:
 		error = "parse meeting_info result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + result.items())
+
+	# process id_enrollment_info
+	soupResult = soup.find(id=id_enrollment_info).extract()
+	if not soupResult:
+		error = "id_enrollment_info not found"
+		print error
+		return resultDict, error
+	result = parseClass_enrollment_info(soupResult)
+	if not len(result) > 0:
+		error = "parse enrollment_info result none"
 		print error
 		return resultDict, error
 	resultDict = dict(resultDict.items() + result.items())
@@ -701,11 +718,56 @@ def parseClass_meeting_info(soupResult):
 	resultDict = {}
 	try:
 		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
-		print resultList
+		# print resultList
+		meetingKey = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+
+		keysNumber = 4
+		assert(len(resultList) % keysNumber == 0)
+		count = len(resultList) / keysNumber - 1
+		# print count
+		meetingList = []
+		for i in xrange(0, count):
+			dic = {}
+			for keyIndex in xrange(0, keysNumber):
+				key = resultList[keyIndex].replace(" ", "_").lower()
+				if key == "room":
+					# Replace MC-- 2035 to MC 2035
+					dic[key] = resultList[(i + 1) * keysNumber + keyIndex].replace("-", "")
+				else:
+					dic[key] = resultList[(i + 1) * keysNumber + keyIndex]
+			# print dic
+			meetingList.append(dic)
+		resultDict[meetingKey] = meetingList
 	except Exception, e:
 		print "parse meeting info error: %s" % e
 		return {}
 	return resultDict
+
+def parseClass_enrollment_info(soupResult):
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print resultList
+		enrollKey = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+		assert(len(resultList) % 2 == 0)
+		count = len(resultList) / 2
+		enrollmentList = []
+		for i in xrange(0, count):
+			eachEnrollDict = {}
+			eachEnrollDict[resultList[i * 2].replace(" ", "_").lower()] = resultList[i * 2 + 1]
+			enrollmentList.append(eachEnrollDict)
+		resultDict[enrollKey] = enrollmentList
+	except Exception, e:
+		print "parse enrollment info error: %s" % e
+		return {}
+	return resultDict
+
+
+
+
 
 ################# API ################
 

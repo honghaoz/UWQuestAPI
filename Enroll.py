@@ -221,7 +221,7 @@ def main():
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
 										course_subject = "CS", 
-										course_number = "240", 
+										course_number = "137", 
 										course_number_relation = "E", 
 										course_career = "UG", 
 										open_only = "Y")
