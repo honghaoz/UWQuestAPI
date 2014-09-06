@@ -177,8 +177,7 @@ def main():
 										course_career = "GRD", 
 										open_only = "Y")
 
-	print QuestParser.Parse_enroll_searchForClassesResult(myQuest.currentResponse.content)
-
+	print QuestParser.API_enroll_searchForClassesResultResponse(myQuest)
 
 if __name__ == '__main__':
     main()

@@ -402,13 +402,37 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
      Parameter  | Description
     ----------- | -------------
     sid         | Session id 
+    institution   | which institution
+    term		   | which term
+    course_subject| eg. "CS", "ECE"
+    course_number | 
+    course_number_relations | contians, equal...
+    course_career | "UG" or "GRD"
+    show_open_classes_only | "Y" or "N"
     
     
   - 2) Response
 
      Field        | Description
     -----------   | -------------
-    term       | which term
+    course_subject       | 
+    course_number |
+    course_name |
+    sections |
+    	sections_number |
+    	class_number |
+    	status | open or close
+    	session | Regular
+    	section_info_request_value | value used for get detail info for this section
+    	schedules | section schedules
+    	days_&_times | 
+    	meeting_dates  |
+    	instructor | 
+    	room |
+    	
+    	
+    	
+    	
 
     
     

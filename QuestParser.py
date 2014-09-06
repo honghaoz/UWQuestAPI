@@ -521,7 +521,7 @@ def parseSection(idString, sectionHtml):
 		# print soup.prettify()
 		status = soup.find(id="win0divDERIVED_CLSRCH_SSR_STATUS_LONG$" + indexString)
 		# print status.find("img")["alt"]
-		resultDict["status"] = status.find("img")["alt"]
+		resultDict["status"] = status.find("img")["alt"].lower().strip()
 		session = soup.find(id='win0divPSXLATITEM_XLATSHORTNAME$' + indexString).text.strip()
 
 		scheduleTable = soup.find(id="SSR_CLSRCH_MTG1$scroll$" + indexString)
@@ -996,4 +996,16 @@ def API_enroll_searchForClassesResponse(questSession):
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "parse seach for classes options error"
+	return getFullResponseDictionary(meta, data)
+
+def API_enroll_searchForClassesResultResponse(questSession):
+	result = Parse_enroll_searchForClassesResult(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = []
+	if result:
+		meta["status"] = "success"
+		data = result
+	else:
+		meta["status"] = "failure"
+		meta["message"] = "parse seach for classes result error"
 	return getFullResponseDictionary(meta, data)
