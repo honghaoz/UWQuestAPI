@@ -103,8 +103,56 @@ def gotoEnroll_searchForClasses(questSession):
 	print "GET search for classes Page Failed"
 	return False
 
-def postEnroll_searchForClasses():
-	pass
+def postEnroll_searchForClasses(questSession, institution, term, course_subject, course_number, course_number_relation, course_career, open_only):
+	postData = questSession.getBasicParameters()
+	postData["ICAction"] = "UW_DERIVED_SR_SSR_PB_CLASS_SRCH"
+	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+	postData['CLASS_SRCH_WRK2_INSTITUTION$31$'] = institution
+	postData["CLASS_SRCH_WRK2_STRM$35$"] = term
+	postData["CLASS_SRCH_WRK2_SUBJECT$7$"] = course_subject
+	postData["CLASS_SRCH_WRK2_CATALOG_NBR$8$"] = course_number
+	postData["CLASS_SRCH_WRK2_SSR_EXACT_MATCH1"] = course_number_relation
+	postData["CLASS_SRCH_WRK2_ACAD_CAREER"] = course_career
+	postData["CLASS_SRCH_WRK2_SSR_OPEN_ONLY$chk"] = open_only
+	postData["CLASS_SRCH_WRK2_SSR_OPEN_ONLY"] = open_only
+	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+
+	response = questSession.session.post(enroll_searchForClassesURL_HRMS, data = postData, allow_redirects = False)
+	questSession.currentResponse = response
+	if response.status_code == requests.codes.ok:
+		questSession.currentStateNum += 1
+		questSession.currentPOSTpage = "ENROLL_SEARCH_FOR_CLASSES_RESULT"
+		print "POST search for classes OK"
+		print "institution: %s" % institution
+		print "term: %s" % term
+		print "course_subject: %s" % course_subject
+		print "course_number: %s" % course_number
+		print "course_number_relation: %s" % course_number_relation
+		print "course_career: %s" % course_career
+		print "open_only: %s" % open_only
+		if askForContinue(response.content):
+			print "Need to Continue"
+			postData = questSession.getBasicParameters()
+			postData["ICAction"] = "#ICSave"
+			response = questSession.session.post(enroll_searchForClassesURL_HRMS, data = postData, allow_redirects = False)
+			questSession.currentResponse = response
+			if response.status_code == requests.codes.ok:
+				questSession.currentStateNum += 1
+				questSession.currentPOSTpage = "ENROLL_SEARCH_FOR_CLASSES_RESULT"
+				print response.content
+		return True
+	else:
+		print "POST search for classes failed"
+		return False
+
+def askForContinue(html):
+	soup = BeautifulSoup(html.replace("<![CDATA[", "<").replace("]]>", ">"))
+	# print soup.prettify()
+	isAsking = soup.find(id="win0divDERIVED_SSE_DSP_SSR_MSG_TEXT")
+	if isAsking:
+		return True
+	else:
+		return False
 
 def main():
 	myQuest = QuestClass.QuestSession("", "") # "userid", "password"
@@ -120,6 +168,17 @@ def main():
 
 	myQuest.gotoEnroll_searchForClasses()
 	print QuestParser.API_enroll_searchForClassesResponse(myQuest)
+
+	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
+										term = "1149", 
+										course_subject = "CS", 
+										course_number = "", 
+										course_number_relation = "E", 
+										course_career = "GRD", 
+										open_only = "Y")
+
+	print QuestParser.Parse_enroll_searchForClassesResult(myQuest.currentResponse.content)
+
 
 if __name__ == '__main__':
     main()

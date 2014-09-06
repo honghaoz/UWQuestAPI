@@ -447,6 +447,106 @@ def Parse_enroll_searchForClasses(html):
 	# print responseDict
 	return responseDict
 
+def Parse_enroll_searchForClassesResult(html):
+	html = html.replace("<![CDATA[", "<").replace("]]>", ">")
+	soup = BeautifulSoup(html)
+	# print soup.prettify().encode('utf8')
+	isNoResult = soup.find(id="win0divDERIVED_CLSMSG_ERROR_TEXT")
+	if isNoResult:
+		return []
+	# print soup.text.encode("utf-8")
+	separatorPattern = re.compile("<.+win0divDERIVED_CLSRCH_SSR_EXPAND_COLLAP2\$\d+(?!.+\$).+>")
+	splitResultList = re.split(separatorPattern, html) #re.split(seperatorPattern, soup.text)
+	courseHtml = splitResultList[1:]
+	courseCount = len(courseHtml)
+	resultList = []
+	for i in xrange(0, courseCount):
+		eachCourse = courseHtml[i]
+		courseDict = parseCourse(eachCourse, i)
+		if courseDict:
+			resultList.append(courseDict)
+		else:
+			return None
+	return resultList
+
+def parseCourse(courseHtml, index):
+	soup = BeautifulSoup(courseHtml)
+	resultDict = {}
+	try:
+		courseNameChunk = soup.find(id="DERIVED_CLSRCH_DESCR200$" + str(index))
+		courseString = courseNameChunk.text.strip()
+		courseSubjectNumber, courseName = map(lambda x: x.strip(), courseString.split("-"))
+		courseSubject, courseNumber = courseSubjectNumber.split()
+		resultDict["course_subject"] = courseSubject
+		resultDict["course_number"] = courseNumber
+		resultDict["course_name"] = courseName
+		
+		sectionSeparator = re.compile("(id(?:|\s)=(?:|\s)(?:\'|\")UW_DERIVED_SR_SSR_CLASSNAME_LONG\$\d+(?:\'|\"))")
+		sectionsHtml = re.split(sectionSeparator, courseHtml)[1:]
+		sectionCount = len(sectionsHtml)
+		assert(sectionCount % 2 == 0)
+		sectionsList = []
+		for i in xrange(0, sectionCount / 2):
+			sectionResult = parseSection(sectionsHtml[2 * i], sectionsHtml[2 * i + 1])
+			if sectionResult:
+				sectionsList.append(sectionResult)
+			else:
+				assert(0)
+		resultDict["sections"] = sectionsList
+	except Exception, e:
+		return None
+	return resultDict
+
+def parseSection(idString, sectionHtml):
+	resultDict = {}
+	try:
+		valuePattern = re.compile("id(?:|\s)=(?:|\s)(?:\'|\")(UW_DERIVED_SR_SSR_CLASSNAME_LONG\$\d+)(?:\'|\")")
+		indexPattern = re.compile("id(?:|\s)=(?:|\s)(?:\'|\")UW_DERIVED_SR_SSR_CLASSNAME_LONG\$(\d+)(?:\'|\")")
+		requestValue =  re.findall(valuePattern, idString)[0]
+		resultDict["section_info_request_value"] = requestValue
+		indexString = re.findall(indexPattern, idString)[0]
+		# print requestValue, indexString
+
+		sectionStringPattern = re.compile("(?:\'|\")UW_DERIVED_SR_SSR_CLASSNAME_LONG\$%s(?:\'|\").*?>(.*?)</a>" % indexString, re.DOTALL)
+		sectionString = re.findall(sectionStringPattern, sectionHtml)[0]
+		pattern = re.compile("(.*?)\((\d+)\)")
+		# result = re.findall(pattern, sectionString)
+		sectionNumber, classNumber = re.findall(pattern, sectionString)[0]
+		# print sectionNumber, classNumber
+		resultDict["section_number"] = sectionNumber
+		resultDict["class_number"] = classNumber
+
+		soup = BeautifulSoup("<a " + sectionHtml)
+		# print soup.text
+		# print soup.prettify()
+		status = soup.find(id="win0divDERIVED_CLSRCH_SSR_STATUS_LONG$" + indexString)
+		# print status.find("img")["alt"]
+		resultDict["status"] = status.find("img")["alt"]
+		session = soup.find(id='win0divPSXLATITEM_XLATSHORTNAME$' + indexString).text.strip()
+
+		scheduleTable = soup.find(id="SSR_CLSRCH_MTG1$scroll$" + indexString)
+		scheduleList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(scheduleTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		# print scheduleList
+		keysNumber = 4
+		count = len(scheduleList) / keysNumber - 1
+		# print count
+		scheduleResultList = []
+		for i in xrange(0, count):
+			dic = {}
+			dic[scheduleList[0].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber]
+			dic[scheduleList[1].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 1]
+			dic[scheduleList[2].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 2]
+			dic[scheduleList[3].replace(" ", "_").lower()] = scheduleList[(i + 1) * keysNumber + 3]
+			# print dic
+			scheduleResultList.append(dic)
+		resultDict["schedules"] = scheduleResultList
+		# sectionNumberString = sectionString
+		# print sectionString
+	except Exception, e:
+		return None
+	# print resultDict
+	return resultDict
+
 ################# API ################
 
 # Passed in meta and data dictionary and return full response dictionary
