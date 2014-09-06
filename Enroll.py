@@ -139,7 +139,8 @@ def postEnroll_searchForClasses(questSession, institution, term, course_subject,
 			if response.status_code == requests.codes.ok:
 				questSession.currentStateNum += 1
 				questSession.currentPOSTpage = "ENROLL_SEARCH_FOR_CLASSES_RESULT"
-				print response.content
+				# print response.content
+				return True
 		return True
 	else:
 		print "POST search for classes failed"
@@ -153,6 +154,52 @@ def askForContinue(html):
 		return True
 	else:
 		return False
+
+def postEnroll_searchForClassesDetailInfo(questSession, action):
+	if questSession.currentPOSTpage is "ENROLL_SEARCH_FOR_CLASSES_DETAIL":
+		if postEnroll_goBackToSearchResult(questSession):
+			return postEnroll_searchForClassesDetailInfo(questSession, action)
+		else:
+			return False
+	elif questSession.currentPOSTpage is "ENROLL_SEARCH_FOR_CLASSES_RESULT":
+		postData = questSession.getBasicParameters()
+		postData["ICAction"] = action
+		postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+		postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+
+		response = questSession.session.post(enroll_searchForClassesURL_HRMS, data = postData, allow_redirects = False)
+		questSession.currentResponse = response
+		if response.status_code == requests.codes.ok:
+			questSession.currentStateNum += 1
+			questSession.currentPOSTpage = "ENROLL_SEARCH_FOR_CLASSES_DETAIL"
+			print "POST class detail %s OK" % action
+			# print response.content
+			return True
+		else:
+			print "POST class detail %s failed" % action
+			return False
+	else:
+		print "POST class detail failed: wrong post status"
+		return False
+
+def postEnroll_goBackToSearchResult(questSession):
+	if not questSession.currentPOSTpage is "ENROLL_SEARCH_FOR_CLASSES_DETAIL":
+		print "POST go back to search result table failed: wrong current post page"
+		return False
+	else:
+		postData = questSession.getBasicParameters()
+		postData["ICAction"] = "UW_DERIVED_SR_SSR_PB_BACK"
+		postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
+		postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
+		response = questSession.session.post(enroll_searchForClassesURL_HRMS, data = postData, allow_redirects = False)
+		questSession.currentResponse = response
+		if response.status_code == requests.codes.ok:
+			questSession.currentStateNum += 1
+			questSession.currentPOSTpage = "ENROLL_SEARCH_FOR_CLASSES_RESULT"
+			print "POST go back to search result table success"
+			return True
+		else:
+			return Fals
 
 def main():
 	myQuest = QuestClass.QuestSession("", "") # "userid", "password"
@@ -172,12 +219,17 @@ def main():
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
 										course_subject = "CS", 
-										course_number = "", 
+										course_number = "240", 
 										course_number_relation = "E", 
-										course_career = "GRD", 
+										course_career = "UG", 
 										open_only = "Y")
 
 	print QuestParser.API_enroll_searchForClassesResultResponse(myQuest)
+
+	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$0')
+	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$1')
+
+	print QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content)
 
 if __name__ == '__main__':
     main()

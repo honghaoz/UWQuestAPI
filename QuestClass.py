@@ -272,6 +272,9 @@ class QuestSession(object):
 	def postEnroll_searchForClasses(self, institution, term, course_subject, course_number, course_number_relation, course_career, open_only):
 		return Enroll.postEnroll_searchForClasses(self, institution, term, course_subject, course_number, course_number_relation, course_career, open_only)
 
+	def postEnroll_searchForClassesDetailInfo(self, action):
+		return Enroll.postEnroll_searchForClassesDetailInfo(self, action)
+
 def main():
 	myQuest = QuestSession("", "") # "userid", "password"
 	myQuest.login()

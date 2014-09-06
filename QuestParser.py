@@ -547,6 +547,19 @@ def parseSection(idString, sectionHtml):
 	# print resultDict
 	return resultDict
 
+def Parse_enroll_searchForClassesClassDetail(html):
+	html = html.replace("<![CDATA[", "<").replace("]]>", ">")
+	soup = BeautifulSoup(html)
+	print soup.prettify().encode('utf8')
+
+
+
+
+
+
+
+
+
 ################# API ################
 
 # Passed in meta and data dictionary and return full response dictionary
