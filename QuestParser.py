@@ -454,7 +454,8 @@ def Parse_enroll_searchForClassesResult(html):
 	# print soup.prettify().encode('utf8')
 	isNoResult = soup.find(id="win0divDERIVED_CLSMSG_ERROR_TEXT")
 	if isNoResult:
-		return []
+		# print "The search returns no results that match the criteria specified."
+		return [], None
 	# print soup.text.encode("utf-8")
 	separatorPattern = re.compile("<.+win0divDERIVED_CLSRCH_SSR_EXPAND_COLLAP2\$\d+(?!.+\$).+>")
 	splitResultList = re.split(separatorPattern, html) #re.split(seperatorPattern, soup.text)
@@ -467,7 +468,7 @@ def Parse_enroll_searchForClassesResult(html):
 		if courseDict:
 			resultList.append(courseDict)
 		else:
-			return None
+			return resultList, "There are errors in parsed course data"
 	return resultList
 
 def parseCourse(courseHtml, index):
@@ -598,7 +599,7 @@ def Parse_enroll_searchForClassesClassDetail(html):
 	resultDict = {}
 
 	count = len(paresIds)
-	for i in xrange(0, 7):
+	for i in xrange(0, count):
 		resultDict, hasError = parseUseIDandFunction(soup, resultDict, paresIds[i], parseFunctions[i])
 		if hasError:
 			return resultDict, hasError
@@ -611,7 +612,11 @@ def parseUseIDandFunction(soup, resultDict, idString, parseFunction):
 	if not soupResult:
 		error = "id=" + idString + " not found"
 		print error
-		return resultDict, None
+		# For detecting id="win0divSSR_CLS_DTL_WRK_GROUP4"
+		if idString == "win0divSSR_CLS_DTL_WRK_GROUP4":
+			return resultDict, None
+		else:
+			return resultDict, error
 	soupResult = soupResult.extract()
 	result = parseFunction(soupResult)
 	if not len(result) > 0:
@@ -806,13 +811,62 @@ def parseClass_combined_section(soupResult):
 	return resultDict
 
 def parseClass_unknown_GROUP4(soupResult):
-	pass
+	print "GROUP4 id found!"
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print resultList
+		key = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+		assert(len(resultList) % 2 == 0)
+		count = len(resultList) / 2
+		unknowList = []
+		for i in xrange(0, count):
+			eachEnrollDict = {}
+			eachEnrollDict[resultList[i * 2].replace(" ", "_").lower()] = resultList[i * 2 + 1]
+			unknowList.append(eachEnrollDict)
+		resultDict[key] = unknowList
+	except Exception, e:
+		print "parse unknwon GROUP4 info error: %s" % e
+		return {}
+	return resultDict
 
 def parseClass_class_note(soupResult):
-	pass
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print resultList
+		key = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+		assert(len(resultList) % 2 == 0)
+		count = len(resultList) / 2
+		resList = []
+		for i in xrange(0, count):
+			eachEnrollDict = {}
+			eachEnrollDict[resultList[i * 2].replace(" ", "_").lower()] = resultList[i * 2 + 1]
+			resList.append(eachEnrollDict)
+		resultDict[key] = resList
+	except Exception, e:
+		print "parse class notes info error: %s" % e
+		return {}
+	return resultDict
 
 def parseClass_description(soupResult):
-	pass
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult).replace("<br/>", "\n")).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
+		# print resultList
+		key = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+		description = "\n".join(resultList)
+		# print description
+		resultDict[key] = description
+	except Exception, e:
+		print "parse description info error: %s" % e
+		return {}
+	return resultDict
 
 
 
@@ -1274,13 +1328,29 @@ def API_enroll_searchForClassesResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_enroll_searchForClassesResultResponse(questSession):
-	result = Parse_enroll_searchForClassesResult(questSession.currentResponse.content)
+	result, hasError = Parse_enroll_searchForClassesResult(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
 	data = []
-	if result:
+	if hasError:
+		meta["status"] = "failure"
+		data = result
+		meta["message"] = hasError
+	else:
 		meta["status"] = "success"
 		data = result
-	else:
+		if len(result) == 0:
+			meta["message"] = "The search returns no results that match the criteria specified."
+	return getFullResponseDictionary(meta, data)
+
+def API_enroll_searchForClassesClassDetail(questSession):
+	resultDict, hasError =  Parse_enroll_searchForClassesClassDetail(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
+	if hasError:
 		meta["status"] = "failure"
-		meta["message"] = "parse seach for classes result error"
+		meta["message"] = "There are some error in data"
+		data = resultDict
+	else:
+		meta["status"] = "success"
+		data = resultDict
 	return getFullResponseDictionary(meta, data)

@@ -221,10 +221,10 @@ def main():
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
 										course_subject = "CS", 
-										course_number = "656", 
+										course_number = "454", 
 										course_number_relation = "E", 
-										course_career = "GRD", 
-										open_only = "Y")
+										course_career = "UG", #"GRD", 
+										open_only = "N")
 
 	print json.dumps(QuestParser.API_enroll_searchForClassesResultResponse(myQuest), indent=4, sort_keys=True)
 
@@ -232,7 +232,7 @@ def main():
 	# myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$1')
 
 	# print QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content)
-	print json.dumps(QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content), indent=4, sort_keys=True)
+	print json.dumps(QuestParser.API_enroll_searchForClassesClassDetail(myQuest), indent=4, sort_keys=True)
 
 if __name__ == '__main__':
     main()
