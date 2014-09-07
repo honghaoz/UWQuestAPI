@@ -638,6 +638,19 @@ def Parse_enroll_searchForClassesClassDetail(html):
 		return resultDict, error
 	resultDict = dict(resultDict.items() + result.items())
 
+	# process id_class_availability
+	soupResult = soup.find(id=id_class_availability).extract()
+	if not soupResult:
+		error = "id_class_availability not found"
+		print error
+		return resultDict, error
+	result = parseClass_class_availability(soupResult)
+	if not len(result) > 0:
+		error = "parse class_availability result none"
+		print error
+		return resultDict, error
+	resultDict = dict(resultDict.items() + result.items())
+
 	# print resultDict
 	return resultDict
 
@@ -765,8 +778,26 @@ def parseClass_enrollment_info(soupResult):
 		return {}
 	return resultDict
 
-
-
+def parseClass_class_availability(soupResult):
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print resultList
+		key = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[1:]
+		assert(len(resultList) % 2 == 0)
+		count = len(resultList) / 2
+		availabilityList = []
+		for i in xrange(0, count):
+			eachEnrollDict = {}
+			eachEnrollDict[resultList[i * 2].replace(" ", "_").lower()] = resultList[i * 2 + 1]
+			availabilityList.append(eachEnrollDict)
+		resultDict[key] = availabilityList
+	except Exception, e:
+		print "parse class availability info error: %s" % e
+		return {}
+	return resultDict
 
 
 ################# API ################
