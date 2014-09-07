@@ -568,91 +568,56 @@ def Parse_enroll_searchForClassesClassDetail(html):
 	id_enrollment_info = "win0divSSR_CLS_DTL_WRK_GROUP2" # special case: cs 137 tut002
 	id_class_availability = "win0divSSR_CLS_DTL_WRK_GROUP3"
 	id_combined_section = "win0divSCTN_CMBND$0" # graduate courses
-	id_unknown = "win0divSSR_CLS_DTL_WRK_GROUP4" # Missing GROUP4??? TODO: 
+	id_unknown_GROUP4 = "win0divSSR_CLS_DTL_WRK_GROUP4" # Missing GROUP4??? TODO: 
 	id_class_note = "win0divSSR_CLS_DTL_WRK_GROUP5"# cs 115 sec 001
 	id_description = "win0divSSR_CLS_DTL_WRK_GROUP6"
 
+	paresIds = [id_course_name,
+				id_course_institution,
+				id_class_detail,
+				id_meeting_info,
+				id_enrollment_info,
+				id_class_availability,
+				id_combined_section,
+				id_unknown_GROUP4,
+				id_class_note,
+				id_description]
+
+	parseFunctions = [parseClass_course_name,
+					  parseClass_course_institution,
+					  parseClass_detail,
+					  parseClass_meeting_info,
+					  parseClass_enrollment_info,
+					  parseClass_class_availability,
+					  parseClass_combined_section,
+					  parseClass_unknown_GROUP4,
+					  parseClass_class_note,
+					  parseClass_description]
+
 	resultDict = {}
-	# course name
-	soupResult = soup.find(id=id_course_name).extract()
-	if not soupResult:
-		error = "id_course_name not found"
-		print error
-		return resultDict, error
-	course_name_result = parseClass_course_name(soupResult)
-	if not len(course_name_result) > 0:
-		error = "parse name result none"
-		print error
-		return resultDict, error
-	resultDict = dict(resultDict.items() + course_name_result.items())
 
-	# course institution
-	soupResult = soup.find(id=id_course_institution).extract()
-	if not soupResult:
-		error = "id_course_institution not found"
-		print error
-		return resultDict, error
-	course_institution_result = parseClass_course_institution(soupResult)
-	if not len(course_institution_result) > 0:
-		error = "parse institution result none"
-		print error
-		return resultDict, error
-	resultDict = dict(resultDict.items() + course_institution_result.items())
+	count = len(paresIds)
+	for i in xrange(0, 6):
+		resultDict, hasError = parseUseIDandFunction(soup, resultDict, paresIds[i], parseFunctions[i])
+		if hasError:
+			return resultDict, hasError
+	return resultDict, None
 
-	# class detail
-	soupResult = soup.find(id=id_class_detail).extract()
+# Parse different ids with different functions, template
+def parseUseIDandFunction(soup, resultDict, idString, parseFunction):
+	print "Parse " + idString
+	soupResult = soup.find(id=idString).extract()
 	if not soupResult:
-		error = "id_class_detail not found"
+		error = idString + " not found"
 		print error
 		return resultDict, error
-	result = parseClass_detail(soupResult)
+	result = parseFunction(soupResult)
 	if not len(result) > 0:
-		error = "parse class detail result none"
+		error = "parse " + idString + " returned none"
 		print error
 		return resultDict, error
 	resultDict = dict(resultDict.items() + result.items())
-
-	# process id_meeting_info
-	soupResult = soup.find(id=id_meeting_info).extract()
-	if not soupResult:
-		error = "id_meeting_info not found"
-		print error
-		return resultDict, error
-	result = parseClass_meeting_info(soupResult)
-	if not len(result) > 0:
-		error = "parse meeting_info result none"
-		print error
-		return resultDict, error
-	resultDict = dict(resultDict.items() + result.items())
-
-	# process id_enrollment_info
-	soupResult = soup.find(id=id_enrollment_info).extract()
-	if not soupResult:
-		error = "id_enrollment_info not found"
-		print error
-		return resultDict, error
-	result = parseClass_enrollment_info(soupResult)
-	if not len(result) > 0:
-		error = "parse enrollment_info result none"
-		print error
-		return resultDict, error
-	resultDict = dict(resultDict.items() + result.items())
-
-	# process id_class_availability
-	soupResult = soup.find(id=id_class_availability).extract()
-	if not soupResult:
-		error = "id_class_availability not found"
-		print error
-		return resultDict, error
-	result = parseClass_class_availability(soupResult)
-	if not len(result) > 0:
-		error = "parse class_availability result none"
-		print error
-		return resultDict, error
-	resultDict = dict(resultDict.items() + result.items())
-
-	# print resultDict
-	return resultDict
+	return resultDict, None
 
 def parseClass_course_name(soupResult):
 	resultDict = {}
@@ -798,6 +763,25 @@ def parseClass_class_availability(soupResult):
 		print "parse class availability info error: %s" % e
 		return {}
 	return resultDict
+
+def parseClass_combined_section(soupResult):
+	pass
+
+def parseClass_unknown_GROUP4(soupResult):
+	pass
+
+def parseClass_class_note(soupResult):
+	pass
+
+def parseClass_description(soupResult):
+	pass
+
+
+
+
+
+
+
 
 
 ################# API ################
