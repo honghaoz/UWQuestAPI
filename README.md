@@ -1,7 +1,11 @@
 UW Quest API
 ==========
 
-This API provides full access to University of Waterloo Quest, the Waterloo's student information system.
+This API provides full access (still building) to University of Waterloo Quest, the Waterloo's student information system.
+
+## Insteresting in this project?
+
+Building this API for quest system is time consuming, you are very wellcome if you are interesting in this project and want to join us.
 
 ## Accessing the API
 
