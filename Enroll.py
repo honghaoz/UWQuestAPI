@@ -104,7 +104,7 @@ def gotoEnroll_searchForClasses(questSession):
 	print "GET search for classes Page Failed"
 	return False
 
-def postEnroll_searchForClasses(questSession, institution, term, course_subject, course_number, course_number_relation, course_career, open_only):
+def postEnroll_searchForClasses(questSession, institution, term, course_subject, course_number, course_number_relation, course_career, open_only, class_number = ""):
 	postData = questSession.getBasicParameters()
 	postData["ICAction"] = "UW_DERIVED_SR_SSR_PB_CLASS_SRCH"
 	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$'] = '9999'
@@ -116,6 +116,7 @@ def postEnroll_searchForClasses(questSession, institution, term, course_subject,
 	postData["CLASS_SRCH_WRK2_ACAD_CAREER"] = course_career
 	postData["CLASS_SRCH_WRK2_SSR_OPEN_ONLY$chk"] = open_only
 	postData["CLASS_SRCH_WRK2_SSR_OPEN_ONLY"] = open_only
+	postData["CLASS_SRCH_WRK2_CLASS_NBR$124$"] = class_number
 	postData['DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$'] = '9999'
 
 	response = questSession.session.post(enroll_searchForClassesURL_HRMS, data = postData, allow_redirects = False)
@@ -221,17 +222,18 @@ def main():
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
 										course_subject = "CS", 
-										course_number = "454", 
+										course_number = "135", 
 										course_number_relation = "E", 
 										course_career = "UG", #"GRD", 
-										open_only = "N")
+										open_only = "N",
+										class_number = "6062")
 
 	print json.dumps(QuestParser.API_enroll_searchForClassesResultResponse(myQuest), indent=4, sort_keys=True)
 
 	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$0')
-	# myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$1')
+	print json.dumps(QuestParser.API_enroll_searchForClassesClassDetail(myQuest), indent=4, sort_keys=True)
 
-	# print QuestParser.Parse_enroll_searchForClassesClassDetail(myQuest.currentResponse.content)
+	myQuest.postEnroll_searchForClassesDetailInfo('UW_DERIVED_SR_SSR_CLASSNAME_LONG$3')
 	print json.dumps(QuestParser.API_enroll_searchForClassesClassDetail(myQuest), indent=4, sort_keys=True)
 
 if __name__ == '__main__':

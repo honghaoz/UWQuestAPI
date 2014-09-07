@@ -469,7 +469,7 @@ def Parse_enroll_searchForClassesResult(html):
 			resultList.append(courseDict)
 		else:
 			return resultList, "There are errors in parsed course data"
-	return resultList
+	return resultList, None
 
 def parseCourse(courseHtml, index):
 	soup = BeautifulSoup(courseHtml)
@@ -612,11 +612,11 @@ def parseUseIDandFunction(soup, resultDict, idString, parseFunction):
 	if not soupResult:
 		error = "id=" + idString + " not found"
 		print error
-		# For detecting id="win0divSSR_CLS_DTL_WRK_GROUP4"
-		if idString == "win0divSSR_CLS_DTL_WRK_GROUP4":
-			return resultDict, None
-		else:
+		# For fieds must have
+		if (idString == "win0divDERIVED_CLSRCH_DESCR200") or (idString == "win0divDERIVED_CLSRCH_SSS_PAGE_KEYDESCR") or (idString == "win0divSSR_CLS_DTL_WRK_GROUP1") or (idString == "win0divSSR_CLSRCH_MTG$0"):
 			return resultDict, error
+		else:
+			return resultDict, None
 	soupResult = soupResult.extract()
 	result = parseFunction(soupResult)
 	if not len(result) > 0:
