@@ -456,8 +456,7 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     grading | Numeric Grading Basis
     location | University of Waterloo
     session | e.g. Regular Academic Session
-    
-    sections |
+    sections | 
     	component_type | LEC TUT TST 
     	component_number | 001
     	class_number |
