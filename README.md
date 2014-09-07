@@ -373,9 +373,10 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
 
 - /enroll/search_for_classes
 
-	- There are two kinds of response. 
+	- There are three kinds of response. 
   		- If only sid is provided, response will be search criteria and option values that can be queried
   		- If sid and at least two criterias are provided, response will be results for this search
+  		- If sid and section_info_request_value are provided, response will be detail information for corresponding section
   	
   - 1) method: POST/GET
   - 1) Parameters
@@ -431,7 +432,60 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     	instructor | 
     	room |
     	
-    	
+- 3) method: POST/GET
+  - 3) Parameters
+
+     Parameter  | Description
+    ----------- | -------------
+    sid         | Session id 
+    section_info_request_value   | this value should get from the second response
+    
+    
+  - 3) Response
+
+     Field        | Description
+    -----------   | -------------
+    Class Details  | contains detail information for this class
+    campus | University of Waterloo - Main
+    career | Undergraduate
+    class_components |
+    component_type |
+    is_required | Required
+    class_number |
+    dates | 9/8/2014 - 12/1/2014
+    grading | Numeric Grading Basis
+    location | University of Waterloo
+    session | e.g. Regular Academic Session
+    
+    sections |
+    	component_type | LEC TUT TST 
+    	component_number | 001
+    	class_number |
+    	status | Open or Close
+    	session | Regular
+    	status | Open or Closed
+    	units | 0.5 units
+    class_availability | 
+    	class_capacity | 
+    	enrollment_total | 
+    	available_seats | 
+    component_number | 
+    component_type | 
+    course_name | 
+    course_subject |
+    course_number |
+    description |
+    enrollment_information |
+    	enrollment_requirements |
+    institution | 
+    meeting_information |
+    days_&_times | 
+    instructor | 
+    meeting_dates |
+    room |
+    notes | 
+    class_notes |
+    term |
     	
     	
 
