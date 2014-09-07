@@ -511,11 +511,12 @@ def parseSection(idString, sectionHtml):
 
 		sectionStringPattern = re.compile("(?:\'|\")UW_DERIVED_SR_SSR_CLASSNAME_LONG\$%s(?:\'|\").*?>(.*?)</a>" % indexString, re.DOTALL)
 		sectionString = re.findall(sectionStringPattern, sectionHtml)[0]
-		pattern = re.compile("(.*?)\((\d+)\)")
+		pattern = re.compile("(.*)-(.*)\((.*)\)")
 		# result = re.findall(pattern, sectionString)
-		sectionNumber, classNumber = re.findall(pattern, sectionString)[0]
-		# print sectionNumber, classNumber
-		resultDict["section_number"] = sectionNumber
+		component_number, component_type, classNumber = re.findall(pattern, sectionString)[0]
+		# print component_number, component_type, classNumber
+		resultDict["component_type"] = component_type
+		resultDict["component_number"] = component_number
 		resultDict["class_number"] = classNumber
 
 		soup = BeautifulSoup("<a " + sectionHtml)
@@ -597,7 +598,7 @@ def Parse_enroll_searchForClassesClassDetail(html):
 	resultDict = {}
 
 	count = len(paresIds)
-	for i in xrange(0, 6):
+	for i in xrange(0, 7):
 		resultDict, hasError = parseUseIDandFunction(soup, resultDict, paresIds[i], parseFunctions[i])
 		if hasError:
 			return resultDict, hasError
@@ -606,11 +607,12 @@ def Parse_enroll_searchForClassesClassDetail(html):
 # Parse different ids with different functions, template
 def parseUseIDandFunction(soup, resultDict, idString, parseFunction):
 	print "Parse " + idString
-	soupResult = soup.find(id=idString).extract()
+	soupResult = soup.find(id=idString)
 	if not soupResult:
-		error = idString + " not found"
+		error = "id=" + idString + " not found"
 		print error
-		return resultDict, error
+		return resultDict, None
+	soupResult = soupResult.extract()
 	result = parseFunction(soupResult)
 	if not len(result) > 0:
 		error = "parse " + idString + " returned none"
@@ -765,7 +767,43 @@ def parseClass_class_availability(soupResult):
 	return resultDict
 
 def parseClass_combined_section(soupResult):
-	pass
+	# print soupResult.prettify().encode('utf8')
+	resultDict = {}
+	try:
+		resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(soupResult)).replace(" \r", ", ").replace("\xc2\xa0", "-").split("\n")))
+		# print resultList
+		key = resultList[0].replace(" ", "_").lower()
+		resultList = resultList[6:]
+		keysNumber = 6
+		assert(len(resultList) % keysNumber == 0)
+		count = len(resultList) / keysNumber
+		combined_section_list = []
+		for i in xrange(0, count):
+			section = {}
+			pattern = re.compile("(.*)\s(.*)-(.*)")
+			course_subject, course_number, component_number = map(lambda x: x.strip(), re.findall(pattern, resultList[i * keysNumber])[0])
+			pattern = re.compile("(.*?)\s\((.*?)\)")
+			component_type, class_number = map(lambda x: x.strip(), re.findall(pattern, resultList[i * keysNumber + 1])[0])
+			course_name = resultList[i * keysNumber + 2]
+			status = resultList[i * keysNumber + 3]
+			enroll_total = resultList[i * keysNumber + 4]
+			wait_total = resultList[i * keysNumber + 5]
+
+			section["course_subject"] = course_subject
+			section["course_number"] = course_number
+			section["component_number"] = component_number
+			section["component_type"] = component_type
+			section["class_number"] = class_number
+			section["course_name"] = course_name
+			section["status"] = status
+			section["enroll_total"] = enroll_total
+			section["wait_total"] = wait_total
+			combined_section_list.append(section)
+		resultDict[key] = combined_section_list
+	except Exception, e:
+		print "parse combined section info error: %s" % e
+		return {}
+	return resultDict
 
 def parseClass_unknown_GROUP4(soupResult):
 	pass

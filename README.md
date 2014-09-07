@@ -419,7 +419,8 @@ All responses contain two keys: "meta" and "data", "meta" contains informations 
     course_number |
     course_name |
     sections |
-    	sections_number |
+    	component_type | LEC TUT TST 
+    	component_number | 001
     	class_number |
     	status | Open or Close
     	session | Regular

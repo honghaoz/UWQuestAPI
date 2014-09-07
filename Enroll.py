@@ -221,9 +221,9 @@ def main():
 	myQuest.postEnroll_searchForClasses(institution = "UWATR", 
 										term = "1149", 
 										course_subject = "CS", 
-										course_number = "137", 
+										course_number = "656", 
 										course_number_relation = "E", 
-										course_career = "UG", 
+										course_career = "GRD", 
 										open_only = "Y")
 
 	print json.dumps(QuestParser.API_enroll_searchForClassesResultResponse(myQuest), indent=4, sort_keys=True)
