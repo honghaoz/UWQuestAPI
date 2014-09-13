@@ -298,29 +298,30 @@ def Parse_enroll_myClassSchedule(html):
 	soup = BeautifulSoup(html)
 	# print soup.prettify()
 	choiceTable = soup.find(id="SSR_DUMMY_RECV1$scroll$0")
-	if choiceTable is None: # There is only one chice and schedule list is returned directly
+	if choiceTable is None: 
+	# 1: There is only one chice and schedule list is returned directly
+	# 2: Inactive term
 		termList = soup.find(id="ACE_DERIVED_REGFRM1_SSR_STDNTKEY_DESCR")
 		if termList is None:
 			isValid = soup.find(id="win0divDERIVED_REGFRM1_SS_MESSAGE_LONG")
 			if not isValid:
-				return []
+				return [], "Page not valid" 
 			else:
-				return[isValid.text.strip()]
+				return[isValid.text.strip()], None
 		termList = map(lambda x: x.strip(), re.sub("\<.*?\>", "", str(termList)).split("|"))
 		if len(termList) < 3:
-			return []
+			return [], "TermList length is incorrect"
 		result = ["Term", "Career", "Institution", termList[0], termList[1], termList[2]]
-		return result
+		return result, None
 	else:
 		choiceList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(choiceTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 		if len(choiceList) < 3:
-			return []
+			return [], "ChoiceList length is incorrect"
 		try:
 			del(choiceList[0])
-		except:
-			return []
-		return choiceList
-
+		except Exception, e:
+			return [], "error: %s" % e
+		return choiceList, None
 
 def Parse_enroll_myClassScheduleTerm(html):
 	soup = BeautifulSoup(html.replace("<![CDATA[", "<").replace("]]>", ">"))
@@ -1285,26 +1286,30 @@ def API_myAcademics_myAdvisorResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_enroll_myClassScheduleResponse(questSession):
-	resultList = Parse_enroll_myClassSchedule(questSession.currentResponse.content)
+	resultList, hasError = Parse_enroll_myClassSchedule(questSession.currentResponse.content)
 	meta = getEmptyMetaDict()
 	data = []
 	keysNumber = 3
-	if len(resultList) == 1:
+	if hasError:
 		meta["status"] = "failure"
-		meta["message"] = resultList[0]
-	elif not len(resultList) < keysNumber:
-		meta["status"] = "success"
-		count = len(resultList) / keysNumber - 1
-		for i in xrange(0, count):
-			newDict = {}
-			newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
-			newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
-			newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
-			newDict["term_index"] = i
-			data.append(newDict)
-	else :
-		meta["status"] = "failure"
-		meta["message"] = "response page contains no schedule information"
+		meta["message"] = hasError
+	else:
+		if len(resultList) == 1:
+			meta["status"] = "success"
+			meta["message"] = resultList[0]
+		elif not len(resultList) < keysNumber:
+			meta["status"] = "success"
+			count = len(resultList) / keysNumber - 1
+			for i in xrange(0, count):
+				newDict = {}
+				newDict[resultList[0].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber]
+				newDict[resultList[1].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 1]
+				newDict[resultList[2].replace(" ", "_").lower()] = resultList[(i + 1) * keysNumber + 2]
+				newDict["term_index"] = i
+				data.append(newDict)
+		else :
+			meta["status"] = "failure"
+			meta["message"] = "response page contains no schedule information"
 	return getFullResponseDictionary(meta, data)
 
 
