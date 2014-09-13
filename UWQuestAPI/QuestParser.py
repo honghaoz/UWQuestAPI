@@ -171,6 +171,11 @@ def Parse_myAcademics_myProgram(html):
 	table = soup.find(id="ACADPROGCURRENT$scroll$0")
 	if table is None:
 		return []
+	messageID = "win0divUW_DERIVED_SR_DESCR50$0"
+	try:
+		soup.find(id=messageID).extract() # Inactive term, skip it FIXIT
+	except Exception, e:
+		pass
 	resultList = map(lambda x: unescape(x.strip()), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(table)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))
 	resultList.insert(0, "Current Program")
 	if resultList[2] == "CurrentSubPlanGroupbox":

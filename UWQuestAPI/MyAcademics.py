@@ -327,8 +327,6 @@ def main():
 
 	myQuest.gotoMyAcademics_advisors()
 	print QuestParser.API_myAcademics_myAdvisorResponse(myQuest)
-	
-	# myQuest.gotoMyAcademics_graduateOfferLetters()
 
 if __name__ == '__main__':
     main()

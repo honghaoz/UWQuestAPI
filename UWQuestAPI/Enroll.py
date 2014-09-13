@@ -209,11 +209,11 @@ def main():
 
 	myQuest.postEnroll()
 
-	# myQuest.gotoEnroll_myClassSchedule()
-	# print QuestParser.API_enroll_myClassScheduleResponse(myQuest)
+	myQuest.gotoEnroll_myClassSchedule()
+	print QuestParser.API_enroll_myClassScheduleResponse(myQuest)
 
-	# myQuest.postEnroll_myClassSchedule_termIndex(0)
-	# print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
+	myQuest.postEnroll_myClassSchedule_termIndex(0)
+	print QuestParser.API_enroll_myClassScheduleTermResponse(myQuest)
 
 	myQuest.gotoEnroll_searchForClasses()
 	# print QuestParser.API_enroll_searchForClassesResponse(myQuest)
