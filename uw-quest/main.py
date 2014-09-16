@@ -33,6 +33,7 @@ from UWQuestAPI.QuestClass import QuestSession
 
 from UWQuestAPI.PersonalInformation import postPersonalInformation
 from UWQuestAPI import QuestParser
+from UWQuestAPI.QuestParser import getFullResponseDictionary, getEmptyMetaDict
 
 # Global variables for jinja environment
 template_dir = os.path.join(os.path.dirname(__file__), 'html_template')
@@ -51,6 +52,19 @@ class BasicHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def checkKey(self):
+        key = self.request.get("key")
+        try:
+            key = int(key)
+        except Exception, e:
+            self.write("Wrong key type")
+        if key == 77881122:
+            return True
+        return False
+    def dumpJSON(self, dict):
+        self.response.headers['Content-Type'] = 'application/json'
+        self.write(json.dumps(dict))
+
 class MainHandler(BasicHandler):
     """Handle for '/' """
     def get(self):
@@ -65,13 +79,15 @@ def hashSID(userid, password, icsid):
     return sidHash
 
 class SessionStore(object):
-    """docstring for SessionStore"""
+    """docstring for SessionStore
+        SessionStore has a storeDict, this storeDict use userid and sid as key and point to the same [sid, userid, password, icsid]
+    """
     storeDict = {}
     def __init__(self):
-        print "SessionStore init()"
+        logging.info("SessionStore init()")
 
-    def find(self, sid):
-        return (sid in self.storeDict)
+    def find(self, anyID): # id is userid or sid
+        return (anyID in self.storeDict)
 
     def getUserID(self, sid):
         if self.find(sid):
@@ -85,24 +101,26 @@ class SessionStore(object):
         else:
             return None
 
-    def getSession(self, sid):
-        if self.find(sid):
-            return self.storeDict[sid][3]
+    def getSession(self, anyID):
+        if self.find(anyID):
+            return self.storeDict[anyID][3]
         else:
             return None
 
     def add(self, userid, password, questSession):
+        # Make sure no duplicate entries
         if self.find(userid):
+            logging.info("Remove old")
             self.removeWithUserID(userid)
-
-        sidHash = hashSID(userid, password, questSession.icsid)        
-        if self.find(sidHash):
-            self.removeWithSID(sidHash)
+        newSID = hashSID(userid, password, questSession.icsid)        
+        if self.find(newSID):
+            self.removeWithSID(newSID)
         else:
-            print "Added new"
-        value = [sidHash, userid, password, questSession]
-        self.storeDict[sidHash] = value
+            logging.info("Added new")
+        value = [newSID, userid, password, questSession]
+        self.storeDict[newSID] = value
         self.storeDict[userid] = value
+        return True
     
     def removeWithUserID(self, userid):
         try:
@@ -110,21 +128,25 @@ class SessionStore(object):
             # print sid
             self.storeDict.pop(sid)
             self.storeDict.pop(userid)
-            print "removed successfully with %s" % userid
+            logging.info("removed successfully with %s" % userid)
+            return True
         except Exception, e:
-            print "removed failed with %s, %s" % (userid, e)
+            logging.error("removed failed with %s, %s" % (userid, e))
+            return False
 
     def removeWithSID(self, sid):
         try:
             userid = self.getUserID(sid)
             self.storeDict.pop(sid)
             self.storeDict.pop(userid)
-            print "removed successfully with %s" % sid
+            logging.info("removed successfully with %s" % sid)
+            return True
         except Exception, e:
-            print "removed failed with %s, %s" % (sid, e)
+            logging.error("removed failed with %s, %s" % (sid, e))
+            return False
 
     def clear(self):
-        self.storeDict.clear()
+        return self.storeDict.clear()
 
     def printOut(self):
         print self.storeDict
@@ -132,10 +154,7 @@ class SessionStore(object):
             # print key + "\t: " + value
         # print json.dumps(self.storeDict, indent=4, sort_keys=True)
         
-        
 sessionStore = SessionStore()
-
-basicQuestSession = QuestSession("", "")
 
 class LoginHandler(BasicHandler):
     def post(self):
@@ -145,12 +164,9 @@ class LoginHandler(BasicHandler):
         self.loginOperation()
         
     def loginOperation(self):
-        key = self.request.get("key")
-        try:
-            key = int(key)
-        except Exception, e:
-            self.write("Wrong key")
-        if key == 77881122:
+        meta = getEmptyMetaDict()
+        data = {}
+        if self.checkKey():
             userid = self.request.get("userid")
             password = self.request.get("password")
             global sessionStore
@@ -163,7 +179,7 @@ class LoginHandler(BasicHandler):
                 foundSession = sessionStore.getSession(userid)
                 if (not foundSession.checkIsExpired()) and (foundSession.isLogin):
                     # Not expired and isLogin
-                    self.write(json.dumps(QuestParser.API_account_loginResponse(foundSession, sessionStore.getSID(userid))))
+                    self.dumpJSON(QuestParser.API_account_loginResponse(foundSession, sessionStore.getSID(userid)))
                     sessionStore.printOut()
                     return
 
@@ -173,10 +189,12 @@ class LoginHandler(BasicHandler):
             if newQuestSession.isLogin:
                 sessionStore.add(userid, password, newQuestSession)
                 sid = sessionStore.getSID(userid)
-            self.write(json.dumps(QuestParser.API_account_loginResponse(newQuestSession, sid)))
+            self.dumpJSON(QuestParser.API_account_loginResponse(newQuestSession, sid))
             sessionStore.printOut()
         else:
-            self.write("Invalid key ")
+            meta["status"] = "failure"
+            meta["message"] = "Invalid key"
+            self.dumpJSON(getFullResponseDictionary(meta, data))
         
 class LogoutHandler(BasicHandler):
     def post(self):
@@ -186,12 +204,30 @@ class LogoutHandler(BasicHandler):
         self.logoutOperation()
         
     def logoutOperation(self):
-        sid = self.request.get("sid")
-        # TODO
-        # global basicQuestSession
-        # basicQuestSession = BasicQuestSession(userid, password)
-        # basicQuestSession.login()
-        # self.write(json.dumps(QuestParser.API_account_loginResponse(basicQuestSession)))
+        meta = getEmptyMetaDict()
+        data = {}
+        if self.checkKey():
+            sid = self.request.get("sid")
+            global sessionStore
+            if sessionStore.find(sid):
+                userid = sessionStore.getUserID(sid)
+                if sessionStore.removeWithSID(sid):
+                    sessionStore.printOut()
+                    meta["status"] = "success"
+                    meta["message"] = "%s has logged out" % userid
+                    data["sid"] = sid
+                else:
+                    meta["status"] = "failure"
+                    meta["message"] = "logout %s sid failed" % userid
+                    data["sid"] = sid
+            else:
+                meta["status"] = "failure"
+                meta["message"] = "sid not Found"
+            self.dumpJSON(getFullResponseDictionary(meta, data))
+        else:
+            meta["status"] = "failure"
+            meta["message"] = "Invalid key"
+            self.dumpJSON(getFullResponseDictionary(meta, data))
 
 class personalinformationHandler(BasicHandler):
     def post(self, category):
