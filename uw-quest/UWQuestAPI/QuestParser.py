@@ -892,12 +892,12 @@ def getEmptyMetaDict():
 	return {"status": "", "message": ""}
 
 # Return acount login response dictionary
-def API_account_loginResponse(questSession):
+def API_account_loginResponse(questSession, sid):
 	meta = getEmptyMetaDict()
 	data = {}
 	if questSession.isLogin:
 		meta["status"] = "success"
-		data["sid"] = questSession.icsid
+		data["sid"] = sid
 	else:
 		meta["status"] = "failure"
 		meta["message"] = questSession.currentError

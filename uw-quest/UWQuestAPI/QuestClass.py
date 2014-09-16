@@ -3,6 +3,7 @@ from requests import Request, Session
 from bs4 import BeautifulSoup
 import re
 import copy
+from datetime import datetime, date, time
 
 # Import outer files
 import QuestParser
@@ -30,6 +31,7 @@ def getStateNum(html):
 class QuestSession(object):
 	session = Session()
 	isLogin = False
+	isWrongPassword = False
 	userid = ""
 	password = ""
 	icsid = ""
@@ -40,6 +42,9 @@ class QuestSession(object):
 
 	currentPOSTpage = "" # Log which page we are at
 	# currentResult
+
+	loginRetryTimes = 0
+	loginRetryMaxTime = 3
 
 	# Post parameters
 	basicPostData = {
@@ -99,21 +104,60 @@ class QuestSession(object):
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			# Go to student center
-			if(self.gotoStudentCenter()):
+			result = self.gotoStudentCenter()
+			if(result):
+				self.loginRetryTimes = 0
 				self.isLogin = True
 				print "Login Successfully!"
 				return True
+			else:
+				self.loginRetryTimes += 1
+				if self.loginRetryTimes < self.loginRetryMaxTime:
+					return self.login()
 		self.isLogin = False
 		print "Login Failed!"
 		return False
 	
-	# TODO
-	def checkIsExpiration(self):
+	def checkIsExpired(self):
 		''' Check whether login is expired, return True if expired
 			@Param 
 			@Return True if expired
 		'''
+		# 16_Sep_2014_03:54:03_GMT
+		timeString = self.currentResponse.cookies["PS_TOKENEXPIRE"]
+		try:
+			lastActiveTime = datetime.strptime(timeString, "%d_%b_%Y_%H:%M:%S_%Z")
+			currentTime = datetime.utcnow()
+			timeDelta = currentTime - lastActiveTime
+			# If elasped seconds is greater than 20min, cookie is expired
+			if timeDelta.seconds > 20 * 60:
+				print "Cookies is expired"
+				return True
+			else:
+				print "Cookies is not expired"
+				return False
+		except:
+			print "Cookies invalid"
+			return False
+
+	def checkIsWrongUsernamePassword(self):
+		soup = BeautifulSoup(self.currentResponse.content)
+		if self.currentResponse.status_code == requests.codes.ok:
+			findLoginID = soup.find(id="login")
+			if findLoginID:
+				self.isWrongPassword = True
+				return True
+		self.isWrongPassword = False
 		return False
+
+	def checkIsValid(self):
+		soup = BeautifulSoup(self.currentResponse.content)
+		# print soup.prettify()
+		isValid = soup.find(id="ICSID")
+		if isValid:
+			return True
+		else:
+			return False
 
 	def checkIsUndergraduate(self, response):
 		''' Check whether logined account is undergraduate
@@ -193,12 +237,37 @@ class QuestSession(object):
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			self.checkIsUndergraduate(response)
-			if self.updateICSID(response) is True:
-				print "GET Student Center OK"
-				return True
-		print "GET Student Center Failed"
-		return False
+			if not self.checkIsWrongUsernamePassword():
+				isValid = self.checkIsValid()
+				if isValid:
+					self.checkIsUndergraduate(response)
+					if self.updateICSID(response) is True:
+						print "GET Student Center OK"
+						return True
+					else:
+						print "GET Student Center Failed: updateICSID failed"
+						return False
+				else:
+					print "GET Student Center Failed: invalid page"
+					return False
+			else:
+				print "GET Student Center Failed: Wrong username/password"
+				return False
+		else:
+			print "GET Student Center Failed: status code %s" % str(response.status_code)
+			return False
+
+	# def checkIsLogin(self):
+	# 	if not self.isLogin:
+	# 		if not (self.login()):
+	# 			print "Cannot login!"
+	# 			return False
+	# 	else:
+	# 		return True
+
+	# def updateLoginSession(self):
+	# 	if self.checkIsValid():
+	# 		pass
 
 	# Personal Information
 	def postPersonalInformation(self):
@@ -279,29 +348,34 @@ def main():
 	myQuest = QuestSession("", "") # "userid", "password"
 	myQuest.login()
 
-	# Personal Information
-	myQuest.postPersonalInformation()
+	myQuest.checkIsExpired()
+	# print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
 
-	myQuest.gotoPersonalInformation_address()
-	print QuestParser.API_personalInfo_addressResponse(myQuest)
+	# # Personal Information
+	# myQuest.postPersonalInformation()
 
-	myQuest.gotoPersonalInformation_name()
-	print QuestParser.API_personalInfo_nameResponse(myQuest)
+	# myQuest.gotoPersonalInformation_address()
+	# print QuestParser.API_personalInfo_addressResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_phoneNumbers()
-	print QuestParser.API_personalInfo_phoneResponse(myQuest)
+	# myQuest.gotoPersonalInformation_name()
+	# print QuestParser.API_personalInfo_nameResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_email()
-	print QuestParser.API_personalInfo_emailResponse(myQuest)
+	# myQuest.gotoPersonalInformation_phoneNumbers()
+	# print QuestParser.API_personalInfo_phoneResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_emgencyContacts()
-	print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
+	# myQuest.gotoPersonalInformation_email()
+	# print QuestParser.API_personalInfo_emailResponse(myQuest)
+
+	# myQuest.gotoPersonalInformation_emgencyContacts()
+	# print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_demographicInfo()
-	print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
+	# myQuest.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_citizenship()
-	print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
+	# myQuest.gotoPersonalInformation_citizenship()
+	# print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
+
+	# print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
 
 if __name__ == '__main__':
     main()
