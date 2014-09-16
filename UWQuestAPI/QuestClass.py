@@ -41,6 +41,9 @@ class QuestSession(object):
 	currentPOSTpage = "" # Log which page we are at
 	# currentResult
 
+	loginRetryTimes = 0
+	loginRetryMaxTime = 3
+
 	# Post parameters
 	basicPostData = {
 		'ICAJAX':'1',
@@ -99,10 +102,16 @@ class QuestSession(object):
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			# Go to student center
-			if(self.gotoStudentCenter()):
+			result = self.gotoStudentCenter()
+			if(result):
+				self.loginRetryTimes = 0
 				self.isLogin = True
 				print "Login Successfully!"
 				return True
+			else:
+				self.loginRetryTimes += 1
+				if self.loginRetryTimes < self.loginRetryMaxTime:
+					return self.login()
 		self.isLogin = False
 		print "Login Failed!"
 		return False
@@ -114,6 +123,15 @@ class QuestSession(object):
 			@Return True if expired
 		'''
 		return False
+
+	def checkIsValid(self):
+		soup = BeautifulSoup(self.currentResponse.content)
+		# print soup.prettify()
+		isValid = soup.find(id="ICSID")
+		if isValid:
+			return True
+		else:
+			return False
 
 	def checkIsUndergraduate(self, response):
 		''' Check whether logined account is undergraduate
@@ -193,12 +211,29 @@ class QuestSession(object):
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			self.checkIsUndergraduate(response)
-			if self.updateICSID(response) is True:
-				print "GET Student Center OK"
-				return True
-		print "GET Student Center Failed"
-		return False
+			isValid = self.checkIsValid()
+			if isValid:
+				self.checkIsUndergraduate(response)
+				if self.updateICSID(response) is True:
+					print "GET Student Center OK"
+					return True
+				else:
+					print "GET Student Center Failed: updateICSID failed"
+					return False
+			else:
+				print "GET Student Center Failed: invalid page"
+				return False
+		else:
+			print "GET Student Center Failed: status code %s" % str(response.status_code)
+			return False
+
+	def checkIsLogin(self):
+		if not self.isLogin:
+			if not (self.login()):
+				print "Cannot login!"
+				return False
+		else:
+			return True
 
 	# Personal Information
 	def postPersonalInformation(self):
@@ -285,23 +320,23 @@ def main():
 	myQuest.gotoPersonalInformation_address()
 	print QuestParser.API_personalInfo_addressResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_name()
-	print QuestParser.API_personalInfo_nameResponse(myQuest)
+	# myQuest.gotoPersonalInformation_name()
+	# print QuestParser.API_personalInfo_nameResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_phoneNumbers()
-	print QuestParser.API_personalInfo_phoneResponse(myQuest)
+	# myQuest.gotoPersonalInformation_phoneNumbers()
+	# print QuestParser.API_personalInfo_phoneResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_email()
-	print QuestParser.API_personalInfo_emailResponse(myQuest)
+	# myQuest.gotoPersonalInformation_email()
+	# print QuestParser.API_personalInfo_emailResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_emgencyContacts()
-	print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
+	# myQuest.gotoPersonalInformation_emgencyContacts()
+	# print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_demographicInfo()
-	print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
+	# myQuest.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_citizenship()
-	print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
+	# myQuest.gotoPersonalInformation_citizenship()
+	# print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
 
 if __name__ == '__main__':
     main()
