@@ -3,6 +3,7 @@ from requests import Request, Session
 from bs4 import BeautifulSoup
 import re
 import copy
+from datetime import datetime, date, time
 
 # Import outer files
 import QuestParser
@@ -117,13 +118,30 @@ class QuestSession(object):
 		print "Login Failed!"
 		return False
 	
-	# TODO
 	def checkIsExpired(self):
 		''' Check whether login is expired, return True if expired
 			@Param 
 			@Return True if expired
 		'''
-		return False
+		# 16_Sep_2014_03:54:03_GMT
+		timeString = self.currentResponse.cookies["PS_TOKENEXPIRE"]
+		try:
+			lastActiveTime = datetime.strptime(timeString, "%d_%b_%Y_%H:%M:%S_%Z")
+			currentTime = datetime.utcnow()
+			print lastActiveTime
+			print currentTime
+			timeDelta = currentTime - lastActiveTime
+			print timeDelta
+			# If elasped seconds is greater than 20min, cookie is expired
+			if timeDelta.seconds > 20 * 60:
+				print "Cookies is expired"
+				return True
+			else:
+				print "Cookies is not expired"
+				return False
+		except:
+			print "Cookies invalid"
+			return False
 
 	def checkIsWrongUsernamePassword(self):
 		soup = BeautifulSoup(self.currentResponse.content)
@@ -333,33 +351,34 @@ def main():
 	myQuest = QuestSession("", "") # "userid", "password"
 	myQuest.login()
 
-	print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
+	myQuest.checkIsExpired()
+	# print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
 
-	# Personal Information
-	myQuest.postPersonalInformation()
+	# # Personal Information
+	# myQuest.postPersonalInformation()
 
-	myQuest.gotoPersonalInformation_address()
-	print QuestParser.API_personalInfo_addressResponse(myQuest)
+	# myQuest.gotoPersonalInformation_address()
+	# print QuestParser.API_personalInfo_addressResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_name()
-	print QuestParser.API_personalInfo_nameResponse(myQuest)
+	# myQuest.gotoPersonalInformation_name()
+	# print QuestParser.API_personalInfo_nameResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_phoneNumbers()
-	print QuestParser.API_personalInfo_phoneResponse(myQuest)
+	# myQuest.gotoPersonalInformation_phoneNumbers()
+	# print QuestParser.API_personalInfo_phoneResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_email()
-	print QuestParser.API_personalInfo_emailResponse(myQuest)
+	# myQuest.gotoPersonalInformation_email()
+	# print QuestParser.API_personalInfo_emailResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_emgencyContacts()
-	print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
+	# myQuest.gotoPersonalInformation_emgencyContacts()
+	# print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_demographicInfo()
-	print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
+	# myQuest.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_citizenship()
-	print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
+	# myQuest.gotoPersonalInformation_citizenship()
+	# print QuestParser.API_personalInfo_citizenshipResponse(myQuest)
 
-	print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
+	# print requests.utils.dict_from_cookiejar(myQuest.currentResponse.cookies)
 
 if __name__ == '__main__':
     main()
