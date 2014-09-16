@@ -128,10 +128,7 @@ class QuestSession(object):
 		try:
 			lastActiveTime = datetime.strptime(timeString, "%d_%b_%Y_%H:%M:%S_%Z")
 			currentTime = datetime.utcnow()
-			print lastActiveTime
-			print currentTime
 			timeDelta = currentTime - lastActiveTime
-			print timeDelta
 			# If elasped seconds is greater than 20min, cookie is expired
 			if timeDelta.seconds > 20 * 60:
 				print "Cookies is expired"
