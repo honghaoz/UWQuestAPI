@@ -29,6 +29,7 @@ from google.appengine.api import memcache
 sys.path.insert(0, 'libs')
 import requests
 
+from UWQuestAPI import QuestClass
 from UWQuestAPI.QuestClass import QuestSession
 
 from UWQuestAPI.PersonalInformation import postPersonalInformation
@@ -38,6 +39,14 @@ from UWQuestAPI.QuestParser import getFullResponseDictionary, getEmptyMetaDict
 # Global variables for jinja environment
 template_dir = os.path.join(os.path.dirname(__file__), 'html_template')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
+
+# Error code constants
+kErrorInvalidKey = 1 # yes
+kErrorInvalidSID = 2 # yes
+kErrorInvalidSession = 3 # timeout or not logged in, yes
+kErrorInvalidUserPassword = 4 
+kErrorParseContent = 5
+kErrorOther = 6
 
 # Basic Handler
 class BasicHandler(webapp2.RequestHandler):
@@ -61,9 +70,48 @@ class BasicHandler(webapp2.RequestHandler):
         if key == 77881122:
             return True
         return False
+    def responseInvalidKey(self):
+        meta = getEmptyMetaDict()
+        data = {}
+        meta["status"] = "failure"
+        meta["message"] = "Invalid key"
+        meta["error_code"] = kErrorInvalidKey
+        self.dumpJSON(getFullResponseDictionary(meta, data))
+
     def dumpJSON(self, dict):
         self.response.headers['Content-Type'] = 'application/json'
         self.write(json.dumps(dict))
+
+    def responseInvalidSid(self):
+        meta = getEmptyMetaDict()
+        data = {}
+        meta["status"] = "failure"
+        meta["message"] = "Invalid sid"
+        meta["error_code"] = kErrorInvalidSID
+        self.dumpJSON(getFullResponseDictionary(meta, data))
+
+    def responseInvalidSession(self):
+        meta = getEmptyMetaDict()
+        data = {}
+        meta["status"] = "failure"
+        meta["message"] = "Session is timeout"
+        meta["error_code"] = kErrorInvalidSession
+        self.dumpJSON(getFullResponseDictionary(meta, data))
+
+    def responseInvalidPassword(self):
+        meta = getEmptyMetaDict()
+        data = {}
+        meta["status"] = "failure"
+        meta["message"] = "Invalid Userid/Password"
+        meta["error_code"] = kErrorInvalidUserPassword
+        self.dumpJSON(getFullResponseDictionary(meta, data))
+
+    # Add error code for parsed result from UWQuestAPI library
+    def responseParseResult(self, parseResult, error_code):
+        metaDict = parseResult["meta"]
+        if metaDict["status"] == "failure":
+            metaDict["error_code"] = error_code
+        self.dumpJSON(parseResult)
 
 class MainHandler(BasicHandler):
     """Handle for '/' """
@@ -170,7 +218,8 @@ class LoginHandler(BasicHandler):
             userid = self.request.get("userid")
             password = self.request.get("password")
             global sessionStore
-            # Init for the first time
+
+            # Init session store for the first time
             if not sessionStore:
                 sessionStore = SessionStore()
 
@@ -179,7 +228,8 @@ class LoginHandler(BasicHandler):
                 foundSession = sessionStore.getSession(userid)
                 if (not foundSession.checkIsExpired()) and (foundSession.isLogin):
                     # Not expired and isLogin
-                    self.dumpJSON(QuestParser.API_account_loginResponse(foundSession, sessionStore.getSID(userid)))
+                    self.responseParseResult(QuestParser.API_account_loginResponse(foundSession, sessionStore.getSID(userid)), kErrorInvalidSession)
+                    # self.dumpJSON(QuestParser.API_account_loginResponse(foundSession, sessionStore.getSID(userid)))
                     sessionStore.printOut()
                     return
 
@@ -189,12 +239,19 @@ class LoginHandler(BasicHandler):
             if newQuestSession.isLogin:
                 sessionStore.add(userid, password, newQuestSession)
                 sid = sessionStore.getSID(userid)
-            self.dumpJSON(QuestParser.API_account_loginResponse(newQuestSession, sid))
-            sessionStore.printOut()
+                self.responseParseResult(QuestParser.API_account_loginResponse(newQuestSession, sid), 0) # Must be success
+                sessionStore.printOut()
+            else:
+                # Login failed
+                errorCodeFromLib = newQuestSession.currentErrorCode
+                errorCodeAPI = 0
+                if errorCodeFromLib == QuestClass.kErrorInvalidUserPassword:
+                    errorCodeAPI = kErrorInvalidUserPassword
+                else:
+                    errorCodeAPI = kErrorOther
+                self.responseParseResult(QuestParser.API_account_loginResponse(newQuestSession, sid), errorCodeAPI)
         else:
-            meta["status"] = "failure"
-            meta["message"] = "Invalid key"
-            self.dumpJSON(getFullResponseDictionary(meta, data))
+            self.responseInvalidKey()
         
 class LogoutHandler(BasicHandler):
     def post(self):
@@ -211,6 +268,8 @@ class LogoutHandler(BasicHandler):
             global sessionStore
             if sessionStore.find(sid):
                 userid = sessionStore.getUserID(sid)
+                session = sessionStore.getSession(sid)
+                session.logout()
                 if sessionStore.removeWithSID(sid):
                     sessionStore.printOut()
                     meta["status"] = "success"
@@ -220,16 +279,21 @@ class LogoutHandler(BasicHandler):
                     meta["status"] = "failure"
                     meta["message"] = "logout %s sid failed" % userid
                     data["sid"] = sid
+                self.dumpJSON(getFullResponseDictionary(meta, data))
             else:
-                meta["status"] = "failure"
-                meta["message"] = "sid not Found"
-            self.dumpJSON(getFullResponseDictionary(meta, data))
+                self.responseInvalidSid()
         else:
-            meta["status"] = "failure"
-            meta["message"] = "Invalid key"
-            self.dumpJSON(getFullResponseDictionary(meta, data))
+            self.responseInvalidKey()
 
 class personalinformationHandler(BasicHandler):
+    retryTime = 2
+    def restoreRetryTime(self):
+        self.retryTime = 2
+
+    def shouldRetry(self):
+        self.retryTime -= 1
+        return (not self.retryTime == 0)
+
     def post(self, category):
         self.personalinformationOperation(category)
 
@@ -249,54 +313,87 @@ class personalinformationHandler(BasicHandler):
                     self.processPersonalInfoReuqest(foundSession, category)
                 else:
                     # Found session is invalid, need relogin
-                    response = {"meta": {"status": "failure", "message": "Session is timeout"}, "data": []}
-                    self.dumpJSON(response)
+                    self.responseInvalidSession()
             else:
                 # Not found sid, invalid sid
-                response = {"meta": {"status": "failure", "message": "Invalid sid"}, "data": []}
-                self.dumpJSON(response)
+                self.responseInvalidSid()
         else:
             # Invalid key
-            meta["status"] = "failure"
-            meta["message"] = "Invalid key"
-            self.dumpJSON(getFullResponseDictionary(meta, data))
+            self.responseInvalidKey()
 
     # PRO: personalInfoQuestSesson must be valid
     def processPersonalInfoReuqest(self, personalInfoQuestSesson, category):
         if category == "addresses":
-            personalInfoQuestSesson.gotoPersonalInformation_address()
-            response = QuestParser.API_personalInfo_addressResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_address():
+                response = QuestParser.API_personalInfo_addressResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
+
         elif category == "names":
-            personalInfoQuestSesson.gotoPersonalInformation_name()
-            response = QuestParser.API_personalInfo_nameResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_name():
+                response = QuestParser.API_personalInfo_nameResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         elif category == "phone_numbers":
-            personalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
-            response = QuestParser.API_personalInfo_phoneResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_phoneNumbers():
+                response = QuestParser.API_personalInfo_phoneResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         elif category == "email_addresses":
-            personalInfoQuestSesson.gotoPersonalInformation_email()
-            response = QuestParser.API_personalInfo_emailResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_email():
+                response = QuestParser.API_personalInfo_emailResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         elif category == "emergency_contacts":
-            personalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
-            response = QuestParser.API_personalInfo_emergencyContactResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_emgencyContacts():
+                response = QuestParser.API_personalInfo_emergencyContactResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         elif category == "demographic_information":
-            personalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
-            response = QuestParser.API_personalInfo_demographicInfoResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_demographicInfo():
+                response = QuestParser.API_personalInfo_demographicInfoResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         elif category == "citizenship_immigration_documents":
-            personalInfoQuestSesson.gotoPersonalInformation_citizenship()
-            response = QuestParser.API_personalInfo_citizenshipResponse(personalInfoQuestSesson)
+            if personalInfoQuestSesson.gotoPersonalInformation_citizenship():
+                response = QuestParser.API_personalInfo_citizenshipResponse(personalInfoQuestSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processPersonalInfoReuqest(personalInfoQuestSesson, category)
+                else:
+                    return self.responseInvalidSession()
         else:
             response = {"meta": {"status": "failure", "message": "Invalid endpoint"}, "data": []}                    
-        self.dumpJSON(response)
+        self.responseParseResult(response, kErrorParseContent)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/login', LoginHandler),
     ('/logout', LogoutHandler),
     ('/personalinformation/%s' % r'([a-z\_]+)', personalinformationHandler)
-    # ('/personalinformation/names', personalinformation_namesHandler),
-    # ('/personalinformation/phone_numbers', personalinformation_phoneNumbersHandler),
-    # ('/personalinformation/email_addresses', personalinformation_emailAddressesHandler),
-    # ('/personalinformation/emergency_contacts', personalinformation_emergencyContactsHandler),
-    # ('/personalinformation/demographic_information', personalinformation_demographicInformationHandler),
-    # ('/personalinformation/citizenship_immigration_documents', personalinformation_citizenshipImmigrationDocumentsHandler),
 ], debug=True)

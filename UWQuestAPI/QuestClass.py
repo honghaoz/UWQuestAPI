@@ -27,6 +27,12 @@ def getStateNum(html):
 	s = s.replace("value=","").replace('"',"").replace("'","")
 	return int(s)
 
+# Error code constants
+kErrorInvalidUserPassword = 11
+kErrorUpdateICSID = 12
+kErrorInvalidStudentPage = 13
+kErrorHTTPStatus = 14
+
 # TODO: timeout handling, network error handling
 class QuestSession(object):
 	session = Session()
@@ -39,6 +45,7 @@ class QuestSession(object):
 	isUndergraduate = True
 	# currentResponse
 	currentError = "" # Error message
+	currentErrorCode = 0
 
 	currentPOSTpage = "" # Log which page we are at
 	# currentResult
@@ -73,6 +80,7 @@ class QuestSession(object):
 
 	# Login
 	questLoginURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG'
+	questLogoutURL = "https://quest.pecs.uwaterloo.ca/psp/SS/ACADEMIC/SA/?cmd=logout"
 	studentCenterURL_SA = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/SA/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL'
 	studentCenterURL_HRMS = "https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL"
 
@@ -108,15 +116,31 @@ class QuestSession(object):
 			if(result):
 				self.loginRetryTimes = 0
 				self.isLogin = True
+				self.currentError = ""
+				self.currentErrorCode = 0
 				print "Login Successfully!"
 				return True
 			else:
+				if self.currentErrorCode == kErrorInvalidUserPassword:
+					self.isLogin = False
+					return False
 				self.loginRetryTimes += 1
 				if self.loginRetryTimes < self.loginRetryMaxTime:
 					return self.login()
 		self.isLogin = False
 		print "Login Failed!"
 		return False
+
+	def logout(self):
+		response = self.session.get(self.questLogoutURL)
+		self.currentResponse = response
+		if response.status_code == requests.codes.ok:
+			print "Logout Successfully"
+			self.isLogin = False
+			return True
+		else:
+			print "Logout Failed!"
+			return False
 	
 	def checkIsExpired(self):
 		''' Check whether login is expired, return True if expired
@@ -132,20 +156,23 @@ class QuestSession(object):
 			# If elasped seconds is greater than 20min, cookie is expired
 			if timeDelta.seconds > 20 * 60:
 				print "Cookies is expired"
+				self.isLogin = False
 				return True
 			else:
 				print "Cookies is not expired"
 				return False
 		except:
 			print "Cookies invalid"
+			self.isLogin = False
 			return False
 
-	def checkIsWrongUsernamePassword(self):
+	def checkIsOnLoginPage(self):
 		soup = BeautifulSoup(self.currentResponse.content)
 		if self.currentResponse.status_code == requests.codes.ok:
 			findLoginID = soup.find(id="login")
 			if findLoginID:
 				self.isWrongPassword = True
+				self.isLogin = False
 				return True
 		self.isWrongPassword = False
 		return False
@@ -157,6 +184,7 @@ class QuestSession(object):
 		if isValid:
 			return True
 		else:
+			self.isLogin = False
 			return False
 
 	def checkIsUndergraduate(self, response):
@@ -182,7 +210,6 @@ class QuestSession(object):
 		'''
 		try:
 			self.icsid = getICSID(response.content)
-			# Print ICSID
 			print "ICSID: " + self.icsid
 		except:
 			return False
@@ -195,7 +222,6 @@ class QuestSession(object):
 		'''
 		try:
 			self.currentStateNum = getStateNum(response.content)
-			# Print current state num
 			print "Current StateNum: " + str(self.currentStateNum)
 		except:
 			return False
@@ -237,7 +263,7 @@ class QuestSession(object):
 		response = self.session.get(self.studentCenterURL_SA, data = getStudentCenterData)
 		self.currentResponse = response
 		if response.status_code == requests.codes.ok:
-			if not self.checkIsWrongUsernamePassword():
+			if not self.checkIsOnLoginPage():
 				isValid = self.checkIsValid()
 				if isValid:
 					self.checkIsUndergraduate(response)
@@ -246,15 +272,23 @@ class QuestSession(object):
 						return True
 					else:
 						print "GET Student Center Failed: updateICSID failed"
+						self.currentError = "GET Student Center Failed: updateICSID failed"
+						self.currentErrorCode = kErrorUpdateICSID
 						return False
 				else:
 					print "GET Student Center Failed: invalid page"
+					self.currentError = "GET Student Center Failed: invalid page"
+					self.currentErrorCode = kErrorInvalidStudentPage
 					return False
 			else:
 				print "GET Student Center Failed: Wrong username/password"
+				self.currentError = "GET Student Center Failed: Wrong username/password"
+				self.currentErrorCode = kErrorInvalidUserPassword
 				return False
 		else:
 			print "GET Student Center Failed: status code %s" % str(response.status_code)
+			self.currentError = "GET Student Center Failed: status code %s" % str(response.status_code)
+			self.currentErrorCode = kErrorHTTPStatus
 			return False
 
 	# def checkIsLogin(self):
