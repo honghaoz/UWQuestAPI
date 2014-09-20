@@ -240,36 +240,53 @@ class personalinformationHandler(BasicHandler):
         sid = self.request.get("sid")
         logging.info("category: " + category)
         logging.info("sid: " + sid)
-        global basicQuestSession
-        if sid == basicQuestSession.icsid:
-            personalInfoQuestSesson = PersonalInformationQuestSession("", "", basicQuestSession)
-            if category == "addresses":
-                personalInfoQuestSesson.gotoPersonalInformation_address()
-                response = QuestParser.API_personalInfo_addressResponse(personalInfoQuestSesson)
-            elif category == "names":
-                personalInfoQuestSesson.gotoPersonalInformation_name()
-                response = QuestParser.API_personalInfo_nameResponse(personalInfoQuestSesson)
-            elif category == "phone_numbers":
-                personalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
-                response = QuestParser.API_personalInfo_phoneResponse(personalInfoQuestSesson)
-            elif category == "email_addresses":
-                personalInfoQuestSesson.gotoPersonalInformation_email()
-                response = QuestParser.API_personalInfo_emailResponse(personalInfoQuestSesson)
-            elif category == "emergency_contacts":
-                personalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
-                response = QuestParser.API_personalInfo_emergencyContactResponse(personalInfoQuestSesson)
-            elif category == "demographic_information":
-                personalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
-                response = QuestParser.API_personalInfo_demographicInfoResponse(personalInfoQuestSesson)
-            elif category == "citizenship_immigration_documents":
-                personalInfoQuestSesson.gotoPersonalInformation_citizenship()
-                response = QuestParser.API_personalInfo_citizenshipResponse(personalInfoQuestSesson)
+        if self.checkKey():
+            global sessionStore
+            if sessionStore.find(sid):
+                foundSession = sessionStore.getSession(sid)
+                if (not foundSession.checkIsExpired()) and (foundSession.isLogin):
+                    # Found valid session
+                    self.processPersonalInfoReuqest(foundSession, category)
+                else:
+                    # Found session is invalid, need relogin
+                    response = {"meta": {"status": "failure", "message": "Session is timeout"}, "data": []}
+                    self.dumpJSON(response)
             else:
-                response = {"meta": {"status": "failure", "message": "Invalid endpoint"}, "data": []}                    
-            self.write(json.dumps(response))
+                # Not found sid, invalid sid
+                response = {"meta": {"status": "failure", "message": "Invalid sid"}, "data": []}
+                self.dumpJSON(response)
         else:
-            response = {"meta": {"status": "failure", "message": "Invalid sid"}, "data": []}
-            self.write(json.dumps(response))
+            # Invalid key
+            meta["status"] = "failure"
+            meta["message"] = "Invalid key"
+            self.dumpJSON(getFullResponseDictionary(meta, data))
+
+    # PRO: personalInfoQuestSesson must be valid
+    def processPersonalInfoReuqest(self, personalInfoQuestSesson, category):
+        if category == "addresses":
+            personalInfoQuestSesson.gotoPersonalInformation_address()
+            response = QuestParser.API_personalInfo_addressResponse(personalInfoQuestSesson)
+        elif category == "names":
+            personalInfoQuestSesson.gotoPersonalInformation_name()
+            response = QuestParser.API_personalInfo_nameResponse(personalInfoQuestSesson)
+        elif category == "phone_numbers":
+            personalInfoQuestSesson.gotoPersonalInformation_phoneNumbers()
+            response = QuestParser.API_personalInfo_phoneResponse(personalInfoQuestSesson)
+        elif category == "email_addresses":
+            personalInfoQuestSesson.gotoPersonalInformation_email()
+            response = QuestParser.API_personalInfo_emailResponse(personalInfoQuestSesson)
+        elif category == "emergency_contacts":
+            personalInfoQuestSesson.gotoPersonalInformation_emgencyContacts()
+            response = QuestParser.API_personalInfo_emergencyContactResponse(personalInfoQuestSesson)
+        elif category == "demographic_information":
+            personalInfoQuestSesson.gotoPersonalInformation_demographicInfo()
+            response = QuestParser.API_personalInfo_demographicInfoResponse(personalInfoQuestSesson)
+        elif category == "citizenship_immigration_documents":
+            personalInfoQuestSesson.gotoPersonalInformation_citizenship()
+            response = QuestParser.API_personalInfo_citizenshipResponse(personalInfoQuestSesson)
+        else:
+            response = {"meta": {"status": "failure", "message": "Invalid endpoint"}, "data": []}                    
+        self.dumpJSON(response)
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
