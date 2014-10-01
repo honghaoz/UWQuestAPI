@@ -66,7 +66,8 @@ class BasicHandler(webapp2.RequestHandler):
         try:
             key = int(key)
         except Exception, e:
-            self.write("Wrong key type")
+            logging.error("Wrong key type")
+            # self.write("Wrong key type")
         if key == 77881122:
             return True
         return False
@@ -203,6 +204,22 @@ class SessionStore(object):
         # print json.dumps(self.storeDict, indent=4, sort_keys=True)
         
 sessionStore = SessionStore()
+
+
+class ActivateHandler(BasicHandler):
+    def post(self):
+        self.activateOperation()
+
+    def get(self):
+        self.activateOperation()
+
+    def activateOperation(self):
+        meta = getEmptyMetaDict()
+        if self.checkKey():
+            meta["status"] = "success"
+        else:
+            meta["status"] = "failure"
+        self.dumpJSON(getFullResponseDictionary(meta, {}))
 
 class LoginHandler(BasicHandler):
     def post(self):
@@ -395,6 +412,7 @@ class personalinformationHandler(BasicHandler):
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
+    ('/activate', ActivateHandler),
     ('/login', LoginHandler),
     ('/logout', LogoutHandler),
     ('/personalinformation/%s' % r'([a-z\_]+)', personalinformationHandler)
