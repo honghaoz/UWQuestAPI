@@ -225,6 +225,7 @@ class LoginHandler(BasicHandler):
 
             if sessionStore.find(userid):
                 # Found existing userid
+                logging.info("Found existing session")
                 foundSession = sessionStore.getSession(userid)
                 if (not foundSession.checkIsExpired()) and (foundSession.isLogin):
                     # Not expired and isLogin
@@ -233,6 +234,7 @@ class LoginHandler(BasicHandler):
                     sessionStore.printOut()
                     return
 
+            logging.info("Start a new session")
             newQuestSession = QuestSession(userid, password)
             newQuestSession.login()
             sid = ""
