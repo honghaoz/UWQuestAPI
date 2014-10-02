@@ -1,0 +1,1221 @@
+<html dir="ltr" lang="en">
+ <!-- Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved. -->
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+   <script language="JavaScript">
+    var  totalTimeoutMilliseconds = 1200000; 
+var  warningTimeoutMilliseconds = 900000; 
+var timeOutURL = 'https://quest.pecs.uwaterloo.ca/psp/SS/ACADEMIC/HRMS/?cmd=expire';
+var timeoutWarningPageURL = 'https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/s/WEBLIB_TIMEOUT.PT_TIMEOUTWARNING.FieldFormula.IScript_TIMEOUTWARNING';
+   </script>
+   <link href="/cs/SS/cache/85310/PSSTYLEREQ_1.css" id="PSSTYLEREQ_1_css" rel="stylesheet" type="text/css"/>
+   <link href="/cs/SS/cache/85310/SSS_STYLESHEET_3.css" id="SSS_STYLESHEET_3_css" rel="stylesheet" type="text/css"/>
+   <title id="PSPAGETITLE">
+    Email Addresses
+   </title>
+   <script language="JavaScript">
+    var winParent = null;
+var modalID = null;
+var modalZoomName = null;
+var baseKey_win0 = "\x1b";
+var altKey_win0 = "05678\xbc\xbe\xbf\xde2";
+var ctrlKey_win0 = "JK";
+var saveWarningKeys_win0 = "A2;";
+var bAccessibility_win0 =false;
+var bDoModal_win0 = false;
+var bPromptPage_win0 = false;
+var bTabOverTB_win0 = false;
+var bTabOverPg_win0 = false;
+var bTabOverNonPS_win0 = false;
+var strCurrUrl='https://quest.pecs.uwaterloo.ca/psp/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL?EMPLID=20385401&PAGE=SS_CC_EMAIL_ADDR';
+var bIncInNavigation='T';
+var szCrefID='HC_SS_CC_EMAIL_ADDR_GBL';
+var szCrefReged='T';
+var szCrefVisible='T';
+var szCrefLabel='Email Addresses';
+var szCalendarType = 'G';
+var bMenuSrchPage = false;
+var bWSRP=0;var szMenuSrchText = "-999999-";
+var modalCloseUrl = '/cs/SS/cache/85310/PT_PORTAL_IC_CLOSE_1.gif';
+var modalCloseAlt = 'Close';
+var modalResizeUrl= '/cs/SS/cache/85310/PT_RESIZE_IMG_1.gif';
+var modalResizeAlt = 'Drag to resize';
+var modalMoveAlt = 'Drag to move';
+   </script>
+   <script language="JavaScript">
+    var gridRowSelRgbColor_win0 ="rgb(212,219,217)";
+   </script>
+   <script language="JavaScript">
+    try {
+document.domain = "pecs.uwaterloo.ca";
+}
+catch(err) {;}
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_COMMON_MIN_341.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_AJAX_NET_MIN_339.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_SAVEWARNINGSCRIPT_MIN_1.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_PAGESCRIPT_win0_MIN_339.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_EDITSCRIPT_win0_MIN_1.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_POPUPSCRIPT_win0_MIN_339.js" type="text/javascript">
+   </script>
+   <script language="JavaScript" src="/cs/SS/cache/85310/PT_GRIDSCRIPT_win0_MIN_339.js" type="text/javascript">
+   </script>
+   <script language="JavaScript">
+    var nResubmit=0;
+var nLastAction=0;
+var loader=null;
+if (typeof(bCleanHtml) == 'undefined')
+	var bCleanHtml = false;
+setupTimeout2();
+var postUrl_win0='https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL';
+function aAction_win0(form, name, params, bAjax, bPrompt)
+{
+setupTimeout2();
+if ((name != '#ICSave'))
+processing_win0(1,3000);
+aAction0_win0(form, name, params, bAjax, bPrompt);
+}
+function submitAction_win0(form, name)
+{
+setupTimeout2();
+if (!ptCommonObj2.isICQryDownload(form, name))
+ { processing_win0(1,3000); }
+preSubmitProcess_win0(form, name);
+var spellcheckpos = name.indexOf('$spellcheck');
+if ((spellcheckpos != -1) && (name.indexOf('#KEYA5') != -1))
+	form.ICAction.value = name.substring(0,spellcheckpos);
+else 
+	form.ICAction.value=name;
+var actionName = form.ICAction.value;
+form.ICXPos.value=ptCommonObj2.getScrollX();
+form.ICYPos.value=ptCommonObj2.getScrollY();
+if (!ptCommonObj2.isAJAXReq(form, name) && !ptCommonObj2.isPromptReq(name)){
+if (nLastAction == 1 && nResubmit > 0) return;
+form.ICResubmit.value=nResubmit;
+form.submit();
+if (!ptCommonObj2.isICQryDownload(form, name))
+	nResubmit++;
+}
+else if (ptCommonObj2.isPromptReq(name))
+	pAction_win0(form, name, arguments[2]);
+else
+	aAction_win0(form, actionName);}
+   </script>
+   <script language="javascript">
+    var pt_calHeadstyle=" class='PTCALHEAD' "
+var pt_calWeekHeadstyle=" class='PTCALWEEKHEAD' "
+function dateitemrefs()
+{
+this.pt_dateheader = "/cs/SS/cache/85310/PT_PORTAL_IC_CLOSE_1.gif";
+this.pt_datering = "/cs/SS/cache/85310/PT_CURRENT_DATE_1.gif";
+this.pt_datesel = "/cs/SS/cache/85310/PT_SELECTED_DATE_1.gif";
+this.pt_nextmonth = "/cs/SS/cache/85310/PT_RIGHT_SCROLL_1.gif";
+this.pt_prevmonth= "/cs/SS/cache/85310/PT_LEFT_SCROLL_1.gif";
+this.pt_daystitle_hijri = "/cs/SS/cache/85310/PT_DATE_TITLE_S6_1.GIF";
+this.pt_daystitle_thai = "/cs/SS/cache/85310/PT_DATE_TITLE_S0_1.GIF";
+this.pt_daystitle_s0 = "/cs/SS/cache/85310/PT_DATE_TITLE_S0_1.GIF";
+this.pt_daystitle_m1 = "/cs/SS/cache/85310/PT_DATE_TITLE_M1_1.GIF";
+this.pt_daystitle_t2 = "/cs/SS/cache/85310/PT_DATE_TITLE_T2_1.GIF";
+this.pt_daystitle_w3 = "/cs/SS/cache/85310/PT_DATE_TITLE_W3_1.GIF";
+this.pt_daystitle_t4 = "/cs/SS/cache/85310/PT_DATE_TITLE_T4_1.GIF";
+this.pt_daystitle_f5 = "/cs/SS/cache/85310/PT_DATE_TITLE_F5_1.gif";
+this.pt_daystitle_s6 = "/cs/SS/cache/85310/PT_DATE_TITLE_S6_1.GIF";
+}
+ 
+function LoadCalendar()
+{
+var dateitems = new dateitemrefs();
+loadImages(dateitems);
+}
+function DatePrompt_win0(dtfield,promptfield,yrfmt,bsubmit)
+{
+setupTimeout2();
+openDate_win0(dtfield, promptfield, "MDY/"+yrfmt,bsubmit,"G",0);
+}
+   </script>
+   <script language="JavaScript" ptdefer="defer">
+    if (typeof ptStyleSheet == "undefined") {
+ptStyleSheet = 'SSS_STYLESHEET';
+}
+function onLoadExt_win0() {
+modalZoomName = null;
+var pt_pageinfo = document.getElementById('pt_pageinfo_win0');
+if (pt_pageinfo) {
+pt_pageinfo.setAttribute('Page', 'SS_CC_EMAIL_ADDR');
+pt_pageinfo.setAttribute('Component', 'SS_CC_EMAIL_ADDR');
+pt_pageinfo.setAttribute('Menu', 'CC_PORTFOLIO');
+}
+
+ g_bAccessibilityMode=false; 
+UpdateBreadCrumbs();
+runOnloadScript_win0(false,false,false,false,false,false,false,false,false,false,false,false,false,true,false,6,'ICFocus',false,false);
+if (typeof(HelppopupObj_win0) != 'undefined' && HelppopupObj_win0 != null)
+ HelppopupObj_win0.StopPopup();
+
+doModalOnLoad_win0(false, false);
+ResetGlyph_win0();
+self.scroll(0,0);
+objToBeFocus = null;
+if (typeof oWin == 'undefined') setEventHandlers_win0('ICFirstAnchor_win0', 'ICLastAnchor_win0', false);
+ else
+ oWin.setEventHandlers_win0('ICFirstAnchor_win0', 'ICLastAnchor_win0', false);
+setFocus_win0('DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$',-1);
+processing_win0(0,3000);
+ptConsole2.enable();
+
+GenerateABN();
+GenerateFakeBC();
+bcUpdateForPTF();if (typeof(myAppsWindowOpenJS) != 'undefined' && myAppsWindowOpenJS != null && myAppsWindowOpenJS != '')
+ {
+try {eval(myAppsWindowOpenJS);} catch(e) {}
+  myAppsWindowOpenJS=null;
+}
+ResetGlyph_win0();setPageletInfoInCtxmenu_win0('false');}
+try{ptEvent.load(onLoadExt_win0);}catch(e){}
+   </script>
+  </meta>
+ </head>
+ <body class="PSPAGE" tabindex="-1">
+  <div component="" id="pt_pageinfo_win0" menu="" page="">
+  </div>
+  <div id="pt_modalMaskCover">
+  </div>
+  <div id="pt_modalMask">
+  </div>
+  <div id="pt_console">
+  </div>
+  <div id="pt_typeahead0">
+   <span class="spanTextDropdown" id="pt_typeahead">
+   </span>
+  </div>
+  <div id="WAIT_win0" style="display:none;position:absolute;right:0;">
+   <img align="left" alt="Processing... please wait" id="processing" src="/cs/SS/cache/85310/PT_PROCESSING_1.gif" title="Processing... please wait"/>
+  </div>
+  <div id="SAVED_win0" style="display:none;position:absolute;right:0;">
+   <table border="0" cellpadding="0" cellspacing="0">
+    <tr>
+     <td>
+      <img alt="" border="0" height="39" src="/cs/SS/cache/85310/PTPORTAL_POPBOX_LEFT_1.gif" width="7"/>
+     </td>
+     <td align="center" background="/cs/SS/cache/85310/PTPORTAL_POPBOX_CENTER_1.gif" id="saveWait_win0" valign="middle" width="35">
+      <img alt="" height="24" src="/cs/SS/cache/85310/PT_LOADER_1.gif" width="24"/>
+     </td>
+     <td background="/cs/SS/cache/85310/PTPORTAL_POPBOX_CENTER_1.gif" nowrap="nowrap">
+      <span class="PSPROCESSING" dir="ltr" id="ptStatusText_win0">
+      </span>
+     </td>
+     <td>
+      <img alt="" height="39" src="/cs/SS/cache/85310/PTPORTAL_POPBOX_RIGHT_1.gif" width="6"/>
+     </td>
+     <td>
+     </td>
+    </tr>
+   </table>
+  </div>
+  <a name="ICFirstAnchor_win0">
+  </a>
+  <form action="https://quest.pecs.uwaterloo.ca/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL" autocomplete="off" class="PSForm" method="post" name="win0">
+   <div id="win0divPSHIDDENFIELDS" style="display:none">
+    <input id="ICType" name="ICType" type="hidden" value="Panel"/>
+    <input id="ICElementNum" name="ICElementNum" type="hidden" value="0"/>
+    <input id="ICStateNum" name="ICStateNum" type="hidden" value="6"/>
+    <input id="ICAction" name="ICAction" type="hidden" value="None"/>
+    <input id="ICXPos" name="ICXPos" type="hidden" value="0"/>
+    <input id="ICYPos" name="ICYPos" type="hidden" value="0"/>
+    <input id="ResponsetoDiffFrame" name="ResponsetoDiffFrame" type="hidden" value="-1"/>
+    <input id="TargetFrameName" name="TargetFrameName" type="hidden" value="None"/>
+    <input id="FacetPath" name="FacetPath" type="hidden" value="None"/>
+    <input id="ICFocus" name="ICFocus" type="hidden" value=""/>
+    <input id="ICSaveWarningFilter" name="ICSaveWarningFilter" type="hidden" value="0"/>
+    <input id="ICChanged" name="ICChanged" type="hidden" value="-1"/>
+    <input id="ICResubmit" name="ICResubmit" type="hidden" value="0"/>
+    <input id="ICSID" name="ICSID" type="hidden" value="zZcgWvwTU1tae56ESQ4AxNU+VHf0bPpMvdWEy5UukYw="/>
+    <input id="ICActionPrompt" name="ICActionPrompt" type="hidden" value="false"/>
+    <input id="ICFind" name="ICFind" type="hidden" value=""/>
+    <input id="ICAddCount" name="ICAddCount" type="hidden" value=""/>
+    <input id="ICAPPCLSDATA" name="ICAPPCLSDATA" type="hidden" value=""/>
+   </div>
+   <div id="win0divPAGEBAR">
+   </div>
+   <div id="win0divPSPANELTABS">
+   </div>
+   <div id="win0divPAGECONTAINER">
+    <table class="PSPAGECONTAINER">
+     <tr>
+      <td>
+       <div id="win0divPSPAGECONTAINER">
+        <table border="0" cellpadding="0" cellspacing="0" class="PSPAGECONTAINER" cols="12" id="ACE_width" width="881">
+         <tr>
+          <td height="1" width="0">
+          </td>
+          <td width="2">
+          </td>
+          <td width="2">
+          </td>
+          <td width="6">
+          </td>
+          <td width="166">
+          </td>
+          <td width="376">
+          </td>
+          <td width="68">
+          </td>
+          <td width="42">
+          </td>
+          <td width="78">
+          </td>
+          <td width="2">
+          </td>
+          <td width="14">
+          </td>
+          <td width="125">
+          </td>
+         </tr>
+         <tr>
+          <td height="93">
+          </td>
+          <td align="left" colspan="6" valign="top">
+           <div id="win0divDERIVED_SSTSNAV_GROUP_BOX">
+            <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="619">
+             <tr>
+              <td width="617">
+               <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="7" id="ACE_DERIVED_SSTSNAV_GROUP_BOX" style="border-style:none" width="617">
+                <tr>
+                 <td height="0" width="7">
+                 </td>
+                 <td width="1">
+                 </td>
+                 <td width="1">
+                 </td>
+                 <td width="422">
+                 </td>
+                 <td width="180">
+                 </td>
+                 <td width="1">
+                 </td>
+                 <td width="5">
+                 </td>
+                </tr>
+                <tr>
+                 <td colspan="4" height="3">
+                 </td>
+                 <td align="left" rowspan="2" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_SSTS_MAIN_GOTO">
+                   <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="179">
+                    <tr>
+                     <td width="177">
+                      <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="3" id="ACE_DERIVED_SSTSNAV_SSTS_MAIN_GOTO" style="border-style:none" width="177">
+                       <tr>
+                        <td height="0" width="7">
+                        </td>
+                        <td width="148">
+                        </td>
+                        <td width="22">
+                        </td>
+                       </tr>
+                       <tr>
+                        <td colspan="2" height="1">
+                        </td>
+                        <td align="left" nowrap="nowrap" rowspan="2" valign="top">
+                         <div id="win0divDERIVED_SSTSNAV_GO">
+                          <a href="javascript:submitAction_win0(document.win0,'DERIVED_SSTSNAV_GO');" id="DERIVED_SSTSNAV_GO" name="DERIVED_SSTSNAV_GO" tabindex="17">
+                           <img alt="GO!" border="0" name="DERIVED_SSTSNAV_GO$IMG" src="/cs/SS/cache/85310/PT_NAV_GO_1.gif" title="GO!"/>
+                          </a>
+                          <!-- DERIVED_SSTSNAV_GO -->
+                         </div>
+                        </td>
+                       </tr>
+                       <tr>
+                        <td height="22">
+                        </td>
+                        <td align="left" valign="top">
+                         <div id="win0divDERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$">
+                          <select class="PSDROPDOWNLIST" id="DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$" name="DERIVED_SSTSNAV_SSTS_MAIN_GOTO$7$" onchange="addchg_win0(this);return doEdits_win0(this,'','N','N','N','N','Y','Y',0);" psnchg="0" size="1" style="width:148px; " tabindex="16">
+                           <option value="0300">
+                            Account Inquiry
+                           </option>
+                           <option value="0220">
+                            My Undergrad Academics
+                           </option>
+                           <option value="0100">
+                            Student Center
+                           </option>
+                           <option selected="selected" value="9999">
+                            go to ...
+                           </option>
+                          </select>
+                         </div>
+                        </td>
+                       </tr>
+                      </table>
+                     </td>
+                    </tr>
+                   </table>
+                  </div>
+                 </td>
+                </tr>
+                <tr>
+                 <td colspan="3" height="25">
+                 </td>
+                 <td align="left" rowspan="2" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_PERSON_NAME">
+                   <span class="PALEVEL0PRIMARY" id="DERIVED_SSTSNAV_PERSON_NAME">
+                    Ran Ji
+                   </span>
+                   <!-- DERIVED_SSTSNAV_PERSON_NAME -->
+                  </div>
+                 </td>
+                </tr>
+                <tr>
+                 <td colspan="3" height="5">
+                 </td>
+                </tr>
+                <tr>
+                 <td height="28">
+                 </td>
+                 <td align="left" colspan="4" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_SSTS_NAV_TABS_DIS">
+                   <div style="width:604px; ">
+                    <!-- Begin HTML Area DERIVED_SSTSNAV_SSTS_NAV_TABS_DIS -->
+                    <!-- End HTML Area -->
+                   </div>
+                  </div>
+                 </td>
+                </tr>
+                <tr>
+                 <td height="23">
+                 </td>
+                 <td align="left" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_SSTS_NAV_STABS_DIS">
+                   <div style="width:1px; ">
+                    <!-- Begin HTML Area DERIVED_SSTSNAV_SSTS_NAV_STABS_DIS -->
+                    <!-- End HTML Area -->
+                   </div>
+                  </div>
+                 </td>
+                 <td align="left" colspan="4" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_SSTS_NAV_SUBTABS">
+                   <div style="width:604px; ">
+                    <!-- Begin HTML Area DERIVED_SSTSNAV_SSTS_NAV_SUBTABS -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                     <tr>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_A_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_A_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_A_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERTOP_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="6" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_TOP_IMG_1.gif" width="8"/>
+                      </td>
+                     </tr>
+                     <tr>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_ADDRESSES.GBL?Page=SS_ADDRESSES&amp;Action=C">
+                        addresses
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_NAMES.GBL?Page=SS_CC_NAME&amp;Action=C">
+                        names
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_PERS_PHONE.GBL?Page=SS_CC_PERS_PHONE&amp;Action=U">
+                        phone numbers
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_A_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL?Page=SS_CC_EMAIL_ADDR&amp;Action=U">
+                        email addresses
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_A_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMERG_CNTCT.GBL?Page=SS_CC_EMRG_CNTCT_L&amp;Action=U">
+                        emergency contacts
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL?Page=SS_CC_DEMOG_DATA&amp;Action=U">
+                        demographic information
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_CC_VISA_DOC.GBL?Page=UW_SS_CC_VISA_DOC&amp;Action=U">
+                        citizenship/immigration documents
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                      <td class="ssstabinactive" width="12%">
+                       <a class="ssstabmaintext" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.UW_SS_CC_ABSENCE.GBL?Page=UW_SS_CC_ABSENCE&amp;Action=U">
+                        influenza absence declaration
+                       </a>
+                      </td>
+                      <td>
+                       <img height="15" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_CENTER_IMG_1.gif" width="8"/>
+                      </td>
+                     </tr>
+                     <tr>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_A_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_A_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_A_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_LEFT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                      <td>
+                       <img class="ssstabwidth" height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_CENTERBOTTOM_IMG_1.gif"/>
+                      </td>
+                      <td>
+                       <img height="2" src="/cs/SS/cache/85310/PS_CS_TAB_IA_RIGHT_BOTTOM_IMG_1.gif" width="8"/>
+                      </td>
+                     </tr>
+                    </table>
+                    <!-- End HTML Area -->
+                   </div>
+                  </div>
+                 </td>
+                </tr>
+               </table>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="10">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="3" height="28">
+          </td>
+          <td align="left" colspan="3" valign="top">
+           <div id="win0divINFO">
+            <span class="PATRANSACTIONTITLE">
+             Email Addresses
+            </span>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="3" height="124">
+          </td>
+          <td align="left" colspan="7" valign="top">
+           <div id="win0divUW_SS_WORK_GROUP_BOX_1">
+            <table border="0" cellpadding="0" cellspacing="0" class="PSGROUPBOX" cols="6" id="ACE_UW_SS_WORK_GROUP_BOX_1" style="border-style:none" width="737">
+             <tr>
+              <td height="14" width="6">
+              </td>
+              <td width="2">
+              </td>
+              <td width="698">
+              </td>
+              <td width="2">
+              </td>
+              <td width="2">
+              </td>
+              <td width="27">
+              </td>
+             </tr>
+             <tr>
+              <td height="34">
+              </td>
+              <td align="left" colspan="4" valign="top">
+               <div id="win0div$ICField$55$">
+                <span class="PSTEXT">
+                 Email is the primary means of communication used by the University. It is important for you to keep your email address up to date.
+                </span>
+               </div>
+              </td>
+             </tr>
+             <tr>
+              <td colspan="2" height="22">
+              </td>
+              <td align="left" valign="top">
+               <div id="win0divINFO12">
+                <span class="STRONG">
+                 Campus Email Address
+                </span>
+               </div>
+              </td>
+             </tr>
+             <tr>
+              <td colspan="2" height="40">
+              </td>
+              <td align="left" colspan="2" valign="top">
+               <div id="win0div$ICField$59$">
+                <span class="PSTEXT">
+                 This is the official email address the University community will use to communicate with you as a student. Email guidelines can be found at:  http://www.adm.uwaterloo.ca/infocist/emailuse.html .
+                </span>
+               </div>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="4">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2" height="41">
+          </td>
+          <td align="left" colspan="7" valign="top">
+           <div id="win0divUW_RTG_EMAIL_VW$0">
+            <table border="1" cellpadding="2" cellspacing="0" class="PSLEVEL1GRIDWBO" cols="2" dir="ltr" id="UW_RTG_EMAIL_VW$scroll$0" width="738">
+             <tr>
+              <th abbr="Campus email" align="left" class="PSLEVEL1GRIDCOLUMNHDR" scope="col" width="289">
+               <a class="PSLEVEL1GRIDCOLUMNHDR" href="javascript:submitAction_win0(document.win0,'UW_RTG_EMAIL_VW$srt0$0');" id="UW_RTG_EMAIL_VW$srt0$0" name="UW_RTG_EMAIL_VW$srt0$0" tabindex="79" title="Click column heading to sort ascending">
+                Campus email
+               </a>
+              </th>
+              <th abbr="Delivered to" align="left" class="PSLEVEL1GRIDCOLUMNHDR" scope="col" width="245">
+               <a class="PSLEVEL1GRIDCOLUMNHDR" href="javascript:submitAction_win0(document.win0,'UW_RTG_EMAIL_VW$srt1$0');" id="UW_RTG_EMAIL_VW$srt1$0" name="UW_RTG_EMAIL_VW$srt1$0" tabindex="80" title="Click column heading to sort ascending">
+                Delivered to
+               </a>
+              </th>
+             </tr>
+             <tr id="trUW_RTG_EMAIL_VW$0_row1" valign="center">
+              <td align="left" class="PSLEVEL1GRIDODDROW" height="13">
+               <div id="win0divUW_RTG_EMAIL_VW_EMAIL_ADDR$0">
+                <span class="PSEDITBOX_DISPONLY" id="UW_RTG_EMAIL_VW_EMAIL_ADDR$0">
+                 jran@uwaterloo.ca
+                </span>
+                <!-- UW_RTG_EMAIL_VW_EMAIL_ADDR$0 -->
+               </div>
+              </td>
+              <td align="left" class="PSLEVEL1GRIDODDROW">
+               <div id="win0divUW_RTG_EMAIL_VW_UW_ROUTING_EMAIL$0">
+                <span class="PSEDITBOX_DISPONLY" id="UW_RTG_EMAIL_VW_UW_ROUTING_EMAIL$0">
+                 jran012@gmail.com
+                </span>
+                <!-- UW_RTG_EMAIL_VW_UW_ROUTING_EMAIL$0 -->
+               </div>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="10">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2" height="72">
+          </td>
+          <td align="left" colspan="9" valign="top">
+           <div id="win0divUW_DERIVED_CEM_GROUP_BOX">
+            <table border="0" cellpadding="0" cellspacing="0" class="PSGROUPBOX" cols="4" id="ACE_UW_DERIVED_CEM_GROUP_BOX" style="border-style:none" width="753">
+             <tr>
+              <td height="0" width="8">
+              </td>
+              <td width="2">
+              </td>
+              <td width="652">
+              </td>
+              <td width="91">
+              </td>
+             </tr>
+             <tr>
+              <td height="29">
+              </td>
+              <td align="left" colspan="2" valign="top">
+               <div id="win0div$ICField$74$">
+                <span class="PSTEXT">
+                 Please use the WatIAM link to maintain your email address. Changes on WatIAM will not be reflected here until the next business day.
+                </span>
+               </div>
+              </td>
+             </tr>
+             <tr>
+              <td colspan="2" height="29">
+              </td>
+              <td align="left" colspan="2" nowrap="nowrap" valign="top">
+               <div id="win0divDERIVED_AA2_GO_PB">
+                <a class="PSPUSHBUTTON" id="Left">
+                 <span style="background-Color: transparent;">
+                  <input class="PSPUSHBUTTON" id="DERIVED_AA2_GO_PB" name="DERIVED_AA2_GO_PB" onclick="window.open('https://watiam.uwaterloo.ca/idm/user/login.jsp','','');" onfocus="doFocus_win0(this,false,true);" style="width:112px; " tabindex="30" title="View Report" type="button" value="WATIAM"/>
+                 </span>
+                </a>
+                <!-- DERIVED_AA2_GO_PB -->
+               </div>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="6">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="3" height="24">
+          </td>
+          <td align="left" colspan="2" valign="top">
+           <div id="win0div$ICField$19$">
+            <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="171">
+             <tr>
+              <td width="169">
+               <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="1" id="ACE_$ICField$19$" style="border-style:none" width="169">
+                <tr>
+                 <td height="23" width="169">
+                 </td>
+                </tr>
+               </table>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="6">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="3" height="24">
+          </td>
+          <td align="left" colspan="2" valign="top">
+           <div id="win0div$ICField$20$">
+            <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="171">
+             <tr>
+              <td width="169">
+               <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="1" id="ACE_$ICField$20$" style="border-style:none" width="169">
+                <tr>
+                 <td height="23" width="169">
+                 </td>
+                </tr>
+               </table>
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="12" height="10">
+          </td>
+         </tr>
+         <tr>
+          <td colspan="4" height="80">
+          </td>
+          <td align="left" colspan="4" valign="top">
+           <div id="win0divDERIVED_SSTSNAV_GROUP_BOX$19$">
+            <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="651">
+             <tr>
+              <td width="649">
+               <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="8" id="ACE_DERIVED_SSTSNAV_GROUP_BOX$19$" style="border-style:none" width="649">
+                <tr>
+                 <td height="0" width="5">
+                 </td>
+                 <td width="2">
+                 </td>
+                 <td width="2">
+                 </td>
+                 <td width="36">
+                 </td>
+                 <td width="136">
+                 </td>
+                 <td width="444">
+                 </td>
+                 <td width="2">
+                 </td>
+                 <td width="22">
+                 </td>
+                </tr>
+                <tr>
+                 <td height="13">
+                 </td>
+                 <td align="left" colspan="5" valign="top">
+                  <hr align="left" class="PSHORIZONTALRULE" width="100%"/>
+                 </td>
+                </tr>
+                <tr>
+                 <td colspan="2" height="19">
+                 </td>
+                 <td align="left" colspan="5" valign="top">
+                  <div id="win0divDERIVED_SSTSNAV_SSS_SUBFOOT_LINKS">
+                   <div style="width:620px; ">
+                    <!-- Begin HTML Area DERIVED_SSTSNAV_SSS_SUBFOOT_LINKS -->
+                    <table border="0" cellpadding="0" cellspacing="0">
+                     <tr>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_ADDRESSES.GBL?Page=SS_ADDRESSES&amp;Action=C">
+                        Addresses
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_NAMES.GBL?Page=SS_CC_NAME&amp;Action=C">
+                        Names
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_PERS_PHONE.GBL?Page=SS_CC_PERS_PHONE&amp;Action=U">
+                        Phone Numbers
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL?Page=SS_CC_EMAIL_ADDR&amp;Action=U">
+                        Email Addresses
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMERG_CNTCT.GBL?Page=SS_CC_EMRG_CNTCT_L&amp;Action=U">
+                        Emergency Contacts
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_DEMOG_DATA.GBL?Page=SS_CC_DEMOG_DATA&amp;Action=U">
+                        Demographic Information
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/UW_SS_MENU.UW_SS_CC_VISA_DOC.GBL?Page=UW_SS_CC_VISA_DOC&amp;Action=U">
+                        Citizenship/Immigration Documents
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                       <a class="SSSFOOTERLINKBOLD" href="/psc/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.UW_SS_CC_ABSENCE.GBL?Page=UW_SS_CC_ABSENCE&amp;Action=U">
+                        Influenza Absence Declaration
+                       </a>
+                      </td>
+                      <td>
+                      </td>
+                      <td>
+                      </td>
+                     </tr>
+                    </table>
+                   </div>
+                  </div>
+                 </td>
+                </tr>
+               </table>
+               <!-- End HTML Area -->
+              </td>
+             </tr>
+            </table>
+           </div>
+          </td>
+         </tr>
+        </table>
+       </div>
+      </td>
+     </tr>
+     <tr>
+      <td colspan="3" height="8">
+      </td>
+      <td align="left" valign="top">
+       <div id="win0div$ICField$13$">
+        <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="36">
+         <tr>
+          <td height="6" width="34">
+          </td>
+         </tr>
+        </table>
+       </div>
+      </td>
+     </tr>
+     <tr>
+      <td height="28">
+      </td>
+      <td align="left" colspan="4" valign="top">
+       <div id="win0divDERIVED_SSTSNAV_SSTS_MAIN_GOTO$16$">
+        <table cellpadding="2" cellspacing="0" class="PABACKGROUNDINVISIBLEWBO" cols="1" width="175">
+         <tr>
+          <td width="173">
+           <table border="0" cellpadding="0" cellspacing="0" class="PABACKGROUNDINVISIBLE" cols="3" id="ACE_DERIVED_SSTSNAV_SSTS_MAIN_GOTO$16$" style="border-style:none" width="173">
+            <tr>
+             <td height="0" width="3">
+             </td>
+             <td width="148">
+             </td>
+             <td width="22">
+             </td>
+            </tr>
+            <tr>
+             <td colspan="2" height="1">
+             </td>
+             <td align="left" nowrap="nowrap" rowspan="2" valign="top">
+              <div id="win0divDERIVED_SSTSNAV_GO$8$">
+               <a href="javascript:submitAction_win0(document.win0,'DERIVED_SSTSNAV_GO$8$');" id="DERIVED_SSTSNAV_GO$8$" name="DERIVED_SSTSNAV_GO$8$" tabindex="29">
+                <img alt="GO!" border="0" name="DERIVED_SSTSNAV_GO$8$$IMG" src="/cs/SS/cache/85310/PT_NAV_GO_1.gif" title="GO!"/>
+               </a>
+               <!-- DERIVED_SSTSNAV_GO$8$ -->
+              </div>
+             </td>
+            </tr>
+            <tr>
+             <td height="22">
+             </td>
+             <td align="left" valign="top">
+              <div id="win0divDERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$">
+               <select class="PSDROPDOWNLIST" id="DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$" name="DERIVED_SSTSNAV_SSTS_MAIN_GOTO$8$" onchange="addchg_win0(this);return doEdits_win0(this,'','N','N','N','N','Y','Y',0);" psnchg="0" size="1" style="width:148px; " tabindex="28">
+                <option value="0300">
+                 Account Inquiry
+                </option>
+                <option value="0220">
+                 My Undergrad Academics
+                </option>
+                <option value="0100">
+                 Student Center
+                </option>
+                <option selected="selected" value="9999">
+                 go to ...
+                </option>
+               </select>
+              </div>
+             </td>
+            </tr>
+           </table>
+          </td>
+         </tr>
+        </table>
+       </div>
+      </td>
+     </tr>
+     <tr>
+      <td colspan="8" height="7">
+      </td>
+     </tr>
+    </table>
+   </div>
+  </form>
+ </body>
+</html>
+<tr>
+ <td colspan="12" height="10">
+ </td>
+</tr>
+<div class="PSLEVEL1GRIDCOLUMNHDR" id="pt_dragtxt">
+</div>
+<div id="pt_dragResize" onmbouseover="ptGridResizeObj_win0.dragTD=true;" onmousemove="ptGridResizeObj_win0.TDselMove();" onmouseout="ptGridResizeObj_win0.dragTD=false;" onmouseup="ptGridResizeObj_win0.TDselUp();">
+</div>
+<div frameborder="0" height="0" id="DetachDiv" width="0">
+</div>
+<a name="ICLastAnchor_win0">
+</a>
+<div class="popupDragFrame" id="popupDragFrame">
+</div>
+<!-- Mouse-over popup Begin -->
+<table border="0" cellpadding="0" cellspacing="0" id="win0MOpopupContainer" onmouseout="MOpopupObj_win0.StopPopup();" onmouseover="MOpopupObj_win0.StartPopup('win0MOpopupContainer', '');" style="display:none; position:absolute; top:0; left:0;" width="20">
+ <tr>
+  <td align="left" class="MOBGImage" height="25" id="win0MOpopupInner" valign="top" width="20">
+   <div id="win0MOdivpopupFrame" onclick="MOpopupObj_win0.SetFocusFlag(false);" style="overflow:auto; width:20px; height: 60px; padding:8px; box-shadow:0 0 5px #000000; background-color:white; border: 1px solid #666666;" tabindex="-1">
+    test
+   </div>
+  </td>
+ </tr>
+</table>
+<!-- Mouse-over popup End  -->
+<!-- Embedded Help popup Begin -->
+<div id="HelppopupDiv" style="display:none; position:absolute; top:0; left:0">
+ t
+</div>
+<div class="popupDragFrame" id="HelpDragFrame">
+</div>
+<table border="0" cellpadding="0" cellspacing="0" id="HelppopupContainer" style="opacity:1; display:none; position:absolute; top:0; left:0" width="20">
+ <tr>
+  <td align="left" id="HelppopupInner" style="position:absolute;z-Index:302;" valign="top">
+   <div class="PTPOPUP_HEADER" id="HelppopupTitleBar" style="width:341px">
+    <div id="HelppopupTitleBarLeftImage">
+    </div>
+    <div dir="ltr" id="HelppopupTitleBarMiddle" style="width:333px">
+     <table>
+      <td id="HelppopupTitle" style="width:290px; cursor: move;">
+       <span class="PTPOPUP_TITLE">
+        Help
+       </span>
+      </td>
+      <td style="width:45px">
+       <img align="right" alt="Close" id="#HELPPOPUPCLOSE" onclick="HelppopupObj_win0.StopPopup();" src="/cs/SS/cache/85310/PT_PORTAL_IC_CLOSE_1.gif" style="cursor:pointer" title="Close"/>
+      </td>
+     </table>
+    </div>
+    <div id="HelppopupTitleBarRightImage">
+    </div>
+   </div>
+   <div class="MOBGImage" id="HelpdivpopupFrame" onclick="HelppopupObj_win0.SetFocusFlag(false);" style="border: 1px #bcbaba solid; padding:12px; overflow:auto;" tabindex="-1">
+    test
+   </div>
+   <div class="popupShadow" id="HelppopupShadow" style="position:absolute;z-index:-1;">
+    <div class="popupShadowTopRightCorner" id="HelppopupShadowTopRightCorner" style="height:10px;">
+    </div>
+    <div class="popupShadowTop" id="HelppopupShadowTop">
+    </div>
+    <div class="popupShadowBottom" id="HelppopupShadowBottom" style="height:10px">
+     <div class="popupShadowBottomLeftCorner" id="HelppopupShadowBottomLeftCorner" style="height:10px;width:10px">
+     </div>
+     <div class="popupShadowBottomMiddle" id="HelppopupShadowBottomMiddle" style="height:10px;">
+     </div>
+     <div class="popupShadowBottomRightCorner" id="HelppopupShadowBottomRightCorner" style="height:10px;width:10px">
+     </div>
+    </div>
+   </div>
+  </td>
+ </tr>
+</table>
+<!-- Embedded Help popup End  -->
+<div id="pt_fakeBC" style="display:none">
+ <ul>
+ </ul>
+</div>
+<div id="ptus_universalSrch" style="display:none;">
+ <span>
+  Default Local Node:
+ </span>
+ <input id="ptus_defaultlocalnode" name="ptus_defaultlocalnode" readonly="readonly" type="text" value="UW_CSPR"/>
+ <br/>
+ <span>
+  DbName:
+ </span>
+ <input id="ptus_dbname" name="ptus_dbname" readonly="readonly" type="text" value="CSPR"/>
+ <br/>
+ <span>
+  Portal:
+ </span>
+ <input id="ptus_portal" name="ptus_portal" readonly="readonly" type="text" value="ACADEMIC"/>
+ <br/>
+ <span>
+  Node:
+ </span>
+ <input id="ptus_node" name="ptus_node" readonly="readonly" type="text" value="HRMS"/>
+ <br/>
+ <span>
+  WorkCenter Id:
+ </span>
+ <input id="ptus_workcenterid" name="ptus_workcenterid" readonly="readonly" type="text" value=""/>
+ <br/>
+ <span>
+  Url:
+ </span>
+ <input id="ptus_componenturl" name="ptus_componenturl" readonly="readonly" type="text" value="https://quest.pecs.uwaterloo.ca/psp/SS/ACADEMIC/HRMS/c/CC_PORTFOLIO.SS_CC_EMAIL_ADDR.GBL"/>
+ <br/>
+</div>
+<script language="JavaScript">
+ var bCleanHtml = false;
+var bDefer = true;
+document.deferFldArr_win0 = new Array();
+document.hiddenFldArr_win0 =new Array('ICType','ICElementNum','ICStateNum','ICAction','ICXPos','ICYPos','ResponsetoDiffFrame','TargetFrameName','FacetPath','ICFocus','ICSaveWarningFilter','ICChanged','ICResubmit','ICSID','ICActionPrompt','ICFind','ICAddCount','ICAPPCLSDATA');
+document.chgFldArr_win0 = new Array();
+var bCDATA = false;
+var bLoadCompleted = true;
+</script>

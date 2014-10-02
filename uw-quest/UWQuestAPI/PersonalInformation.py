@@ -25,6 +25,8 @@ def postPersonalInformation(questSession):
 		postPersonalInfo['ICAction'] = 'DERIVED_SSS_SCL_SS_DEMO_SUM_LINK'
 
 		response = questSession.session.post(questSession.studentCenterURL_HRMS, data = postPersonalInfo, allow_redirects = False)
+		if questSession.checkIsOnLoginPage():
+			return False
 		questSession.currentResponse = response
 		if response.status_code == requests.codes.ok:
 			print "POST Personal Information OK"
@@ -44,6 +46,8 @@ def gotoPersonalInformation_address(questSession):
 		'Action': 'C',
 	}
 	response = questSession.session.get(personalInfoAddressURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -63,6 +67,8 @@ def gotoPersonalInformation_name(questSession):
 		'Action': 'C',
 	}
 	response = questSession.session.get(personalInfoNameURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -82,6 +88,8 @@ def gotoPersonalInformation_phoneNumbers(questSession):
 		'Action': 'U',
 	}
 	response = questSession.session.get(personalInfoPhoneNumbersURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -101,6 +109,8 @@ def gotoPersonalInformation_email(questSession):
 		'Action': 'U',
 	}
 	response = questSession.session.get(personalInfoEmailsURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -120,6 +130,8 @@ def gotoPersonalInformation_emgencyContacts(questSession):
 		'Action': 'U',
 	}
 	response = questSession.session.get(personalInfoEnergencyURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -139,6 +151,8 @@ def gotoPersonalInformation_demographicInfo(questSession):
 		'Action': 'U',
 	}
 	response = questSession.session.get(personalInfoDemographicInfoURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):
@@ -158,6 +172,8 @@ def gotoPersonalInformation_citizenship(questSession):
 		'Action': 'U',
 	}
 	response = questSession.session.get(personalInfoCitizenshipURL, data = getData, allow_redirects = False)
+	if questSession.checkIsOnLoginPage():
+			return False
 	questSession.currentResponse = response
 	if response.status_code == requests.codes.ok:
 		if questSession.updateStateNum(response):

@@ -90,14 +90,14 @@ def Parse_personalInfo_email(html):
 	# print filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))
 	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable1)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 
+
 	emailTable2Description = soup.find(id="ACE_UW_DERIVED_CEM_GROUP_BOX_1")
-	if emailTable2Description is None:
-		return []
-	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
+	if not (emailTable2Description is None):
+		resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2Description)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
+	
 	emailTable2 = soup.find(id="SCC_EMAIL_H$scroll$0")
-	if emailTable2 is None:
-		return []
-	resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
+	if not (emailTable2 is None):
+		resultList.extend(map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(emailTable2)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n"))))
 	return resultList
 
 def Parse_personalInfo_emergencyContact(html):
@@ -149,21 +149,38 @@ def Parse_personalInfo_demographicInfo(html):
 
 	return demographicDict
 
+# May return string or [(,), (,)]
 def Parse_personalInfo_citizenship(html):
 	soup = BeautifulSoup(html)	
 	# print soup.prettify()
-	citizenshipTable = soup.find(id="VISA_PMT_SUPPRT$scroll$0")
-	if citizenshipTable is None:
+	requiredDocumentation = soup.find(id="VISA_PMT_SUPPRT$scroll$0")
+	pastDocumentation = soup.find(id="VISA_PMT_EXPIRED$scroll$0")
+	if requiredDocumentation is None:
 		isValid = soup.find(id="win0div$ICField$1$")
 		if (not isValid is None) and isValid.text.strip() == 'Citizenship/Immigration Documents':
-			extraText = soup.find(id="win0divUW_DERIVED_DOCS_PAGETEXT1")
+			extraText = soup.find(id="win0divUW_DERIVED_DOCS_PAGETEXT1") # Some message for new student 
 			if not extraText is None:
-				return [extraText.text.strip()]
+				return extraText.text.strip()
 		return []
-	resultList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(citizenshipTable)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
-	resultList.insert(0, "visa_type")
-	resultList.insert(0, "country")
-	return resultList
+	resultData = []
+	requiredDocList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(requiredDocumentation)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
+	
+	# For required documentation, remove "upload" 
+	isHasUpload = requiredDocumentation.find(id="ATTACHADD$0")
+	if len(requiredDocList) == 3 and isHasUpload:
+		requiredDocList = requiredDocList[:len(requiredDocList) - 1]
+	requiredDocList.insert(0, "visa_type")
+	requiredDocList.insert(0, "country")
+	# print requiredDocList
+	resultData.append(("Required Documentation", requiredDocList))
+
+	if pastDocumentation:
+		pastDocList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(pastDocumentation)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
+		pastDocList.insert(0, "visa_type")
+		pastDocList.insert(0, "country")
+		# print pastDocList
+		resultData.append(("Past Documentation", pastDocList))
+	return resultData
 
 def Parse_myAcademics_myProgram(html):
 	soup = BeautifulSoup(html)	
@@ -1000,10 +1017,19 @@ def API_personalInfo_emailResponse(questSession):
 		# 	}
 		# }
 
+		# Two cases:
+		# ['Email Addresses', 'Email is the primary means of communication used by the University. It is important for you to keep your email address up to date.', 'Campus Email Address', 'This is the official email address the University community will use to communicate with you as a student. Email guidelines can be found at:  http://www.adm.uwaterloo.ca/infocist/emailuse.html .', 'Campus email', 'Delivered to', 'z73huang@uwaterloo.ca', 'z73huang@connect.uwaterloo.ca', 'Alternate Email Addresses', 'The Admissions Office will use the Home email address to communicate with you as an applicant.', 'Email Type', 'Email Address', 'Home', 'huangziyuan0101@sina.cn']
+		# ['Email Addresses', 'Email is the primary means of communication used by the University. It is important for you to keep your email address up to date.', 'Campus Email Address', 'This is the official email address the University community will use to communicate with you as a student. Email guidelines can be found at:  http://www.adm.uwaterloo.ca/infocist/emailuse.html .', 'Campus email', 'Delivered to', 'jran@uwaterloo.ca', 'jran012@gmail.com']
+		# print emailList
+
 		data["description"] = emailList[emailList.index("Email Addresses") + 1]
 
 		campusEmailIndex = emailList.index("Campus Email Address")
-		alternateEmailIndex = emailList.index("Alternate Email Addresses")
+		alternateEmailIndex = len(emailList)
+		try:
+			alternateEmailIndex = emailList.index("Alternate Email Addresses")
+		except Exception, e:
+			pass
 
 		campusEmailCount = (alternateEmailIndex - (campusEmailIndex + 2)) / keysNumber - 1
 		alternateEmailCount = (len(emailList) - (alternateEmailIndex + 2)) / keysNumber - 1
@@ -1021,15 +1047,16 @@ def API_personalInfo_emailResponse(questSession):
 			"data": campusEmailData
 		}
 
-		for i in xrange(0, alternateEmailCount):
-			emailDict = {}
-			emailDict["email_type"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber]
-			emailDict["email_address"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber + 1]
-			alternateEmailData.append(emailDict)
-		data["alternate_email_address"] = {
-			"description": emailList[alternateEmailIndex + 1],
-			"data": alternateEmailData
-		}
+		if alternateEmailCount > 0:
+			for i in xrange(0, alternateEmailCount):
+				emailDict = {}
+				emailDict["email_type"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber]
+				emailDict["email_address"] = emailList[alternateEmailIndex + 2 + (i + 1) * keysNumber + 1]
+				alternateEmailData.append(emailDict)
+			data["alternate_email_address"] = {
+				"description": emailList[alternateEmailIndex + 1],
+				"data": alternateEmailData
+			}
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "response page contains no email information"
@@ -1139,27 +1166,66 @@ def API_personalInfo_demographicInfoResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_personalInfo_citizenshipResponse(questSession):
-	keysNumber = 4 # How many columns
-	citizenList = Parse_personalInfo_citizenship(questSession.currentResponse.content)
-	meta = getEmptyMetaDict()
-	data = []
-	if len(citizenList) == 1:
-		meta["status"] = "success"
-		meta["message"] = citizenList[0]
-	elif not len(citizenList) < keysNumber:
-		meta["status"] = "success"
-		citizenCount = len(citizenList) / keysNumber - 1
-		for i in xrange(0, citizenCount):
-			citizenDict = {}
-			citizenDict[citizenList[0].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber]
-			citizenDict[citizenList[1].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 1]
-			citizenDict[citizenList[2].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 2]
-			citizenDict[citizenList[3].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 3]
-			data.append(citizenDict)
-	else:
+	try:
+		responseData = Parse_personalInfo_citizenship(questSession.currentResponse.content)
+		# Return message, no data for visa documentation
+		if isinstance(responseData, str):
+			meta["status"] = "success"
+			meta["message"] = responseData
+			return getFullResponseDictionary(meta, data)
+		elif isinstance(responseData, list):
+			docList = responseData
+			meta = getEmptyMetaDict()
+			data = {}
+			# Process for last element 
+			if not (len(docList) == 1 or len(docList) == 2):
+				meta["status"] = "failure"
+				meta["message"] = "Wrong length of doc list"
+				return getFullResponseDictionary(meta, data)
+			else:
+				key = docList[len(docList) - 1][0].replace(" ", "_").lower()
+				citizenList = docList[len(docList) - 1][1]
+				keysNumber = 0
+				if len(citizenList) % 2 == 0:
+					keysNumber = len(citizenList) / 2
+				else:
+					assert(False)
+				meta["status"] = "success"
+				citizenCount = len(citizenList) / keysNumber - 1
+				tempData = []
+				for i in xrange(0, citizenCount):
+					citizenDict = {}
+					for j in xrange(0, keysNumber):
+						citizenDict[citizenList[j].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + j]
+					# citizenDict[citizenList[0].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber]
+					# citizenDict[citizenList[1].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 1]
+					# citizenDict[citizenList[2].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 2]
+					# citizenDict[citizenList[3].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 3]
+					tempData.append(citizenDict)
+				data[key] = tempData
+				# process extra one
+				if len(docList) == 2:
+					keysNumber = 2
+					key = docList[0][0].replace(" ", "_").lower()
+					requiredDocumentationList = docList[0][1]
+					requiredCount = len(requiredDocumentationList) / keysNumber - 1
+					tempData = []
+					for i in xrange(0, requiredCount):
+						citizenDict = {}
+						citizenDict[citizenList[0].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber]
+						citizenDict[citizenList[1].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 1]
+						tempData.append(citizenDict)
+					data[key] = tempData
+		else:
+			meta["status"] = "failure"
+			meta["message"] = "response page contains no citizenship/immigration information"
+		return getFullResponseDictionary(meta, data)
+	except Exception, e:
+		meta = getEmptyMetaDict()
+		data = {}
 		meta["status"] = "failure"
-		meta["message"] = "response page contains no citizenship/immigration information"
-	return getFullResponseDictionary(meta, data)
+		meta["message"] = e
+		return getFullResponseDictionary(meta, data)
 
 def API_myAcademics_myProgramResponse(questSession):
 	resultList = Parse_myAcademics_myProgram(questSession.currentResponse.content)
