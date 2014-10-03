@@ -234,6 +234,7 @@ class LoginHandler(BasicHandler):
         if self.checkKey():
             userid = self.request.get("userid")
             password = self.request.get("password")
+            logging.info(userid + " " + password)
             global sessionStore
 
             # Init session store for the first time

@@ -191,23 +191,23 @@ def main():
 	# Personal Information
 	myQuest.postPersonalInformation()
 
-	myQuest.gotoPersonalInformation_address()
-	print QuestParser.API_personalInfo_addressResponse(myQuest)
+	# myQuest.gotoPersonalInformation_address()
+	# print QuestParser.API_personalInfo_addressResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_name()
-	print QuestParser.API_personalInfo_nameResponse(myQuest)
+	# myQuest.gotoPersonalInformation_name()
+	# print QuestParser.API_personalInfo_nameResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_phoneNumbers()
-	print QuestParser.API_personalInfo_phoneResponse(myQuest)
+	# myQuest.gotoPersonalInformation_phoneNumbers()
+	# print QuestParser.API_personalInfo_phoneResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_email()
-	print QuestParser.API_personalInfo_emailResponse(myQuest)
+	# myQuest.gotoPersonalInformation_email()
+	# print QuestParser.API_personalInfo_emailResponse(myQuest)
 
-	myQuest.gotoPersonalInformation_emgencyContacts()
-	print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
+	# myQuest.gotoPersonalInformation_emgencyContacts()
+	# print QuestParser.API_personalInfo_emergencyContactResponse(myQuest)
 	
-	myQuest.gotoPersonalInformation_demographicInfo()
-	print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
+	# myQuest.gotoPersonalInformation_demographicInfo()
+	# print QuestParser.API_personalInfo_demographicInfoResponse(myQuest)
 	
 	myQuest.gotoPersonalInformation_citizenship()
 	print QuestParser.API_personalInfo_citizenshipResponse(myQuest)

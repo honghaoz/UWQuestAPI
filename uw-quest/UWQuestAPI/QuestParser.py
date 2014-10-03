@@ -157,10 +157,12 @@ def Parse_personalInfo_citizenship(html):
 	pastDocumentation = soup.find(id="VISA_PMT_EXPIRED$scroll$0")
 	if requiredDocumentation is None:
 		isValid = soup.find(id="win0div$ICField$1$")
+		# print "None"
 		if (not isValid is None) and isValid.text.strip() == 'Citizenship/Immigration Documents':
+			# print "Valid"
 			extraText = soup.find(id="win0divUW_DERIVED_DOCS_PAGETEXT1") # Some message for new student 
 			if not extraText is None:
-				return extraText.text.strip()
+				return str(extraText.text.strip())
 		return []
 	resultData = []
 	requiredDocList = map(lambda x: x.strip(), filter(lambda x: len(x) > 0, re.sub("\<.*?\>", "", str(requiredDocumentation)).replace(" \r", ", ").replace("\xc2\xa0", "").split("\n")))[1:]
@@ -1166,8 +1168,10 @@ def API_personalInfo_demographicInfoResponse(questSession):
 	return getFullResponseDictionary(meta, data)
 
 def API_personalInfo_citizenshipResponse(questSession):
+	responseData = Parse_personalInfo_citizenship(questSession.currentResponse.content)
+	meta = getEmptyMetaDict()
+	data = {}
 	try:
-		responseData = Parse_personalInfo_citizenship(questSession.currentResponse.content)
 		# Return message, no data for visa documentation
 		if isinstance(responseData, str):
 			meta["status"] = "success"
@@ -1175,8 +1179,6 @@ def API_personalInfo_citizenshipResponse(questSession):
 			return getFullResponseDictionary(meta, data)
 		elif isinstance(responseData, list):
 			docList = responseData
-			meta = getEmptyMetaDict()
-			data = {}
 			# Process for last element 
 			if not (len(docList) == 1 or len(docList) == 2):
 				meta["status"] = "failure"
@@ -1222,8 +1224,6 @@ def API_personalInfo_citizenshipResponse(questSession):
 			meta["message"] = "response page contains no citizenship/immigration information"
 		return getFullResponseDictionary(meta, data)
 	except Exception, e:
-		meta = getEmptyMetaDict()
-		data = {}
 		meta["status"] = "failure"
 		meta["message"] = e
 		return getFullResponseDictionary(meta, data)
