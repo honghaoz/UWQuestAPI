@@ -1208,12 +1208,13 @@ def API_personalInfo_citizenshipResponse(questSession):
 					keysNumber = 2
 					key = docList[0][0].replace(" ", "_").lower()
 					requiredDocumentationList = docList[0][1]
+					# print requiredDocumentationList
 					requiredCount = len(requiredDocumentationList) / keysNumber - 1
 					tempData = []
 					for i in xrange(0, requiredCount):
 						citizenDict = {}
-						citizenDict[citizenList[0].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber]
-						citizenDict[citizenList[1].replace(" ", "_").lower()] = citizenList[(i + 1) * keysNumber + 1]
+						citizenDict[requiredDocumentationList[0].replace(" ", "_").lower()] = requiredDocumentationList[(i + 1) * keysNumber]
+						citizenDict[requiredDocumentationList[1].replace(" ", "_").lower()] = requiredDocumentationList[(i + 1) * keysNumber + 1]
 						tempData.append(citizenDict)
 					data[key] = tempData
 		else:
