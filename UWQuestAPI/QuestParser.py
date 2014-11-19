@@ -1329,7 +1329,7 @@ def API_myAcademics_unofficialTranscriptResultResponse(questSession):
 	data = ""
 	if soup.find(id="PrintTranscript"):
 		meta["status"] = "success"
-		data = soup.find(id="PrintTranscript")
+		data = str(soup.find(id="PrintTranscript"))
 	else:
 		meta["status"] = "failure"
 		meta["message"] = "get transcript time out"

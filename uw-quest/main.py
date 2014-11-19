@@ -341,7 +341,7 @@ class personalinformationHandler(BasicHandler):
             # Invalid key
             self.responseInvalidKey()
 
-    # PRO: personalInfoQuestSesson must be valid
+    # PRE: personalInfoQuestSesson must be valid
     def processPersonalInfoReuqest(self, personalInfoQuestSesson, category):
         if category == "addresses":
             if personalInfoQuestSesson.gotoPersonalInformation_address():
@@ -411,10 +411,119 @@ class personalinformationHandler(BasicHandler):
             response = {"meta": {"status": "failure", "message": "Invalid endpoint"}, "data": []}                    
         self.responseParseResult(response, kErrorParseContent)
 
+class myAcademicHandler(BasicHandler):
+    retryTime = 2
+    def restoreRetryTime(self):
+        self.retryTime = 2
+
+    def shouldRetry(self):
+        self.retryTime -= 1
+        return (not self.retryTime == 0)
+
+    def post(self, category):
+        self.myAcademicOperation(category)
+
+    def get(self, category):
+        self.myAcademicOperation(category)
+
+    def myAcademicOperation(self, category):
+        sid = self.request.get("sid")
+        logging.info("category: " + category)
+        logging.info("sid: " + sid)
+        if self.checkKey():
+            global sessionStore
+            if sessionStore.find(sid):
+                foundSession = sessionStore.getSession(sid)
+                if (not foundSession.checkIsExpired()) and (foundSession.isLogin):
+                    # Found valid session
+                    self.processMyAcademicReuqest(foundSession, category)
+                else:
+                    # Found session is invalid, need relogin
+                    self.responseInvalidSession()
+            else:
+                # Not found sid, invalid sid
+                self.responseInvalidSid()
+        else:
+            # Invalid key
+            self.responseInvalidKey()
+
+    # PRE: personalInfoQuestSesson must be valid
+    def processMyAcademicReuqest(self, questSesson, category):
+        if category == "my_program":
+            if questSesson.gotoMyAcademics_myProgram():
+                response = QuestParser.API_myAcademics_myProgramResponse(questSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processMyAcademicReuqest(questSesson, category)
+                else:
+                    return self.responseInvalidSession()
+        elif category == "grades":
+            term_index = self.request.get("term_index")
+            logging.info("term_index: " + term_index)
+            # Has term_index, return specific term
+            if len(term_index) > 0:
+                logging.info("Query term: " + term_index)
+                if questSesson.postMyAcademics_grades_termIndex(int(term_index)):
+                    response = QuestParser.API_myAcademics_gradesTermResponse(questSesson)
+                else:
+                    # Retry
+                    if self.shouldRetry():
+                        return self.processMyAcademicReuqest(questSesson, category)
+                    else:
+                        return self.responseInvalidSession()
+            else:
+                # Return term list
+                if questSesson.gotoMyAcademics_grades():
+                    response = QuestParser.API_myAcademics_gradesResponse(questSesson)
+                else:
+                    # Retry
+                    if self.shouldRetry():
+                        return self.processMyAcademicReuqest(questSesson, category)
+                    else:
+                        return self.responseInvalidSession()
+        elif category == "unofficial_transcript":
+            academic_institution = self.request.get("academic_institution")
+            report_type = self.request.get("report_type")
+            logging.info("academic_institution: " + academic_institution)
+            logging.info("report_type: " + report_type)
+            # Return result
+            if len(academic_institution) > 0 and len(report_type) > 0:
+                if questSesson.postMyAcademics_unofficialTranscript_option(academic_institution, report_type):
+                    response = QuestParser.API_myAcademics_unofficialTranscriptResultResponse(questSesson)
+                else:
+                    # Retry
+                    if self.shouldRetry():
+                        return self.processMyAcademicReuqest(questSesson, category)
+                    else:
+                        return self.responseInvalidSession()
+            else:
+                # Return option list
+                if questSesson.gotoMyAcademics_unofficialTranscript():
+                    response = QuestParser.API_myAcademics_unofficialTranscriptResponse(questSesson)
+                else:
+                    # Retry
+                    if self.shouldRetry():
+                        return self.processMyAcademicReuqest(questSesson, category)
+                    else:
+                        return self.responseInvalidSession()
+        elif category == "my_advisors":
+            if questSesson.gotoMyAcademics_advisors():
+                response = QuestParser.API_myAcademics_myAdvisorResponse(questSesson)
+            else:
+                # Retry
+                if self.shouldRetry():
+                    return self.processMyAcademicReuqest(questSesson, category)
+                else:
+                    return self.responseInvalidSession()
+
+        self.responseParseResult(response, kErrorParseContent)
+
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/activate', ActivateHandler),
     ('/login', LoginHandler),
     ('/logout', LogoutHandler),
-    ('/personalinformation/%s' % r'([a-z\_]+)', personalinformationHandler)
+    ('/personalinformation/%s' % r'([a-z\_]+)', personalinformationHandler),
+    ('/my_academics/%s' % r'([a-z\_]+)', myAcademicHandler)
 ], debug=True)

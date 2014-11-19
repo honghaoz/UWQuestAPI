@@ -166,7 +166,7 @@ def gotoMyAcademics_unofficialTranscript(questSession):
 # Transcript is stored in questSession.currentResult
 def postMyAcademics_unofficialTranscript_option(questSession, academic_option, type_option):
 	# If not in the right post postition, change to right post position
-	if not (questSession.currentPOSTpage is "MY_ACADEMICS_HOME"): #or questSession.currentPOSTpage is "MY_ACADEMICS_UNOFFICIAL_OPTION_LINK"):
+	if not (questSession.currentPOSTpage is "MY_ACADEMICS_UNOFFICIAL_OPTION_LINK"): #or questSession.currentPOSTpage is "MY_ACADEMICS_UNOFFICIAL_OPTION_LINK"):
 		if not gotoMyAcademics_unofficialTranscript(questSession): #questSession.postMyAcademics_unofficialTranscript_optionLink():
 			print "POST Unofficial with option: (%s, %s) Failed" % (academic_option, type_option)
 			return False
@@ -301,26 +301,26 @@ def main():
 
 	myQuest.postMyAcademics()
 
-	myQuest.gotoMyAcademics_myProgram()
-	print QuestParser.API_myAcademics_myProgramResponse(myQuest)
+	# myQuest.gotoMyAcademics_myProgram()
+	# print QuestParser.API_myAcademics_myProgramResponse(myQuest)
 
-	myQuest.gotoMyAcademics_grades()
-	print QuestParser.API_myAcademics_gradesResponse(myQuest)
+	# myQuest.gotoMyAcademics_grades()
+	# print QuestParser.API_myAcademics_gradesResponse(myQuest)
 
-	myQuest.postMyAcademics_grades_termIndex(0)
-	print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
+	# myQuest.postMyAcademics_grades_termIndex(1)
+	# print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 
 	# myQuest.postMyAcademics_grades_termIndex(3)
 	# print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 
-	myQuest.postMyAcademics_grades_termIndex(2)
-	print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
+	# myQuest.postMyAcademics_grades_termIndex(0)
+	# print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 
 	# myQuest.postMyAcademics_grades_termIndex(0)
 	# print QuestParser.API_myAcademics_gradesTermResponse(myQuest)
 
-	myQuest.gotoMyAcademics_unofficialTranscript()
-	print QuestParser.API_myAcademics_unofficialTranscriptResponse(myQuest)
+	# myQuest.gotoMyAcademics_unofficialTranscript()
+	# print QuestParser.API_myAcademics_unofficialTranscriptResponse(myQuest)
 
 	myQuest.postMyAcademics_unofficialTranscript_option('UWATR', 'UNGRD')
 	print QuestParser.API_myAcademics_unofficialTranscriptResultResponse(myQuest)
